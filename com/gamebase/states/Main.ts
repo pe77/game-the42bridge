@@ -27,11 +27,11 @@ module GameBase
             }, this);
     	}
 
-
 		render()
-		{
-			this.game.debug.text('Press [ENTER] to back to Menu', 35, 35);
-		}
+        {
+            this.game.debug.text('Press [ENTER] to Menu', 35, 35);
+        }
+
     }
 
 }

@@ -10,6 +10,7 @@ module GameBase {
 
             // add default state
             this.state.add('Menu', GameBase.Menu);
+            this.state.add('Intro', GameBase.Intro);
             this.state.add('Main', GameBase.Main);
         }
     }
@@ -21,8 +22,14 @@ module GameBase {
         {
             super();
 
+            // loading load screen assets (logo, loading bar, etc) [pre-preloading]
+            this.preLoaderState = Preloader;
+
+            // loading all* game assets
             this.loaderState = Loader;
-            this.initialState = 'Menu';
+
+
+            this.initialState = 'Intro';
 
         }
     }

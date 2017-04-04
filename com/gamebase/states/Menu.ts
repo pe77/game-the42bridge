@@ -5,7 +5,7 @@ module GameBase
 
 	export class Menu extends Pk.PkState {
 
-        spaceBarKey:Phaser.Key;
+        enterKey:Phaser.Key;
 
 		
         init(param1, param2, param3) // or | init(...args:any[]) |
@@ -25,19 +25,27 @@ module GameBase
             this.game.stage.backgroundColor = "#89aca6";
 
     		// get the keyboard
-            this.spaceBarKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+            this.enterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
 
             // when press the key...
-            this.spaceBarKey.onDown.add(()=>{
-                this.transition.change('Main'); // change to state Main
+            this.enterKey.onDown.add(()=>{
+                this.transition.change('Intro'); // change to state Main
             }, this);
+
+            // creat text
+			var text:Phaser.Text = this.game.add.text(
+				this.game.world.centerX, 
+				this.game.world.centerY, 
+				"Press Enter", {
+					font: "65px Arial",
+					fill: "#ff0044", 
+					align: "center"
+			});
+
+			// position | middle
+			text.anchor.set(0.5);
     		
     	}
-
-        render()
-        {
-            this.game.debug.text('Press [SPACEBAR] to enter', 35, 35);
-        }
     }
 
 }

@@ -252,7 +252,7 @@ var Pk;
             var _this = _super.call(this, pkConfig.canvasSize[0], pkConfig.canvasSize[1], pkConfig.renderMode, pkConfig.canvasId) || this;
             PkGame.pkConfig = pkConfig;
             // add states
-            _this.state.add('PkLoaderPreLoader', PkLoaderPreLoader);
+            _this.state.add('PkLoaderPreLoader', PkGame.pkConfig.preLoaderState);
             // init loader
             _this.state.start('PkLoaderPreLoader');
             PkGame.game = _this;
@@ -280,6 +280,7 @@ var Pk;
         };
         return PkLoaderPreLoader;
     }(Pk.PkState));
+    Pk.PkLoaderPreLoader = PkLoaderPreLoader;
 })(Pk || (Pk = {}));
 var Pk;
 (function (Pk) {
@@ -293,6 +294,7 @@ var Pk;
             this.loaderLoadingBar = 'assets/states/loader/images/loading-bar.png'; // loading bar
             this.loaderWaitingTime = 1000; // 1 sec
             this.loaderState = Pk.PkLoader;
+            this.preLoaderState = Pk.PkLoaderPreLoader;
         }
         return PkConfig;
     }());
@@ -304,7 +306,7 @@ var Pk;
         RenderMode[RenderMode["CANVAS"] = Phaser.CANVAS] = "CANVAS";
         RenderMode[RenderMode["WEBGL"] = Phaser.WEBGL] = "WEBGL";
         RenderMode[RenderMode["HEADLESS"] = Phaser.HEADLESS] = "HEADLESS";
-    })(RenderMode || (RenderMode = {}));
+    })(RenderMode = Pk.RenderMode || (Pk.RenderMode = {}));
 })(Pk || (Pk = {}));
 /// <reference path='state/PkState.ts' />
 var Pk;
@@ -346,15 +348,19 @@ var Pk;
             }
             return true && JSON.stringify(obj) === JSON.stringify({});
         };
-        PkUtils.createSquare = function (game, width, height, color) {
-            color = color || '#000000';
+        PkUtils.createSquareBitmap = function (game, width, height, color) {
+            if (color === void 0) { color = "#000000"; }
             var bmd = game.add.bitmapData(width, height);
             bmd.ctx.beginPath();
             bmd.ctx.rect(0, 0, width, height);
             bmd.ctx.fillStyle = color;
             bmd.ctx.fill();
-            var bgUI = game.add.sprite(0, 0, bmd);
-            return bgUI;
+            return bmd;
+        };
+        PkUtils.createSquare = function (game, width, height, color) {
+            if (color === void 0) { color = "#000000"; }
+            var bmd = Pk.PkUtils.createSquareBitmap(game, width, height, color);
+            return game.add.sprite(0, 0, bmd);
         };
         return PkUtils;
     }());
@@ -378,6 +384,7 @@ var GameBase;
             var _this = _super.call(this, new Config()) || this;
             // add default state
             _this.state.add('Menu', GameBase.Menu);
+            _this.state.add('Intro', GameBase.Intro);
             _this.state.add('Main', GameBase.Main);
             return _this;
         }
@@ -388,8 +395,11 @@ var GameBase;
         __extends(Config, _super);
         function Config() {
             var _this = _super.call(this) || this;
+            // loading load screen assets (logo, loading bar, etc) [pre-preloading]
+            _this.preLoaderState = GameBase.Preloader;
+            // loading all* game assets
             _this.loaderState = GameBase.Loader;
-            _this.initialState = 'Menu';
+            _this.initialState = 'Intro';
             return _this;
         }
         return Config;
@@ -398,6 +408,20 @@ var GameBase;
 /// <reference path='../pkframe/refs.ts' />
 var GameBase;
 (function (GameBase) {
+    var Preloader = (function (_super) {
+        __extends(Preloader, _super);
+        function Preloader() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        Preloader.prototype.preload = function () {
+            // load game loading bar
+            this.load.image('game-loading-bar', 'assets/states/loader/images/loading-bar.png');
+            // load game loading logo
+            this.load.image('game-loading-logo', 'assets/states/loader/images/logo.png');
+        };
+        return Preloader;
+    }(Pk.PkLoaderPreLoader));
+    GameBase.Preloader = Preloader;
     var Loader = (function (_super) {
         __extends(Loader, _super);
         function Loader() {
@@ -407,7 +431,28 @@ var GameBase;
             _super.prototype.init.call(this);
         };
         Loader.prototype.preload = function () {
-            _super.prototype.preload.call(this);
+            // ignore preloading bar
+            // super.preload();
+            // creating sprites from preloadead images
+            this.loadingBar = this.add.sprite(0, 0, 'game-loading-bar');
+            this.logo = this.add.sprite(0, 0, 'game-loading-logo');
+            // position loading bar | middle
+            this.loadingBar.anchor.x = 0.5;
+            this.loadingBar.x = this.game.width / 2;
+            this.loadingBar.y = this.game.height - this.loadingBar.height;
+            // set sprite as preloading
+            this.load.setPreloadSprite(this.loadingBar);
+            // positioning logo on middle
+            this.logo.anchor.set(.5, .5);
+            this.logo.position.set(this.game.width / 2, this.game.height / 2);
+            // add a preloadead logo
+            this.game.add.existing(this.logo);
+            this.logo.alpha = 0;
+            //  ** ADDING Other things  ** //
+            // intro
+            this.load.audio('intro-sound', 'assets/states/intro/sounds/intro.mp3');
+            this.load.image('intro-1', 'assets/states/intro/images/1.jpg');
+            this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
             // default
             this.load.spritesheet('simon', 'assets/default/images/player.png', 58, 96, 5);
             // state level 1
@@ -415,9 +460,6 @@ var GameBase;
             this.load.audio('level1-sound', 'assets/states/level1/sounds/sound-test.mp3');
             // state main
             this.load.image('titlepage', 'assets/states/main/images/titlepage.jpg');
-            // state loader
-            this.load.image('loadingbar', 'assets/states/loader/images/loader.png');
-            this.load.image('logo', 'assets/states/loader/images/logo.png');
         };
         Loader.prototype.create = function () {
             _super.prototype.create.call(this);
@@ -425,6 +467,82 @@ var GameBase;
         return Loader;
     }(Pk.PkLoader));
     GameBase.Loader = Loader;
+})(GameBase || (GameBase = {}));
+/// <reference path='../../pkframe/refs.ts' />
+var GameBase;
+(function (GameBase) {
+    var Intro = (function (_super) {
+        __extends(Intro, _super);
+        function Intro() {
+            var _this = _super !== null && _super.apply(this, arguments) || this;
+            _this.padding = 30;
+            _this.images = new Array();
+            return _this;
+        }
+        Intro.prototype.create = function () {
+            // change state bg
+            this.game.stage.backgroundColor = "#000";
+            // auto bypass
+            setTimeout(function () {
+                // change state
+                // this.transition.change('Main');
+            }, 1000);
+            // creat text
+            var textWidth = this.game.width - (this.padding * 2);
+            this.text = this.game.add.text(0, // x
+            0, // y
+            // text
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." +
+                "\n\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." +
+                "\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur." +
+                "\n\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", {
+                // font details
+                font: "25px Arial",
+                fill: "#fff",
+                boundsAlignH: "center",
+                boundsAlignV: "top",
+                wordWrap: true,
+                wordWrapWidth: textWidth
+            });
+            this.text.align = "center";
+            this.text.cacheAsBitmap = true;
+            this.text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+            console.log('text h:', this.text.height);
+            // text bounds
+            this.text.setTextBounds(this.padding, // x
+            this.game.height + 30, // y
+            textWidth, // width
+            this.text.height // heigth
+            );
+            // audio
+            this.musicBG = this.game.add.audio('intro-sound');
+            this.musicBG.onDecoded.add(this.playSound, this); // load
+            // text area mask
+            var maskHeigth = 190;
+            // this.textMask = this.game.add.graphics(this.game.world.centerX - textWidth / 2, this.game.height - maskHeigth - this.padding);
+            this.textMask = this.game.add.graphics(0, 0);
+            this.textMask.beginFill(0x000);
+            this.textMask.drawRect(0, 0, textWidth, maskHeigth);
+            this.textMask.endFill();
+            this.textMask.x = this.game.world.centerX - textWidth / 2;
+            this.textMask.y = this.game.height - maskHeigth - this.padding;
+            // set as a text mask
+            this.text.mask = this.textMask;
+            // add images
+            this.images.push(this.add.sprite(0, 0, 'intro-1'));
+        };
+        Intro.prototype.playSound = function () {
+            // play music
+            this.musicBG.fadeIn(3000, false);
+        };
+        Intro.prototype.update = function () {
+            this.text.y -= 0.5;
+            // this.t.y -= 1;
+            // this.text.y -= 1;
+        };
+        return Intro;
+    }(Pk.PkState));
+    GameBase.Intro = Intro;
 })(GameBase || (GameBase = {}));
 /// <reference path='../../pkframe/refs.ts' />
 var GameBase;
@@ -454,7 +572,7 @@ var GameBase;
             }, this);
         };
         Main.prototype.render = function () {
-            this.game.debug.text('Press [ENTER] to back to Menu', 35, 35);
+            this.game.debug.text('Press [ENTER] to Menu', 35, 35);
         };
         return Main;
     }(Pk.PkState));
@@ -480,14 +598,19 @@ var GameBase;
             // change state bg
             this.game.stage.backgroundColor = "#89aca6";
             // get the keyboard
-            this.spaceBarKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+            this.enterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
             // when press the key...
-            this.spaceBarKey.onDown.add(function () {
-                _this.transition.change('Main'); // change to state Main
+            this.enterKey.onDown.add(function () {
+                _this.transition.change('Intro'); // change to state Main
             }, this);
-        };
-        Menu.prototype.render = function () {
-            this.game.debug.text('Press [SPACEBAR] to enter', 35, 35);
+            // creat text
+            var text = this.game.add.text(this.game.world.centerX, this.game.world.centerY, "Press Enter", {
+                font: "65px Arial",
+                fill: "#ff0044",
+                align: "center"
+            });
+            // position | middle
+            text.anchor.set(0.5);
         };
         return Menu;
     }(Pk.PkState));

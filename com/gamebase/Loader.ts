@@ -1,9 +1,25 @@
 /// <reference path='../pkframe/refs.ts' />
 
 module GameBase {
+
+    export class Preloader  extends Pk.PkLoaderPreLoader {
+
+        preload()
+        {
+            // load game loading bar
+            this.load.image('game-loading-bar', 'assets/states/loader/images/loading-bar.png');
+
+            // load game loading logo
+            this.load.image('game-loading-logo', 'assets/states/loader/images/logo.png');
+        }
+
+    }
  
     export class Loader extends Pk.PkLoader implements Pk.I.Loader {
 
+        loadingBar:Phaser.Sprite;
+        logo:Phaser.Sprite;
+        
         init()
         {
             super.init();
@@ -11,7 +27,38 @@ module GameBase {
 
         preload()
         {
-            super.preload();
+            // ignore preloading bar
+            // super.preload();
+
+            // creating sprites from preloadead images
+            this.loadingBar     = this.add.sprite(0, 0, 'game-loading-bar');
+            this.logo           = this.add.sprite(0, 0, 'game-loading-logo');
+            
+            // position loading bar | middle
+            this.loadingBar.anchor.x = 0.5;
+            this.loadingBar.x = this.game.width / 2;
+            this.loadingBar.y = this.game.height - this.loadingBar.height;
+
+            // set sprite as preloading
+            this.load.setPreloadSprite(this.loadingBar);
+
+            // positioning logo on middle
+            this.logo.anchor.set(.5, .5);
+            this.logo.position.set(this.game.width/2, this.game.height/2);
+
+            // add a preloadead logo
+            this.game.add.existing(this.logo);
+
+            this.logo.alpha = 0;
+            
+
+
+            //  ** ADDING Other things  ** //
+
+            // intro
+            this.load.audio('intro-sound', 'assets/states/intro/sounds/intro.mp3');
+            this.load.image('intro-1', 'assets/states/intro/images/1.jpg');
+            this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
 
             // default
             this.load.spritesheet('simon', 'assets/default/images/player.png', 58, 96, 5);
@@ -22,10 +69,6 @@ module GameBase {
             
             // state main
             this.load.image('titlepage', 'assets/states/main/images/titlepage.jpg');
-
-            // state loader
-            this.load.image('loadingbar', 'assets/states/loader/images/loader.png');
-            this.load.image('logo', 'assets/states/loader/images/logo.png');
         }
 
         create()
