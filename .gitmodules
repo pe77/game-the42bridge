@@ -1,0 +1,3 @@
+[submodule "com/pkframe"]
+	path = com/pkframe
+	url = git@github.com:pe77/pkframework.git
