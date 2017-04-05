@@ -454,7 +454,10 @@ var GameBase;
             this.load.image('intro-1', 'assets/states/intro/images/1.jpg');
             this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
             // default
-            this.load.spritesheet('simon', 'assets/default/images/player.png', 58, 96, 5);
+            this.load.spritesheet('char1', 'assets/default/images/char1.jpg', 58, 96, 5);
+            this.load.spritesheet('char2', 'assets/default/images/char2.jpg', 58, 96, 5);
+            this.load.spritesheet('char3', 'assets/default/images/char3.jpg', 58, 96, 5);
+            this.load.spritesheet('char4', 'assets/default/images/char4.jpg', 58, 96, 5);
             // state level 1
             this.load.image('level1-bg', 'assets/states/level1/images/bg.png');
             this.load.audio('level1-sound', 'assets/states/level1/sounds/sound-test.mp3');
@@ -467,6 +470,41 @@ var GameBase;
         return Loader;
     }(Pk.PkLoader));
     GameBase.Loader = Loader;
+})(GameBase || (GameBase = {}));
+/// <reference path='../../pkframe/refs.ts' />
+var GameBase;
+(function (GameBase) {
+    var Char = (function (_super) {
+        __extends(Char, _super);
+        function Char(game, body) {
+            var _this = _super.call(this, game) || this;
+            _this.side = Side.RIGHT; // sprite side
+            _this.setBody(body);
+            _this.animationIdle = _this.body.animations.add('idle');
+            _this.animationIdle.play(10, true);
+            return _this;
+            // this.body.animations.play('idle');
+        }
+        Char.prototype.setBody = function (body) {
+            this.body = body;
+            this.add(this.body);
+        };
+        return Char;
+    }(Pk.PkElement));
+    GameBase.Char = Char;
+    var Operator;
+    (function (Operator) {
+        Operator[Operator["MULT"] = 0] = "MULT";
+        Operator[Operator["DIVI"] = 1] = "DIVI";
+        Operator[Operator["PLUS"] = 2] = "PLUS";
+        Operator[Operator["MINU"] = 3] = "MINU";
+        Operator[Operator["FACT"] = 4] = "FACT";
+    })(Operator = GameBase.Operator || (GameBase.Operator = {}));
+    var Side;
+    (function (Side) {
+        Side[Side["LEFT"] = 0] = "LEFT";
+        Side[Side["RIGHT"] = 1] = "RIGHT";
+    })(Side = GameBase.Side || (GameBase.Side = {}));
 })(GameBase || (GameBase = {}));
 /// <reference path='../../pkframe/refs.ts' />
 var GameBase;
@@ -590,7 +628,9 @@ var GameBase;
     var Main = (function (_super) {
         __extends(Main, _super);
         function Main() {
-            return _super !== null && _super.apply(this, arguments) || this;
+            var _this = _super !== null && _super.apply(this, arguments) || this;
+            _this.charPadding = 10;
+            return _this;
         }
         Main.prototype.init = function () {
             var args = [];
@@ -610,6 +650,23 @@ var GameBase;
             this.enterKey.onDown.add(function () {
                 _this.transition.change('Menu', 1111, 'text', { a: true, b: [1, 2] }); // return with some foo/bar args
             }, this);
+            // set characters group / element
+            this.characters = new Pk.PkElement(this.game);
+            // add 4 chars
+            for (var i = 0; i < 4; i++) {
+                // create
+                var char = new GameBase.Char(this.game, this.game.add.sprite(0, 0, 'char' + (i + 1)));
+                // pos
+                char.x = (char.width + this.charPadding) * i;
+                // start from diferents frames
+                char.animationIdle.setFrame(this.game.rnd.integerInRange(1, 5));
+                // add
+                this.characters.add(char);
+            }
+            // pos char group
+            this.characters.x += 30;
+            this.characters.y = this.game.world.centerY;
+            // = new Simon(this.game, this.game.add.sprite(0, 0, 'simon'));
         };
         Main.prototype.render = function () {
             this.game.debug.text('(Main Screen) Press [ENTER] to Menu', 35, 35);

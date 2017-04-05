@@ -61,7 +61,10 @@ module GameBase {
             this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
 
             // default
-            this.load.spritesheet('simon', 'assets/default/images/player.png', 58, 96, 5);
+            this.load.spritesheet('char1', 'assets/default/images/char1.jpg', 58, 96, 5);
+            this.load.spritesheet('char2', 'assets/default/images/char2.jpg', 58, 96, 5);
+            this.load.spritesheet('char3', 'assets/default/images/char3.jpg', 58, 96, 5);
+            this.load.spritesheet('char4', 'assets/default/images/char4.jpg', 58, 96, 5);
 
             // state level 1
             this.load.image('level1-bg', 'assets/states/level1/images/bg.png');
