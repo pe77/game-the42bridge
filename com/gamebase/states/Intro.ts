@@ -7,13 +7,13 @@ module GameBase
 
         padding:number = 30;
         musicBG:Phaser.Sound;
-        text:Phaser.Text;
 
+        text:Phaser.Text;
         textMask:Phaser.Graphics;
 
-        t:Phaser.Sprite;
-
         images:Array<Phaser.Sprite> = new Array();
+
+        skipButton:Pk.PkElement;
 
     	create()
     	{
@@ -66,6 +66,9 @@ module GameBase
             this.musicBG = this.game.add.audio('intro-sound');
             this.musicBG.onDecoded.add(this.playSound, this); // load
 
+            // on sound complete
+            this.musicBG.onStop.add(this.end, this);
+
             // text area mask
             var maskHeigth = 190;
             // this.textMask = this.game.add.graphics(this.game.world.centerX - textWidth / 2, this.game.height - maskHeigth - this.padding);
@@ -82,7 +85,41 @@ module GameBase
 
             // add images
             this.images.push(this.add.sprite(0, 0, 'intro-1'));
+
+            // skip "button" text
+            this.skipButton = new Pk.PkElement(this.game);
+            var skipText = this.game.add.text(
+				0, // x
+				0, // y
+				"Skip >>" // text
+                , {
+                    // font details
+					font: "12px Arial",
+					fill: "#fff"
+			});
+            skipText.align = "left";
+
+            // add in object
+            this.skipButton.add(skipText);
+
+            // enable input and hand cursor
+            this.skipButton.setAll('inputEnabled', true);
+            this.skipButton.setAll('input.useHandCursor', true);
+
+            // position
+            this.skipButton.x = this.game.width - this.skipButton.width - this.padding;
+            this.skipButton.y = this.padding;
+
+            // skip action
+            this.skipButton.callAll('events.onInputUp.add', 'events.onInputUp', this.end, this);
+
     	}
+
+        end()
+        {
+            // change state
+            this.transition.change('Menu'); 
+        }
 
         playSound()
         {
@@ -93,9 +130,17 @@ module GameBase
         update()
         {
             this.text.y -= 0.5;
-            // this.t.y -= 1;
-            // this.text.y -= 1;
         }
+
+        // calls when leaving state
+        shutdown()
+        {
+            if(this.musicBG.isPlaying)
+                this.musicBG.stop();
+            //
+        }
+
+        
 
     }
 

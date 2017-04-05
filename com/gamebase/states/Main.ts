@@ -29,7 +29,7 @@ module GameBase
 
 		render()
         {
-            this.game.debug.text('Press [ENTER] to Menu', 35, 35);
+            this.game.debug.text('(Main Screen) Press [ENTER] to Menu', 35, 35);
         }
 
     }

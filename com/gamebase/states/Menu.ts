@@ -29,23 +29,14 @@ module GameBase
 
             // when press the key...
             this.enterKey.onDown.add(()=>{
-                this.transition.change('Intro'); // change to state Main
+                this.transition.change('Main'); // change to state Main
             }, this);
-
-            // creat text
-			var text:Phaser.Text = this.game.add.text(
-				this.game.world.centerX, 
-				this.game.world.centerY, 
-				"Press Enter", {
-					font: "65px Arial",
-					fill: "#ff0044", 
-					align: "center"
-			});
-
-			// position | middle
-			text.anchor.set(0.5);
-    		
     	}
+
+		render()
+        {
+            this.game.debug.text('(Menu Screen) Press [ENTER] to Main', 35, 35);
+        }
     }
 
 }

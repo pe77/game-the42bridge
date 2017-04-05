@@ -517,6 +517,8 @@ var GameBase;
             // audio
             this.musicBG = this.game.add.audio('intro-sound');
             this.musicBG.onDecoded.add(this.playSound, this); // load
+            // on sound complete
+            this.musicBG.onStop.add(this.end, this);
             // text area mask
             var maskHeigth = 190;
             // this.textMask = this.game.add.graphics(this.game.world.centerX - textWidth / 2, this.game.height - maskHeigth - this.padding);
@@ -530,6 +532,31 @@ var GameBase;
             this.text.mask = this.textMask;
             // add images
             this.images.push(this.add.sprite(0, 0, 'intro-1'));
+            // skip "button" text
+            this.skipButton = new Pk.PkElement(this.game);
+            var skipText = this.game.add.text(0, // x
+            0, // y
+            "Skip >>" // text
+            , {
+                // font details
+                font: "12px Arial",
+                fill: "#fff"
+            });
+            skipText.align = "left";
+            // add in object
+            this.skipButton.add(skipText);
+            // enable input and hand cursor
+            this.skipButton.setAll('inputEnabled', true);
+            this.skipButton.setAll('input.useHandCursor', true);
+            // position
+            this.skipButton.x = this.game.width - this.skipButton.width - this.padding;
+            this.skipButton.y = this.padding;
+            // skip action
+            this.skipButton.callAll('events.onInputUp.add', 'events.onInputUp', this.end, this);
+        };
+        Intro.prototype.end = function () {
+            // change state
+            this.transition.change('Menu');
         };
         Intro.prototype.playSound = function () {
             // play music
@@ -537,8 +564,12 @@ var GameBase;
         };
         Intro.prototype.update = function () {
             this.text.y -= 0.5;
-            // this.t.y -= 1;
-            // this.text.y -= 1;
+        };
+        // calls when leaving state
+        Intro.prototype.shutdown = function () {
+            if (this.musicBG.isPlaying)
+                this.musicBG.stop();
+            //
         };
         return Intro;
     }(Pk.PkState));
@@ -572,7 +603,7 @@ var GameBase;
             }, this);
         };
         Main.prototype.render = function () {
-            this.game.debug.text('Press [ENTER] to Menu', 35, 35);
+            this.game.debug.text('(Main Screen) Press [ENTER] to Menu', 35, 35);
         };
         return Main;
     }(Pk.PkState));
@@ -601,16 +632,11 @@ var GameBase;
             this.enterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
             // when press the key...
             this.enterKey.onDown.add(function () {
-                _this.transition.change('Intro'); // change to state Main
+                _this.transition.change('Main'); // change to state Main
             }, this);
-            // creat text
-            var text = this.game.add.text(this.game.world.centerX, this.game.world.centerY, "Press Enter", {
-                font: "65px Arial",
-                fill: "#ff0044",
-                align: "center"
-            });
-            // position | middle
-            text.anchor.set(0.5);
+        };
+        Menu.prototype.render = function () {
+            this.game.debug.text('(Menu Screen) Press [ENTER] to Main', 35, 35);
         };
         return Menu;
     }(Pk.PkState));
