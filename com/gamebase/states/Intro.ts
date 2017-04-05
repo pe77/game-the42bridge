@@ -113,6 +113,16 @@ module GameBase
             // skip action
             this.skipButton.callAll('events.onInputUp.add', 'events.onInputUp', this.end, this);
 
+            // skipp button show delay
+            this.game.add.tween(this.skipButton).from(
+                {
+                    y: this.skipButton.height * (-1)
+                }, // props
+                500, // animation time
+                Phaser.Easing.Linear.None, // tween
+                true, // auto start
+                1500 // delay | 1.5 sec
+            )
     	}
 
         end()
