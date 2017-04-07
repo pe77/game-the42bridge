@@ -59,6 +59,7 @@ module GameBase {
             this.load.audio('intro-sound', 'assets/states/intro/sounds/intro.mp3');
             this.load.image('intro-1', 'assets/states/intro/images/1.jpg');
             this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
+            this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
 
             // default
             this.load.spritesheet('char1', 'assets/default/images/char1.jpg', 58, 96, 5);

@@ -25,9 +25,7 @@ module GameBase {
             this.setBody(body);
 
             this.animationIdle = this.body.animations.add('idle');
-            this.animationIdle.play(10, true)
-
-            // this.body.animations.play('idle');
+            this.animationIdle.play(10, true); // start idle animation
         }
 
         setBody(body:Phaser.Sprite):void
