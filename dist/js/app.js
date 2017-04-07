@@ -399,7 +399,7 @@ var GameBase;
             _this.preLoaderState = GameBase.Preloader;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
-            _this.initialState = 'Intro';
+            _this.initialState = 'Main';
             return _this;
         }
         return Config;
@@ -434,7 +434,6 @@ var GameBase;
             // pos
             _this.text.y += _this.image.height + _this.padding;
             _this.text.width;
-            console.log('this.text.width:', _this.text.width);
             _this.image.anchor.x = .5;
             _this.image.x = _this.text.width / 2;
             // add objs
@@ -445,9 +444,9 @@ var GameBase;
             return _this;
         }
         IntroBox.prototype.in = function (delay) {
-            if (delay === void 0) { delay = 1500; }
             // anim block
-            this.game.add.tween(this).to({
+            if (delay === void 0) { delay = 1500; }
+            this.addTween(this).to({
                 alpha: 1
             }, // props
             500, // animation time
@@ -460,7 +459,7 @@ var GameBase;
             var _this = this;
             if (delay === void 0) { delay = 0; }
             // anim block
-            var outTween = this.game.add.tween(this).to({
+            var outTween = this.addTween(this).to({
                 alpha: 0
             }, // props
             500, // animation time
@@ -540,6 +539,9 @@ var GameBase;
             this.load.spritesheet('char2', 'assets/default/images/char2.jpg', 58, 96, 5);
             this.load.spritesheet('char3', 'assets/default/images/char3.jpg', 58, 96, 5);
             this.load.spritesheet('char4', 'assets/default/images/char4.jpg', 58, 96, 5);
+            this.load.spritesheet('heath-icon', 'assets/default/images/heath-icon.png', 15, 15, 2);
+            this.load.spritesheet('stamina-icon', 'assets/default/images/stamina-icon.png', 15, 15, 2);
+            this.load.spritesheet('mana-icon', 'assets/default/images/mana-icon.png', 15, 15, 2);
             // state level 1
             this.load.image('level1-bg', 'assets/states/level1/images/bg.png');
             this.load.audio('level1-sound', 'assets/states/level1/sounds/sound-test.mp3');
@@ -560,12 +562,17 @@ var GameBase;
         __extends(Char, _super);
         function Char(game, body) {
             var _this = _super.call(this, game) || this;
+            _this.energyMax = 5;
+            _this.healthMax = 5;
             _this.side = Side.RIGHT; // sprite side
             _this.setBody(body);
-            _this.animationIdle = _this.body.animations.add('idle');
-            _this.animationIdle.play(10, true); // start idle animation
             return _this;
         }
+        Char.prototype.create = function () {
+            // animation
+            this.animationIdle = this.body.animations.add('idle');
+            this.animationIdle.play(10, true); // start idle animation
+        };
         Char.prototype.setBody = function (body) {
             this.body = body;
             this.add(this.body);
@@ -586,6 +593,61 @@ var GameBase;
         Side[Side["LEFT"] = 0] = "LEFT";
         Side[Side["RIGHT"] = 1] = "RIGHT";
     })(Side = GameBase.Side || (GameBase.Side = {}));
+})(GameBase || (GameBase = {}));
+/// <reference path='../../pkframe/refs.ts' />
+var GameBase;
+(function (GameBase) {
+    var Hero = (function (_super) {
+        __extends(Hero, _super);
+        function Hero() {
+            var _this = _super !== null && _super.apply(this, arguments) || this;
+            _this.gaudePadding = 5;
+            _this.energyType = E.EnergyType.STAMINA;
+            return _this;
+        }
+        Hero.prototype.create = function () {
+            _super.prototype.create.call(this);
+            // gaudes
+            this.healthGaude = new GameBase.Gaude(this.game);
+            this.energiGaude = new GameBase.Gaude(this.game);
+            // add on hero 
+            this.add(this.healthGaude);
+            this.add(this.energiGaude);
+            // add heath icons
+            for (var i = 0; i < this.healthMax; i++)
+                this.healthGaude.addIcon(new GameBase.Icon(this.game, 'heath-icon'));
+            //
+            // select energy icon
+            var energyIconKey = '';
+            switch (this.energyType) {
+                case E.EnergyType.MANA:
+                    energyIconKey = 'mana-icon';
+                    break;
+                case E.EnergyType.STAMINA:
+                    energyIconKey = 'stamina-icon';
+                    break;
+            }
+            // add energy icons
+            for (var i = 0; i < this.energyMax; i++)
+                this.energiGaude.addIcon(new GameBase.Icon(this.game, energyIconKey));
+            //
+            // pos gaudes
+            this.healthGaude.y = this.body.height + this.gaudePadding;
+            this.energiGaude.y = this.healthGaude.y + (this.healthGaude.height / 4) + this.gaudePadding;
+            this.energiGaude.x += this.gaudePadding;
+            console.log('heat gaude create');
+        };
+        return Hero;
+    }(GameBase.Char));
+    GameBase.Hero = Hero;
+    var E;
+    (function (E) {
+        var EnergyType;
+        (function (EnergyType) {
+            EnergyType[EnergyType["STAMINA"] = 0] = "STAMINA";
+            EnergyType[EnergyType["MANA"] = 1] = "MANA";
+        })(EnergyType = E.EnergyType || (E.EnergyType = {}));
+    })(E = GameBase.E || (GameBase.E = {}));
 })(GameBase || (GameBase = {}));
 /// <reference path='../../pkframe/refs.ts' />
 var GameBase;
@@ -673,7 +735,6 @@ var GameBase;
             // if last box
             if (this.boxsIndex == this.boxs.length) {
                 setTimeout(function () {
-                    clearInterval(_this.boxsInterval);
                     _this.end();
                 }, 1500);
                 return;
@@ -685,6 +746,7 @@ var GameBase;
         };
         Intro.prototype.end = function () {
             // change state
+            clearInterval(this.boxsInterval);
             this.transition.change('Menu');
         };
         Intro.prototype.playSound = function () {
@@ -709,6 +771,7 @@ var GameBase;
         function Main() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
             _this.charPadding = 10;
+            _this.padding = 20;
             return _this;
         }
         Main.prototype.init = function () {
@@ -730,22 +793,36 @@ var GameBase;
                 _this.transition.change('Menu', 1111, 'text', { a: true, b: [1, 2] }); // return with some foo/bar args
             }, this);
             // set characters group / element
-            this.characters = new Pk.PkElement(this.game);
-            // add 4 chars
-            for (var i = 0; i < 4; i++) {
-                // create
-                var char = new GameBase.Char(this.game, this.game.add.sprite(0, 0, 'char' + (i + 1)));
+            this.heroes = new Pk.PkElement(this.game);
+            // create
+            var druid = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char1'));
+            druid.energyType = GameBase.E.EnergyType.MANA;
+            druid.create();
+            var priest = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char2'));
+            priest.energyType = GameBase.E.EnergyType.MANA;
+            priest.create();
+            var thief = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char3'));
+            thief.energyType = GameBase.E.EnergyType.STAMINA;
+            thief.create();
+            var knight = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char4'));
+            knight.energyType = GameBase.E.EnergyType.STAMINA;
+            knight.create();
+            // add
+            this.heroes.add(druid);
+            this.heroes.add(priest);
+            this.heroes.add(thief);
+            this.heroes.add(knight);
+            var i = 0;
+            this.heroes.forEach(function (hero) {
                 // pos
-                char.x = (char.width + this.charPadding) * i;
+                hero.x = (hero.width + _this.charPadding) * i;
                 // start from diferents frames
-                char.animationIdle.setFrame(this.game.rnd.integerInRange(1, 5));
-                // add
-                this.characters.add(char);
-            }
+                hero.animationIdle.setFrame(_this.game.rnd.integerInRange(1, 5));
+                i++;
+            }, this);
             // pos char group
-            this.characters.x += 30;
-            this.characters.y = this.game.world.centerY;
-            // = new Simon(this.game, this.game.add.sprite(0, 0, 'simon'));
+            this.heroes.x += this.padding;
+            this.heroes.y = this.game.height - this.heroes.height - this.padding - 100;
         };
         Main.prototype.render = function () {
             this.game.debug.text('(Main Screen) Press [ENTER] to Menu', 35, 35);
@@ -786,6 +863,71 @@ var GameBase;
         return Menu;
     }(Pk.PkState));
     GameBase.Menu = Menu;
+})(GameBase || (GameBase = {}));
+/// <reference path='../../pkframe/refs.ts' />
+var GameBase;
+(function (GameBase) {
+    var Gaude = (function (_super) {
+        __extends(Gaude, _super);
+        function Gaude() {
+            var _this = _super !== null && _super.apply(this, arguments) || this;
+            _this.icons = [];
+            _this.iconEven = true;
+            _this.padding = 5;
+            return _this;
+        }
+        Gaude.prototype.addIcon = function (icon) {
+            icon.create();
+            // icon.animation.setFrame( this.iconEven ? 1 : 2);
+            // this.iconEven = !this.iconEven;
+            console.log('icon:' + icon.width);
+            // save icon ref
+            this.icons.push(icon);
+            // add on gaude
+            this.add(icon);
+            // organize icons pos
+            for (var i = 0; i < this.icons.length; i++)
+                this.icons[i].x = (this.icons[i].width - this.padding) * i;
+            //
+            // console.log('add icon:', this.icons);
+            // 
+        };
+        return Gaude;
+    }(Pk.PkElement));
+    GameBase.Gaude = Gaude;
+})(GameBase || (GameBase = {}));
+/// <reference path='../../pkframe/refs.ts' />
+var GameBase;
+(function (GameBase) {
+    var Icon = (function (_super) {
+        __extends(Icon, _super);
+        function Icon(game, iconKey) {
+            var _this = _super.call(this, game) || this;
+            _this.inOutTime = 500;
+            _this.iconKey = iconKey;
+            return _this;
+        }
+        Icon.prototype.create = function () {
+            this.body = this.game.add.sprite(0, 0, this.iconKey);
+            this.add(this.body);
+            // animation
+            this.animation = this.body.animations.add('pulse');
+            // this.animation.play(3, true); // start pulse animation
+            this.in();
+        };
+        Icon.prototype.in = function () {
+            this.addTween(this).from({
+                alpha: 0
+            }, this.inOutTime, Phaser.Easing.Back.In, true);
+        };
+        Icon.prototype.out = function () {
+            this.addTween(this).to({
+                alpha: 0
+            }, this.inOutTime, Phaser.Easing.Back.In, true);
+        };
+        return Icon;
+    }(Pk.PkElement));
+    GameBase.Icon = Icon;
 })(GameBase || (GameBase = {}));
 var Pk;
 (function (Pk) {

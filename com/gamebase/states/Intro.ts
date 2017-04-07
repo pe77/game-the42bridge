@@ -119,7 +119,7 @@ module GameBase
         }
 
         playBox()
-        {
+        { 
             // finish last box
             if(this.boxsIndex > 0)
                 this.boxs[this.boxsIndex-1].out();
@@ -129,7 +129,6 @@ module GameBase
             if(this.boxsIndex == this.boxs.length)
             {
                 setTimeout(()=>{
-                    clearInterval(this.boxsInterval);
                     this.end();
                 }, 1500);
 
@@ -146,6 +145,7 @@ module GameBase
         end()
         {
             // change state
+            clearInterval(this.boxsInterval);
             this.transition.change('Menu'); 
         }
 

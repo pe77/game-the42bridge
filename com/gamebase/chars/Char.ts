@@ -6,11 +6,11 @@ module GameBase {
         
         operator:Operator;
         
-        stamina:number;
-        staminaMax:number;
+        energy:number;
+        energyMax:number = 5;
 
         health:number;
-        healthMax:number;
+        healthMax:number = 5;
 
         body:Phaser.Sprite;
 
@@ -23,7 +23,11 @@ module GameBase {
             super(game);
 
             this.setBody(body);
+        }
 
+        create()
+        {
+            // animation
             this.animationIdle = this.body.animations.add('idle');
             this.animationIdle.play(10, true); // start idle animation
         }

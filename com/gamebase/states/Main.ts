@@ -7,8 +7,10 @@ module GameBase
 
 		enterKey:Phaser.Key;
 
-		characters:Pk.PkElement;
+		heroes:Pk.PkElement;
 		charPadding:number = 10;
+
+		padding:number = 20;
 
 		init(...args:any[])
 		{
@@ -30,30 +32,47 @@ module GameBase
             }, this);
 
 			// set characters group / element
-			this.characters = new Pk.PkElement(this.game);
+			this.heroes = new Pk.PkElement(this.game);
 
-			// add 4 chars
-			for(let i = 0; i < 4; i++)
-			{
-				// create
-				var char = new GameBase.Char(this.game, this.game.add.sprite(0, 0, 'char'+(i+1)));
+			// create
+			var druid = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char1'));
+			druid.energyType = E.EnergyType.MANA;
+			druid.create();
+
+			var priest = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char2'));
+			priest.energyType = E.EnergyType.MANA;
+			priest.create();
+
+			var thief = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char3'));
+			thief.energyType = E.EnergyType.STAMINA;
+			thief.create();
+
+			var knight = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char4'));
+			knight.energyType = E.EnergyType.STAMINA;
+			knight.create();
+
+			// add
+			this.heroes.add(druid);
+			this.heroes.add(priest);
+			this.heroes.add(thief);
+			this.heroes.add(knight);
+
+
+			var i = 0;
+			this.heroes.forEach((hero)=>{
 				
 				// pos
-				char.x = (char.width + this.charPadding) * i;
+				hero.x = (hero.width + this.charPadding) * i;
 
 				// start from diferents frames
-				char.animationIdle.setFrame(this.game.rnd.integerInRange(1, 5));
+				hero.animationIdle.setFrame(this.game.rnd.integerInRange(1, 5));
+				i++;
+			}, this);
 
-				// add
-				this.characters.add(char);
-				
-			}
 
 			// pos char group
-			this.characters.x += 30;
-			this.characters.y = this.game.world.centerY;
-
-			// = new Simon(this.game, this.game.add.sprite(0, 0, 'simon'));
+			this.heroes.x += this.padding;
+			this.heroes.y = this.game.height - this.heroes.height - this.padding - 100;
 
     	}
 

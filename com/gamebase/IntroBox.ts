@@ -38,7 +38,6 @@ module GameBase {
             this.text.y += this.image.height + this.padding;
 
             this.text.width;
-            console.log('this.text.width:', this.text.width)
 
             this.image.anchor.x = .5;
             this.image.x = this.text.width / 2;
@@ -54,7 +53,8 @@ module GameBase {
         in(delay:number = 1500)
         {
             // anim block
-            this.game.add.tween(this).to(
+            
+            this.addTween(this).to(
                 {
                     alpha: 1
                 }, // props
@@ -68,7 +68,7 @@ module GameBase {
         out(delay:number = 0)
         {
             // anim block
-            var outTween = this.game.add.tween(this).to(
+            var outTween = this.addTween(this).to(
                 {
                     alpha: 0
                 }, // props

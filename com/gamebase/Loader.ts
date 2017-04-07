@@ -67,6 +67,12 @@ module GameBase {
             this.load.spritesheet('char3', 'assets/default/images/char3.jpg', 58, 96, 5);
             this.load.spritesheet('char4', 'assets/default/images/char4.jpg', 58, 96, 5);
 
+            this.load.spritesheet('heath-icon', 'assets/default/images/heath-icon.png', 15, 15, 2);
+            this.load.spritesheet('stamina-icon', 'assets/default/images/stamina-icon.png', 15, 15, 2);
+            this.load.spritesheet('mana-icon', 'assets/default/images/mana-icon.png', 15, 15, 2);
+
+
+
             // state level 1
             this.load.image('level1-bg', 'assets/states/level1/images/bg.png');
             this.load.audio('level1-sound', 'assets/states/level1/sounds/sound-test.mp3');
