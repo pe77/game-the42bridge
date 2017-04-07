@@ -689,7 +689,7 @@ var GameBase;
         };
         Intro.prototype.playSound = function () {
             // play music
-            // this.musicBG.fadeIn(3000, false);
+            this.musicBG.fadeIn(1000, false);
         };
         // calls when leaving state
         Intro.prototype.shutdown = function () {
