@@ -36,6 +36,13 @@ module GameBase {
             var botLeft     = this.game.add.sprite(0, 0, 'selected-icon');
             var botRight    = this.game.add.sprite(0, 0, 'selected-icon');
 
+            // animation
+            topLeft.animations.add('pulse').play(10, true);
+            topRight.animations.add('pulse').play(10, true);
+            botLeft.animations.add('pulse').play(10, true);
+            botRight.animations.add('pulse').play(10, true);
+            
+
             // pos
             botRight.scale.x = topRight.scale.x = -1;
             botRight.x = topRight.x = this.target.width + this.padding;
