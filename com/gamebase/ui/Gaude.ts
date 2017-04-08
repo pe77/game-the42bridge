@@ -16,8 +16,6 @@ module GameBase {
             // icon.animation.setFrame( this.iconEven ? 1 : 2);
             // this.iconEven = !this.iconEven;
             
-            console.log('icon:' + icon.width);
-
             // save icon ref
             this.icons.push(icon);
 

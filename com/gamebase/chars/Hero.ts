@@ -13,8 +13,6 @@ module GameBase {
 
         create()
         {
-            super.create();
-
             // gaudes
             this.healthGaude = new GameBase.Gaude(this.game);
             this.energiGaude = new GameBase.Gaude(this.game);
@@ -50,7 +48,7 @@ module GameBase {
             this.energiGaude.y = this.healthGaude.y + (this.healthGaude.height / 4) + this.gaudePadding;
             this.energiGaude.x += this.gaudePadding;
 
-            console.log('heat gaude create')
+            super.create();
 
         }
 

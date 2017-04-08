@@ -70,13 +70,8 @@ module GameBase {
             this.load.spritesheet('heath-icon', 'assets/default/images/heath-icon.png', 15, 15, 2);
             this.load.spritesheet('stamina-icon', 'assets/default/images/stamina-icon.png', 15, 15, 2);
             this.load.spritesheet('mana-icon', 'assets/default/images/mana-icon.png', 15, 15, 2);
+            this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
 
-
-
-            // state level 1
-            this.load.image('level1-bg', 'assets/states/level1/images/bg.png');
-            this.load.audio('level1-sound', 'assets/states/level1/sounds/sound-test.mp3');
-            
             // state main
             this.load.image('titlepage', 'assets/states/main/images/titlepage.jpg');
         }

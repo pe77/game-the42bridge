@@ -57,9 +57,8 @@ module GameBase
 			this.heroes.add(thief);
 			this.heroes.add(knight);
 
-
 			var i = 0;
-			this.heroes.forEach((hero)=>{
+			this.heroes.forEach((hero:GameBase.Hero)=>{
 				
 				// pos
 				hero.x = (hero.width + this.charPadding) * i;

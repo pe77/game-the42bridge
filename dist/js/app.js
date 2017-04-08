@@ -542,9 +542,7 @@ var GameBase;
             this.load.spritesheet('heath-icon', 'assets/default/images/heath-icon.png', 15, 15, 2);
             this.load.spritesheet('stamina-icon', 'assets/default/images/stamina-icon.png', 15, 15, 2);
             this.load.spritesheet('mana-icon', 'assets/default/images/mana-icon.png', 15, 15, 2);
-            // state level 1
-            this.load.image('level1-bg', 'assets/states/level1/images/bg.png');
-            this.load.audio('level1-sound', 'assets/states/level1/sounds/sound-test.mp3');
+            this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
             // state main
             this.load.image('titlepage', 'assets/states/main/images/titlepage.jpg');
         };
@@ -565,6 +563,7 @@ var GameBase;
             _this.energyMax = 5;
             _this.healthMax = 5;
             _this.side = Side.RIGHT; // sprite side
+            _this.selected = false;
             _this.setBody(body);
             return _this;
         }
@@ -572,10 +571,26 @@ var GameBase;
             // animation
             this.animationIdle = this.body.animations.add('idle');
             this.animationIdle.play(10, true); // start idle animation
+            this.selectedIcon = new GameBase.SelectedIcon(this.game, this);
+            this.selectedIcon.create();
+            this.add(this.selectedIcon);
         };
         Char.prototype.setBody = function (body) {
             this.body = body;
             this.add(this.body);
+            // mouse over check
+            this.body.inputEnabled = true;
+            this.body.input.useHandCursor = true;
+            this.body.events.onInputOver.add(this.inputOver, this);
+            this.body.events.onInputOut.add(this.inputOut, this);
+        };
+        Char.prototype.inputOver = function () {
+            this.selectedIcon.in();
+            this.selected = true;
+        };
+        Char.prototype.inputOut = function () {
+            this.selectedIcon.out();
+            this.selected = false;
         };
         return Char;
     }(Pk.PkElement));
@@ -606,7 +621,6 @@ var GameBase;
             return _this;
         }
         Hero.prototype.create = function () {
-            _super.prototype.create.call(this);
             // gaudes
             this.healthGaude = new GameBase.Gaude(this.game);
             this.energiGaude = new GameBase.Gaude(this.game);
@@ -635,7 +649,7 @@ var GameBase;
             this.healthGaude.y = this.body.height + this.gaudePadding;
             this.energiGaude.y = this.healthGaude.y + (this.healthGaude.height / 4) + this.gaudePadding;
             this.energiGaude.x += this.gaudePadding;
-            console.log('heat gaude create');
+            _super.prototype.create.call(this);
         };
         return Hero;
     }(GameBase.Char));
@@ -880,7 +894,6 @@ var GameBase;
             icon.create();
             // icon.animation.setFrame( this.iconEven ? 1 : 2);
             // this.iconEven = !this.iconEven;
-            console.log('icon:' + icon.width);
             // save icon ref
             this.icons.push(icon);
             // add on gaude
@@ -929,6 +942,77 @@ var GameBase;
     }(Pk.PkElement));
     GameBase.Icon = Icon;
 })(GameBase || (GameBase = {}));
+/// <reference path='../../pkframe/refs.ts' />
+var GameBase;
+(function (GameBase) {
+    var SelectedIcon = (function (_super) {
+        __extends(SelectedIcon, _super);
+        function SelectedIcon(game, target) {
+            var _this = _super.call(this, game) || this;
+            _this.inOutTime = 200;
+            _this.padding = 10;
+            _this.target = target;
+            return _this;
+        }
+        SelectedIcon.prototype.create = function () {
+            // get create 4 squares | 2 top, 2 down
+            this.topIcons = this.game.add.group();
+            this.botIcons = this.game.add.group();
+            // create
+            var topLeft = this.game.add.sprite(0, 0, 'selected-icon');
+            var topRight = this.game.add.sprite(0, 0, 'selected-icon');
+            var botLeft = this.game.add.sprite(0, 0, 'selected-icon');
+            var botRight = this.game.add.sprite(0, 0, 'selected-icon');
+            // pos
+            botRight.scale.x = topRight.scale.x = -1;
+            botRight.x = topRight.x = this.target.width + this.padding;
+            this.topIcons.add(topLeft);
+            this.topIcons.add(topRight);
+            this.botIcons.add(botLeft);
+            this.botIcons.add(botRight);
+            // pos above char
+            this.topIcons.y -= this.topIcons.height / 2;
+            this.botIcons.x = this.topIcons.x = this.target.body.width / 2 - (this.topIcons.width / 2);
+            // pos below char
+            this.botIcons.y = this.target.body.height;
+            this.botIcons.y -= this.padding;
+            // save init cords
+            this.initialPosTop = new Phaser.Point(this.topIcons.x, this.topIcons.y);
+            this.initialPosBot = new Phaser.Point(this.botIcons.x, this.botIcons.y);
+            this.add(this.topIcons);
+            this.add(this.botIcons);
+            this.alpha = 0;
+        };
+        SelectedIcon.prototype.in = function () {
+            this.alpha = 1;
+            this.addTween(this).from({
+                alpha: 0
+            }, this.inOutTime, Phaser.Easing.Back.In, true);
+            this.topIcons.position.y = this.initialPosTop.y;
+            this.addTween(this.topIcons).from({
+                y: this.initialPosTop.y - 10
+            }, this.inOutTime, Phaser.Easing.Back.In, true);
+            this.botIcons.position.y = this.initialPosBot.y;
+            this.addTween(this.botIcons).from({
+                y: this.initialPosBot.y + 10
+            }, this.inOutTime, Phaser.Easing.Back.In, true);
+        };
+        SelectedIcon.prototype.out = function () {
+            this.addTween(this).to({
+                alpha: 0
+            }, this.inOutTime, Phaser.Easing.Back.Out, true);
+            this.addTween(this.topIcons).to({
+                y: this.initialPosTop.y - 10
+            }, this.inOutTime, Phaser.Easing.Back.Out, true);
+            this.addTween(this.botIcons).to({
+                y: this.initialPosBot.y + 10
+            }, this.inOutTime, Phaser.Easing.Back.Out, true);
+        };
+        return SelectedIcon;
+    }(Pk.PkElement));
+    GameBase.SelectedIcon = SelectedIcon;
+})(GameBase || (GameBase = {}));
+/// <reference path='../../../pkframe/refs.ts' />
 var Pk;
 (function (Pk) {
     var PkLayer = (function (_super) {
