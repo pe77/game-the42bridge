@@ -800,6 +800,8 @@ var GameBase;
             var _this = this;
             // change state bg
             this.game.stage.backgroundColor = "#938da0";
+            // prevent stop update when focus out
+            this.stage.disableVisibilityChange = true;
             // get the keyboard key to come back to menu
             this.enterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
             // when press the key...
