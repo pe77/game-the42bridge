@@ -1,10 +1,10 @@
-/// <reference path='../../pkframe/refs.ts' />
+/// <reference path='../../../pkframe/refs.ts' />
  
 module GameBase {
  
     export class Char extends Pk.PkElement implements GameBase.I.Selectable {
         
-        operator:Operator;
+        operator:E.Operator;
         
         energy:number;
         energyMax:number = 5;
@@ -20,6 +20,10 @@ module GameBase {
 
         selected:boolean = false;
         selectedIcon:GameBase.SelectedIcon;
+
+        attacks:Array<GameBase.Attack> = [];
+
+        attackOpenDelay:number = 100;
 
         constructor(game:Pk.PkGame, body:Phaser.Sprite)
         {
@@ -63,16 +67,49 @@ module GameBase {
             this.selectedIcon.out();
             this.selected = false;
         }
+
+        addAttack(attack:GameBase.Attack)
+        {
+            // create attack
+            attack.create();
+
+            // add attack
+            this.attacks.push(attack);
+        }
+
+        openAttacks()
+        {
+            for (var i = 0; i < this.attacks.length; i++) {
+                var attack = this.attacks[i];
+                
+                // pos attacks
+                attack.x = this.x + this.body.width/2;
+                attack.y = this.y - attack.height;
+
+                // last attack position
+                if(i > 0)
+                    attack.y = this.attacks[i-1].y - attack.height - this.attacks[i-1].energyTypeIcon.height - 50;    
+                //
+
+                // show
+                attack.show(i*this.attackOpenDelay)
+                
+            }
+        }
     }
 
-    export enum Operator
+    export module E
     {
-        MULT,
-        DIVI,
-        PLUS,
-        MINU,
-        FACT
+        export enum Operator
+        {
+            MULT,
+            DIVI,
+            PLUS,
+            MINU,
+            FACT
+        }
     }
+    
 
     export enum Side
     {

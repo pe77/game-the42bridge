@@ -37,9 +37,8 @@ module GameBase
 			// set characters group / element
 			this.heroes = new Pk.PkElement(this.game);
 
-			// create
-			var druid = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char1'));
-			druid.energyType = E.EnergyType.MANA;
+			// create heroes
+			var druid = new GameBase.Druid(this.game);
 			druid.create();
 
 			var priest = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char2'));
@@ -65,16 +64,22 @@ module GameBase
 				
 				// pos
 				hero.x = (hero.width + this.charPadding) * i;
+				hero.x += this.padding;
+				hero.y = this.game.height - hero.height - this.padding;
 
 				// start from diferents frames
 				hero.animationIdle.setFrame(this.game.rnd.integerInRange(1, 5));
+
+
 				i++;
 			}, this);
 
-
+			
 			// pos char group
-			this.heroes.x += this.padding;
-			this.heroes.y = this.game.height - this.heroes.height - this.padding - 100;
+			// this.heroes.x += this.padding;
+			// this.heroes.y = this.game.height - this.heroes.height - this.padding - 100;
+
+			console.log('poss hero Y')
 
     	}
 

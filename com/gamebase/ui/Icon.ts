@@ -19,16 +19,23 @@ module GameBase {
             
         }
 
-        create()
+        create(startShow:boolean = true)
         {
             this.body = this.game.add.sprite(0, 0, this.iconKey);
             this.add(this.body);
 
+            if(startShow)
+                this.in();
+            //
+        }
+
+        playAnimation(frameRate)
+        {
+            // default Values
+
             // animation
             this.animation = this.body.animations.add('pulse');
-            // this.animation.play(3, true); // start pulse animation
-
-            this.in();
+            this.animation.play(frameRate, true); // start pulse animation
         }
 
         in()
@@ -50,7 +57,7 @@ module GameBase {
                     alpha:0
                 }, 
                 this.inOutTime, 
-                Phaser.Easing.Back.In,
+                Phaser.Easing.Back.Out,
                 true
             )
         }

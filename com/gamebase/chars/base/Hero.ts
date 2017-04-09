@@ -1,4 +1,5 @@
-/// <reference path='../../pkframe/refs.ts' />
+/// <reference path='../../../pkframe/refs.ts' />
+/// <reference path='./Char.ts' />
  
 module GameBase {
  
@@ -49,6 +50,10 @@ module GameBase {
             this.energiGaude.x += this.gaudePadding;
 
             super.create();
+
+            this.body.events.onInputDown.add(()=>{
+                this.openAttacks();
+            }, this);
 
         }
 
