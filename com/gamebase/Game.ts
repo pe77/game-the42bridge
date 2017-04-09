@@ -29,7 +29,7 @@ module GameBase {
             this.loaderState = Loader;
 
 
-            this.initialState = 'Main';
+            this.initialState = 'Intro';
 
         }
     }
