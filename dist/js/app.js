@@ -399,7 +399,7 @@ var GameBase;
             _this.preLoaderState = GameBase.Preloader;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
-            _this.initialState = 'Main';
+            _this.initialState = 'Intro';
             return _this;
         }
         return Config;
