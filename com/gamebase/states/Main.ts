@@ -20,6 +20,7 @@ module GameBase
 
     	create()
     	{
+
     		// change state bg
             this.game.stage.backgroundColor = "#938da0";
 
@@ -79,7 +80,7 @@ module GameBase
 			// this.heroes.x += this.padding;
 			// this.heroes.y = this.game.height - this.heroes.height - this.padding - 100;
 
-			console.log('poss hero Y')
+			this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
 
     	}
 

@@ -399,7 +399,7 @@ var GameBase;
             _this.preLoaderState = GameBase.Preloader;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
-            _this.initialState = 'Intro';
+            _this.initialState = 'Menu';
             return _this;
         }
         return Config;
@@ -1085,7 +1085,7 @@ var GameBase;
             // pos char group
             // this.heroes.x += this.padding;
             // this.heroes.y = this.game.height - this.heroes.height - this.padding - 100;
-            console.log('poss hero Y');
+            this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
         };
         Main.prototype.render = function () {
             this.game.debug.text('(Main Screen) Press [ENTER] to Menu', 35, 35);
@@ -1109,7 +1109,6 @@ var GameBase;
         };
         Menu.prototype.create = function () {
             var _this = this;
-            _super.prototype.create.call(this);
             console.log('Menu create');
             // change state bg
             this.game.stage.backgroundColor = "#89aca6";
@@ -1119,6 +1118,7 @@ var GameBase;
             this.enterKey.onDown.add(function () {
                 _this.transition.change('Main'); // change to state Main
             }, this);
+            this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
         };
         Menu.prototype.render = function () {
             this.game.debug.text('(Menu Screen) Press [ENTER] to Main', 35, 35);
@@ -1126,6 +1126,115 @@ var GameBase;
         return Menu;
     }(Pk.PkState));
     GameBase.Menu = Menu;
+})(GameBase || (GameBase = {}));
+/// <reference path='../../pkframe/refs.ts' />
+var GameBase;
+(function (GameBase) {
+    var Transitions;
+    (function (Transitions) {
+        var Alpha = (function () {
+            function Alpha(game) {
+                this.event = new Pk.PkEvent('Transitions.Alpha', this);
+                this.changeTime = 500; // ms
+                this.game = game;
+            }
+            Alpha.prototype.start = function () {
+                var _this = this;
+                // create a full screen black retangle alpha 0
+                this.retangle = Pk.PkUtils.createSquare(this.game, this.game.camera.width, this.game.camera.height, "#000000");
+                this.retangle.alpha = 0;
+                // create a tween animation
+                // tween samples: http://phaser.io/examples/v2/category/tweens
+                var t = this.game.add.tween(this.retangle).to({ alpha: 1 }, this.changeTime, "Linear");
+                t.onComplete.add(function () {
+                    // dispatch end transition | mandatory
+                    _this.event.dispatch(Pk.E.OnTransitionEndStart);
+                }, this);
+                t.start(); // play tween
+            };
+            Alpha.prototype.end = function () {
+                var _this = this;
+                // create a full screen black retangle alpha 1. Revert previous transition
+                var retangle = Pk.PkUtils.createSquare(this.game, this.game.camera.width, this.game.camera.height, "#000000");
+                // create a tween animation
+                // tween samples: http://phaser.io/examples/v2/category/tweens
+                var t = this.game.add.tween(retangle).to({ alpha: 0 }, this.changeTime, "Linear");
+                t.onComplete.add(function () {
+                    // dispatch end transition | mandatory
+                    _this.event.dispatch(Pk.E.OnTransitionEndEnd);
+                }, this);
+                t.start(); // play tween
+            };
+            return Alpha;
+        }());
+        Transitions.Alpha = Alpha;
+    })(Transitions = GameBase.Transitions || (GameBase.Transitions = {}));
+})(GameBase || (GameBase = {}));
+/// <reference path='../../pkframe/refs.ts' />
+var GameBase;
+(function (GameBase) {
+    var Transitions;
+    (function (Transitions) {
+        var Slide = (function () {
+            function Slide(game) {
+                this.event = new Pk.PkEvent('Transitions.Slide', this);
+                this.changeTime = 500; // ms
+                this.game = game;
+            }
+            Slide.prototype.start = function () {
+                // create bg
+                var poly = new Phaser.Polygon();
+                poly.setTo([
+                    new Phaser.Point((this.game.world.width / 2) * (-1), 0),
+                    new Phaser.Point(this.game.world.width, 0),
+                    new Phaser.Point(this.game.world.width, this.game.world.height),
+                    new Phaser.Point(0, this.game.world.height) // 3
+                ]);
+                var bg = this.game.add.graphics(0, 0);
+                bg.beginFill(0x000000);
+                bg.drawPolygon(poly.points);
+                bg.endFill();
+                bg.x = bg.width;
+                var slideTween = this.game.add.tween(bg);
+                slideTween.to({
+                    x: 0
+                }, this.changeTime);
+                slideTween.onComplete.add(function (obj) {
+                    // dispatch end transition | mandatory
+                    console.log('terminou animação');
+                    this.event.dispatch(Pk.E.OnTransitionEndStart);
+                }, this);
+                slideTween.start();
+            };
+            Slide.prototype.end = function () {
+                // create bg
+                var poly = new Phaser.Polygon();
+                poly.setTo([
+                    new Phaser.Point(0, 0),
+                    new Phaser.Point(this.game.world.width, 0),
+                    new Phaser.Point(this.game.world.width + (this.game.world.width / 2), this.game.world.height),
+                    new Phaser.Point(0, this.game.world.height) // 3
+                ]);
+                var bg = this.game.add.graphics(0, 0);
+                bg.beginFill(0x000000);
+                bg.drawPolygon(poly.points);
+                bg.endFill();
+                // bg.width; // phaser
+                var slideTween = this.game.add.tween(bg);
+                slideTween.to({
+                    x: bg.width * (-1)
+                }, this.changeTime);
+                slideTween.onComplete.add(function (obj) {
+                    // dispatch end transition | mandatory
+                    console.log('terminou animação');
+                    this.event.dispatch(Pk.E.OnTransitionEndEnd);
+                }, this);
+                slideTween.start();
+            };
+            return Slide;
+        }());
+        Transitions.Slide = Slide;
+    })(Transitions = GameBase.Transitions || (GameBase.Transitions = {}));
 })(GameBase || (GameBase = {}));
 /// <reference path='../../pkframe/refs.ts' />
 var GameBase;

@@ -18,7 +18,6 @@ module GameBase
 
     	create()
     	{
-            super.create();
     		console.log('Menu create');
 
             // change state bg
@@ -31,6 +30,8 @@ module GameBase
             this.enterKey.onDown.add(()=>{
                 this.transition.change('Main'); // change to state Main
             }, this);
+
+            this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
     	}
 
 		render()
