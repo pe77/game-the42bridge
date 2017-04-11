@@ -71,17 +71,10 @@ module GameBase
 				// start from diferents frames
 				hero.animationIdle.setFrame(this.game.rnd.integerInRange(1, 5));
 
-
 				i++;
 			}, this);
-
 			
-			// pos char group
-			// this.heroes.x += this.padding;
-			// this.heroes.y = this.game.height - this.heroes.height - this.padding - 100;
-
 			this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
-
     	}
 
 		render()
