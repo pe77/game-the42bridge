@@ -8,7 +8,7 @@ module GameBase {
         icons:Array<GameBase.Icon> = [];
         iconEven:boolean = true;
 
-        padding:number = 5;
+        padding:number = 3;
 
         addIcon(icon:GameBase.Icon):void
         {
@@ -26,7 +26,7 @@ module GameBase {
 
             // organize icons pos
             for (var i = 0; i < this.icons.length; i++)
-                this.icons[i].x = (this.icons[i].width - this.padding) * i;
+                this.icons[i].x = (this.icons[i].width + this.padding) * i;
             //
 
             

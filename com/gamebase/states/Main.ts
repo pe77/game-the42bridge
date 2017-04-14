@@ -8,7 +8,7 @@ module GameBase
 		enterKey:Phaser.Key;
 
 		heroes:Pk.PkElement;
-		charPadding:number = 10;
+		charPadding:number = 50;
 
 		padding:number = 20;
 
@@ -42,34 +42,50 @@ module GameBase
 			var druid = new GameBase.Druid(this.game);
 			druid.create();
 
-			var priest = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char2'));
-			priest.energyType = E.EnergyType.MANA;
-			priest.create();
-
-			var thief = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char3'));
+			var thief = new GameBase.Hero(this.game, new Phaser.Rectangle(0, 0, 125, 145), 2)
+			thief.addAnimation(this.game.add.sprite(0, 0, 'char2-idle'), 'idle');
 			thief.energyType = E.EnergyType.STAMINA;
 			thief.create();
 
-			var knight = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char4'));
+			var priest = new GameBase.Hero(this.game, new Phaser.Rectangle(0, 0, 84, 220), 3)
+			priest.addAnimation(this.game.add.sprite(0, 0, 'char3-idle'), 'idle');
+			priest.energyType = E.EnergyType.MANA;
+			priest.create();
+
+			var knight = new GameBase.Hero(this.game, new Phaser.Rectangle(0, 0, 184, 189), 4);
+			knight.addAnimation(this.game.add.sprite(0, 0, 'char4-idle'), 'idle');
 			knight.energyType = E.EnergyType.STAMINA;
 			knight.create();
 
 			// add
 			this.heroes.add(druid);
-			this.heroes.add(priest);
 			this.heroes.add(thief);
+			this.heroes.add(priest);
 			this.heroes.add(knight);
 
 			var i = 0;
 			this.heroes.forEach((hero:GameBase.Hero)=>{
 				
 				// pos
-				hero.x = (hero.width + this.charPadding) * i;
-				hero.x += this.padding;
-				hero.y = this.game.height - hero.height - this.padding;
+				// hero.x = (hero.body.width + this.charPadding) * i;
+				// hero.x += this.padding;
+
+				hero.x = this.padding;
+				
+				if(i > 0)
+				{
+					var lastHero = <Hero>this.heroes.getAt(i-1);
+					hero.x = lastHero.x + lastHero.body.width + this.charPadding;
+				}
+					
+				//
+
+				hero.y = this.game.height - hero.body.height - this.padding - 90;
 
 				// start from diferents frames
-				hero.animationIdle.setFrame(this.game.rnd.integerInRange(1, 5));
+				// hero.animationIdle.setFrame(this.game.rnd.integerInRange(1, 5));
+
+				console.log('hero['+i+']', hero.x)
 
 				i++;
 			}, this);

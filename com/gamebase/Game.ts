@@ -28,8 +28,10 @@ module GameBase {
             // loading all* game assets
             this.loaderState = Loader;
 
+            this.canvasSize = [1280, 768];
 
-            this.initialState = 'Menu';
+
+            this.initialState = 'Main';
 
         }
     }

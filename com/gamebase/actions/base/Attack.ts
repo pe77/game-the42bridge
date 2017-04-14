@@ -116,12 +116,12 @@ module GameBase {
             }
 
             this.energyTypeIcon        = new GameBase.Icon(this.game, energyIconKey);
-            this.energyTypeIcon.create(false);
-            this.energyTypeIcon.playAnimation(8);
+            // this.energyTypeIcon.create(false);
+            // this.energyTypeIcon.playAnimation(8);
 
             var operatorIcon        = new GameBase.Icon(this.game, 'operator-icon-' + this.operator);
-            operatorIcon.create(false);
-            operatorIcon.playAnimation(10);
+            // operatorIcon.create(false);
+            // operatorIcon.playAnimation(10);
 
             // POS
 

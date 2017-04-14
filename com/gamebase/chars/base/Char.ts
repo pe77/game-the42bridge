@@ -17,6 +17,7 @@ module GameBase {
         side:Side = Side.RIGHT; // sprite side
 
         animationIdle:Phaser.Animation;
+        animations:Array<GameBase.I.CharAnimations> = [];
 
         selected:boolean = false;
         selectedIcon:GameBase.SelectedIcon;
@@ -25,20 +26,52 @@ module GameBase {
 
         attackOpenDelay:number = 100;
 
-        constructor(game:Pk.PkGame, body:Phaser.Sprite)
+        constructor(game:Pk.PkGame, body:Phaser.Rectangle)
         {
             super(game);
 
-            this.setBody(body);
+            var bodySprite:Phaser.Sprite = Pk.PkUtils.createSquare(game, body.width, body.height);
+            bodySprite.alpha = .5;
+            this.setBody(bodySprite);
+        }
+
+        addAnimation(sprite:Phaser.Sprite, animationKey:string, fps:number = 10)
+        {
+            var a = sprite.animations.add(animationKey);
+            a.play(fps, true);
+
+            // this.body.addChild(sprite);
+            this.add(sprite);
+
+            sprite.anchor.x = 0.5;
+            sprite.anchor.y = 1;
+
+            sprite.x = this.body.width / 2;
+            sprite.y = this.body.height + 40;
+
+            // sprite.anchor.set(.5, .5);
+
+            //sprite.position = this.body.position; 
+            
+
+            // this.body.events.
+            // sprite.y = this.body.y;
+
+            this.animations.push({
+                animation:a,
+                sprite:sprite
+            });
         }
 
         create()
         {
+            /*
             // animation
             this.animationIdle = this.body.animations.add('idle');
             this.animationIdle.play(10, true); // start idle animation
+            */
 
-            this.selectedIcon = new GameBase.SelectedIcon(this.game, this);
+            this.selectedIcon = new GameBase.SelectedIcon(this.game, this.body);
             this.selectedIcon.create();
 
             this.add(this.selectedIcon);
@@ -107,6 +140,16 @@ module GameBase {
             PLUS,
             MINU,
             FACT
+        }
+    }
+
+
+    export module I
+    {
+        export interface CharAnimations
+        {
+            sprite:Phaser.Sprite;
+            animation:Phaser.Animation;
         }
     }
     

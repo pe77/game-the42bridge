@@ -7,7 +7,7 @@ module GameBase {
         
         constructor(game:Pk.PkGame)
         {
-            super(game, game.add.sprite(0, 0, 'char1'));
+            super(game, new Phaser.Rectangle(0, 0,150, 249), 1);
 
             // energy type
             this.energyType     = E.EnergyType.MANA;
@@ -46,7 +46,8 @@ module GameBase {
             
             this.addAttack(regularAttackCustom2);
             
-
+            // animation
+            this.addAnimation(this.game.add.sprite(0, 0, 'char1-idle'), 'idle');
         }
 
     }

@@ -399,7 +399,8 @@ var GameBase;
             _this.preLoaderState = GameBase.Preloader;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
-            _this.initialState = 'Menu';
+            _this.canvasSize = [1280, 768];
+            _this.initialState = 'Main';
             return _this;
         }
         return Config;
@@ -535,15 +536,21 @@ var GameBase;
             this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
             this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
             // chars
-            this.load.spritesheet('char1', 'assets/default/images/char1.jpg', 58, 96, 5);
-            this.load.spritesheet('char2', 'assets/default/images/char2.jpg', 58, 96, 5);
-            this.load.spritesheet('char3', 'assets/default/images/char3.jpg', 58, 96, 5);
-            this.load.spritesheet('char4', 'assets/default/images/char4.jpg', 58, 96, 5);
+            this.load.spritesheet('char1-idle', 'assets/default/images/chars/1/idle.png', 200, 300, 1);
+            this.load.spritesheet('char2-idle', 'assets/default/images/chars/2/idle.png', 150, 200, 1);
+            this.load.spritesheet('char3-idle', 'assets/default/images/chars/3/idle.png', 150, 250, 1);
+            this.load.spritesheet('char4-idle', 'assets/default/images/chars/4/idle.png', 250, 250, 1);
             // icons
-            this.load.spritesheet('heath-icon', 'assets/default/images/heath-icon.png', 15, 15, 2);
-            this.load.spritesheet('stamina-icon', 'assets/default/images/stamina-icon.png', 15, 15, 2);
-            this.load.spritesheet('mana-icon', 'assets/default/images/mana-icon.png', 15, 15, 2);
+            this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
+            this.load.image('stamina-icon', 'assets/default/images/ui/ico-stamina.png');
+            this.load.image('mana-icon', 'assets/default/images/ui/ico-mana.png');
             this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
+            // ui hero
+            this.load.spritesheet('ui-hero-bg', 'assets/default/images/ui/hero-ui-bg.png', 102, 52, 2);
+            this.load.spritesheet('ui-hero-1-op', 'assets/default/images/chars/1/operator-ui.png', 40, 42, 2);
+            this.load.spritesheet('ui-hero-2-op', 'assets/default/images/chars/2/operator-ui.png', 40, 42, 2);
+            this.load.spritesheet('ui-hero-3-op', 'assets/default/images/chars/3/operator-ui.png', 40, 42, 2);
+            this.load.spritesheet('ui-hero-4-op', 'assets/default/images/chars/4/operator-ui.png', 40, 42, 2);
             // attacks icons
             this.load.image('attack-icon-regular', 'assets/default/images/chars/attacks/regular.png');
             this.load.image('attack-icon-tree', 'assets/default/images/chars/attacks/tree.png');
@@ -634,11 +641,11 @@ var GameBase;
                     break;
             }
             this.energyTypeIcon = new GameBase.Icon(this.game, energyIconKey);
-            this.energyTypeIcon.create(false);
-            this.energyTypeIcon.playAnimation(8);
+            // this.energyTypeIcon.create(false);
+            // this.energyTypeIcon.playAnimation(8);
             var operatorIcon = new GameBase.Icon(this.game, 'operator-icon-' + this.operator);
-            operatorIcon.create(false);
-            operatorIcon.playAnimation(10);
+            // operatorIcon.create(false);
+            // operatorIcon.playAnimation(10);
             // POS
             this.textName.x = this.icon.width + this.iconPadding;
             this.textDescription.x = this.textName.x;
@@ -738,17 +745,41 @@ var GameBase;
             _this.energyMax = 5;
             _this.healthMax = 5;
             _this.side = Side.RIGHT; // sprite side
+            _this.animations = [];
             _this.selected = false;
             _this.attacks = [];
             _this.attackOpenDelay = 100;
-            _this.setBody(body);
+            var bodySprite = Pk.PkUtils.createSquare(game, body.width, body.height);
+            bodySprite.alpha = .5;
+            _this.setBody(bodySprite);
             return _this;
         }
+        Char.prototype.addAnimation = function (sprite, animationKey, fps) {
+            if (fps === void 0) { fps = 10; }
+            var a = sprite.animations.add(animationKey);
+            a.play(fps, true);
+            // this.body.addChild(sprite);
+            this.add(sprite);
+            sprite.anchor.x = 0.5;
+            sprite.anchor.y = 1;
+            sprite.x = this.body.width / 2;
+            sprite.y = this.body.height + 40;
+            // sprite.anchor.set(.5, .5);
+            //sprite.position = this.body.position; 
+            // this.body.events.
+            // sprite.y = this.body.y;
+            this.animations.push({
+                animation: a,
+                sprite: sprite
+            });
+        };
         Char.prototype.create = function () {
+            /*
             // animation
             this.animationIdle = this.body.animations.add('idle');
             this.animationIdle.play(10, true); // start idle animation
-            this.selectedIcon = new GameBase.SelectedIcon(this.game, this);
+            */
+            this.selectedIcon = new GameBase.SelectedIcon(this.game, this.body);
             this.selectedIcon.create();
             this.add(this.selectedIcon);
         };
@@ -815,43 +846,20 @@ var GameBase;
 (function (GameBase) {
     var Hero = (function (_super) {
         __extends(Hero, _super);
-        function Hero() {
-            var _this = _super !== null && _super.apply(this, arguments) || this;
-            _this.gaudePadding = 5;
+        function Hero(game, body, id) {
+            var _this = _super.call(this, game, body) || this;
+            _this.identification = 0;
             _this.energyType = E.EnergyType.STAMINA;
+            _this.ui = new GameBase.ui.Hero(_this.game, _this);
+            _this.identification = id;
             return _this;
         }
         Hero.prototype.create = function () {
             var _this = this;
-            // gaudes
-            this.healthGaude = new GameBase.Gaude(this.game);
-            this.energiGaude = new GameBase.Gaude(this.game);
-            // add on hero 
-            this.add(this.healthGaude);
-            this.add(this.energiGaude);
-            // add heath icons
-            for (var i = 0; i < this.healthMax; i++)
-                this.healthGaude.addIcon(new GameBase.Icon(this.game, 'heath-icon'));
-            //
-            // select energy icon
-            var energyIconKey = '';
-            switch (this.energyType) {
-                case E.EnergyType.MANA:
-                    energyIconKey = 'mana-icon';
-                    break;
-                case E.EnergyType.STAMINA:
-                    energyIconKey = 'stamina-icon';
-                    break;
-            }
-            // add energy icons
-            for (var i = 0; i < this.energyMax; i++)
-                this.energiGaude.addIcon(new GameBase.Icon(this.game, energyIconKey));
-            //
-            // pos gaudes
-            this.healthGaude.y = this.body.height + this.gaudePadding;
-            this.energiGaude.y = this.healthGaude.y + (this.healthGaude.height / 4) + this.gaudePadding;
-            this.energiGaude.x += this.gaudePadding;
+            // create ui
+            this.ui.create();
             _super.prototype.create.call(this);
+            this.add(this.ui);
             this.body.events.onInputDown.add(function () {
                 _this.openAttacks();
             }, this);
@@ -875,7 +883,7 @@ var GameBase;
     var Druid = (function (_super) {
         __extends(Druid, _super);
         function Druid(game) {
-            var _this = _super.call(this, game, game.add.sprite(0, 0, 'char1')) || this;
+            var _this = _super.call(this, game, new Phaser.Rectangle(0, 0, 150, 249), 1) || this;
             // energy type
             _this.energyType = GameBase.E.EnergyType.MANA;
             // operator
@@ -903,6 +911,8 @@ var GameBase;
             regularAttackCustom2.energyCost = 5;
             regularAttackCustom2.value = 3;
             this.addAttack(regularAttackCustom2);
+            // animation
+            this.addAnimation(this.game.add.sprite(0, 0, 'char1-idle'), 'idle');
         };
         return Druid;
     }(GameBase.Hero));
@@ -1029,7 +1039,7 @@ var GameBase;
         __extends(Main, _super);
         function Main() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
-            _this.charPadding = 10;
+            _this.charPadding = 50;
             _this.padding = 20;
             return _this;
         }
@@ -1058,28 +1068,38 @@ var GameBase;
             // create heroes
             var druid = new GameBase.Druid(this.game);
             druid.create();
-            var priest = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char2'));
-            priest.energyType = GameBase.E.EnergyType.MANA;
-            priest.create();
-            var thief = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char3'));
+            var thief = new GameBase.Hero(this.game, new Phaser.Rectangle(0, 0, 125, 145), 2);
+            thief.addAnimation(this.game.add.sprite(0, 0, 'char2-idle'), 'idle');
             thief.energyType = GameBase.E.EnergyType.STAMINA;
             thief.create();
-            var knight = new GameBase.Hero(this.game, this.game.add.sprite(0, 0, 'char4'));
+            var priest = new GameBase.Hero(this.game, new Phaser.Rectangle(0, 0, 84, 220), 3);
+            priest.addAnimation(this.game.add.sprite(0, 0, 'char3-idle'), 'idle');
+            priest.energyType = GameBase.E.EnergyType.MANA;
+            priest.create();
+            var knight = new GameBase.Hero(this.game, new Phaser.Rectangle(0, 0, 184, 189), 4);
+            knight.addAnimation(this.game.add.sprite(0, 0, 'char4-idle'), 'idle');
             knight.energyType = GameBase.E.EnergyType.STAMINA;
             knight.create();
             // add
             this.heroes.add(druid);
-            this.heroes.add(priest);
             this.heroes.add(thief);
+            this.heroes.add(priest);
             this.heroes.add(knight);
             var i = 0;
             this.heroes.forEach(function (hero) {
                 // pos
-                hero.x = (hero.width + _this.charPadding) * i;
-                hero.x += _this.padding;
-                hero.y = _this.game.height - hero.height - _this.padding;
+                // hero.x = (hero.body.width + this.charPadding) * i;
+                // hero.x += this.padding;
+                hero.x = _this.padding;
+                if (i > 0) {
+                    var lastHero = _this.heroes.getAt(i - 1);
+                    hero.x = lastHero.x + lastHero.body.width + _this.charPadding;
+                }
+                //
+                hero.y = _this.game.height - hero.body.height - _this.padding - 90;
                 // start from diferents frames
-                hero.animationIdle.setFrame(_this.game.rnd.integerInRange(1, 5));
+                // hero.animationIdle.setFrame(this.game.rnd.integerInRange(1, 5));
+                console.log('hero[' + i + ']', hero.x);
                 i++;
             }, this);
             this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
@@ -1242,7 +1262,7 @@ var GameBase;
             var _this = _super !== null && _super.apply(this, arguments) || this;
             _this.icons = [];
             _this.iconEven = true;
-            _this.padding = 5;
+            _this.padding = 3;
             return _this;
         }
         Gaude.prototype.addIcon = function (icon) {
@@ -1255,7 +1275,7 @@ var GameBase;
             this.add(icon);
             // organize icons pos
             for (var i = 0; i < this.icons.length; i++)
-                this.icons[i].x = (this.icons[i].width - this.padding) * i;
+                this.icons[i].x = (this.icons[i].width + this.padding) * i;
             //
             // console.log('add icon:', this.icons);
             // 
@@ -1263,6 +1283,83 @@ var GameBase;
         return Gaude;
     }(Pk.PkElement));
     GameBase.Gaude = Gaude;
+})(GameBase || (GameBase = {}));
+/// <reference path='../../pkframe/refs.ts' />
+var GameBase;
+(function (GameBase) {
+    var ui;
+    (function (ui) {
+        var Hero = (function (_super) {
+            __extends(Hero, _super);
+            function Hero(game, hero) {
+                var _this = _super.call(this, game) || this;
+                _this.gaudePadding = 10;
+                _this.gaudeHeroPadding = 25;
+                _this.hero = hero;
+                _this.hero.body.events.onInputOver.add(_this.inputOver, _this);
+                _this.hero.body.events.onInputOut.add(_this.inputOut, _this);
+                return _this;
+            }
+            Hero.prototype.create = function () {
+                // bg
+                this.bg = this.game.add.sprite(0, 0, 'ui-hero-bg');
+                // operator
+                this.op = this.game.add.sprite(0, 0, 'ui-hero-' + this.hero.identification + '-op');
+                // gaudes
+                this.healthGaude = new GameBase.Gaude(this.game);
+                this.energiGaude = new GameBase.Gaude(this.game);
+                // add on hero 
+                this.add(this.bg);
+                this.add(this.op);
+                this.add(this.healthGaude);
+                this.add(this.energiGaude);
+                // add heath icons
+                for (var i = 0; i < this.hero.healthMax; i++)
+                    this.healthGaude.addIcon(new GameBase.Icon(this.game, 'heath-icon'));
+                //
+                // select energy icon
+                var energyIconKey = '';
+                switch (this.hero.energyType) {
+                    case GameBase.E.EnergyType.MANA:
+                        energyIconKey = 'mana-icon';
+                        break;
+                    case GameBase.E.EnergyType.STAMINA:
+                        energyIconKey = 'stamina-icon';
+                        break;
+                }
+                // add energy icons
+                for (var i = 0; i < this.hero.energyMax; i++)
+                    this.energiGaude.addIcon(new GameBase.Icon(this.game, energyIconKey));
+                //
+                // pos gaudes
+                this.healthGaude.y = this.hero.body.height;
+                this.energiGaude.y = this.healthGaude.y + (this.healthGaude.height / 4) + this.gaudePadding;
+                this.healthGaude.y += this.gaudeHeroPadding;
+                this.energiGaude.y += this.gaudeHeroPadding;
+                this.bg.y = this.healthGaude.y - 15;
+                this.bg.x -= 15;
+                this.op.anchor.set(0, .5);
+                this.op.x = this.bg.width - this.op.width;
+                this.op.y = this.bg.y; //  - 30;
+                this.bg.animations.add('selected'); //.play(10, true);
+                // this.bg.setFrame(1);
+                // this.bg.frame = 2;
+                this.x = this.hero.body.width / 2 - this.width / 2;
+                this.x += 10;
+                this.y += 25;
+            };
+            Hero.prototype.inputOver = function () {
+                this.bg.animations.frame = 1;
+                this.op.animations.frame = 1;
+            };
+            Hero.prototype.inputOut = function () {
+                this.bg.animations.frame = 0;
+                this.op.animations.frame = 0;
+            };
+            return Hero;
+        }(Pk.PkElement));
+        ui.Hero = Hero;
+    })(ui = GameBase.ui || (GameBase.ui = {}));
 })(GameBase || (GameBase = {}));
 /// <reference path='../../pkframe/refs.ts' />
 var GameBase;
@@ -1338,9 +1435,9 @@ var GameBase;
             this.botIcons.add(botRight);
             // pos above char
             this.topIcons.y -= this.topIcons.height / 2;
-            this.botIcons.x = this.topIcons.x = this.target.body.width / 2 - (this.topIcons.width / 2);
+            this.botIcons.x = this.topIcons.x = this.target.width / 2 - (this.topIcons.width / 2);
             // pos below char
-            this.botIcons.y = this.target.body.height;
+            this.botIcons.y = this.target.height;
             this.botIcons.y -= this.padding;
             // save init cords
             this.initialPosTop = new Phaser.Point(this.topIcons.x, this.topIcons.y);

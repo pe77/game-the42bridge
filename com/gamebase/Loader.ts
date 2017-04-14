@@ -62,16 +62,24 @@ module GameBase {
             this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
 
             // chars
-            this.load.spritesheet('char1', 'assets/default/images/char1.jpg', 58, 96, 5);
-            this.load.spritesheet('char2', 'assets/default/images/char2.jpg', 58, 96, 5);
-            this.load.spritesheet('char3', 'assets/default/images/char3.jpg', 58, 96, 5);
-            this.load.spritesheet('char4', 'assets/default/images/char4.jpg', 58, 96, 5);
+            this.load.spritesheet('char1-idle', 'assets/default/images/chars/1/idle.png', 200, 300, 1);
+            this.load.spritesheet('char2-idle', 'assets/default/images/chars/2/idle.png', 150, 200, 1);
+            this.load.spritesheet('char3-idle', 'assets/default/images/chars/3/idle.png', 150, 250, 1);
+            this.load.spritesheet('char4-idle', 'assets/default/images/chars/4/idle.png', 250, 250, 1);
 
             // icons
-            this.load.spritesheet('heath-icon', 'assets/default/images/heath-icon.png', 15, 15, 2);
-            this.load.spritesheet('stamina-icon', 'assets/default/images/stamina-icon.png', 15, 15, 2);
-            this.load.spritesheet('mana-icon', 'assets/default/images/mana-icon.png', 15, 15, 2);
+            this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
+            this.load.image('stamina-icon', 'assets/default/images/ui/ico-stamina.png');
+            this.load.image('mana-icon', 'assets/default/images/ui/ico-mana.png');
             this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
+
+            // ui hero
+            this.load.spritesheet('ui-hero-bg', 'assets/default/images/ui/hero-ui-bg.png', 102, 52, 2);
+            this.load.spritesheet('ui-hero-1-op', 'assets/default/images/chars/1/operator-ui.png', 40, 42, 2);
+            this.load.spritesheet('ui-hero-2-op', 'assets/default/images/chars/2/operator-ui.png', 40, 42, 2);
+            this.load.spritesheet('ui-hero-3-op', 'assets/default/images/chars/3/operator-ui.png', 40, 42, 2);
+            this.load.spritesheet('ui-hero-4-op', 'assets/default/images/chars/4/operator-ui.png', 40, 42, 2);
+
 
             // attacks icons
             this.load.image('attack-icon-regular', 'assets/default/images/chars/attacks/regular.png');

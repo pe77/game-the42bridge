@@ -8,7 +8,7 @@ module GameBase {
         inOutTime:number = 200;
 
         animation:Phaser.Animation;
-        target:GameBase.Char;
+        target:Phaser.Sprite;
 
         topIcons:Phaser.Group;
         botIcons:Phaser.Group;
@@ -18,7 +18,7 @@ module GameBase {
         initialPosTop:Phaser.Point;
         initialPosBot:Phaser.Point;
 
-        constructor(game:Pk.PkGame, target:GameBase.Char)
+        constructor(game:Pk.PkGame, target:Phaser.Sprite)
         {
             super(game);
             this.target = target;
@@ -55,10 +55,10 @@ module GameBase {
 
             // pos above char
             this.topIcons.y -= this.topIcons.height / 2;
-            this.botIcons.x = this.topIcons.x = this.target.body.width / 2 - (this.topIcons.width / 2);
+            this.botIcons.x = this.topIcons.x = this.target.width / 2 - (this.topIcons.width / 2);
 
             // pos below char
-            this.botIcons.y =  this.target.body.height;
+            this.botIcons.y =  this.target.height;
             this.botIcons.y -= this.padding;
 
             // save init cords
