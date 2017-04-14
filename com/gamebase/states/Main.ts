@@ -35,6 +35,21 @@ module GameBase
                 this.transition.change('Menu', 1111, 'text', {a:true, b:[1, 2]});  // return with some foo/bar args
             }, this);
 
+			// add layers
+			this.addLayer('stage-back-1');
+			this.addLayer('stage-back-2');
+			this.addLayer('stage-back-3');
+			this.addLayer('chars');
+			this.addLayer('stage-front-1');
+			this.addLayer('ui');
+
+
+			// scenario sprites
+			var mainBg:Phaser.Sprite = this.game.add.sprite(0, 0, 'main-bg');
+			var mainBridgeBack:Phaser.Sprite = this.game.add.sprite(0, 0, 'main-bridge-back');
+			var mainBridgeFront:Phaser.Sprite = this.game.add.sprite(0, 0, 'main-bridge-front');
+
+
 			// set characters group / element
 			this.heroes = new Pk.PkElement(this.game);
 
@@ -80,10 +95,27 @@ module GameBase
 					
 				//
 
-				hero.y = this.game.height - hero.body.height - this.padding - 120;
+				hero.y = this.game.height - hero.body.height - this.padding - 135;
+
+				hero.ui.create();
+
+				this.addToLayer('ui', hero.ui);
 
 				i++;
 			}, this);
+
+			this.addToLayer('chars', this.heroes);
+
+
+			mainBridgeBack.y = 443;
+			mainBridgeFront.y = 540;
+
+			
+			this.addToLayer('stage-back-1', mainBg);
+			this.addToLayer('stage-back-2', mainBridgeBack);
+			this.addToLayer('stage-front-1', mainBridgeFront);
+			
+
 			
 			this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
     	}

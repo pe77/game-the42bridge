@@ -399,7 +399,7 @@ var GameBase;
             _this.preLoaderState = GameBase.Preloader;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
-            _this.canvasSize = [1280, 768];
+            _this.canvasSize = [1280, 720];
             _this.initialState = 'Main';
             return _this;
         }
@@ -554,6 +554,10 @@ var GameBase;
             this.load.image('ui-hero-2-off', 'assets/default/images/chars/2/ui-off.png');
             this.load.image('ui-hero-3-off', 'assets/default/images/chars/3/ui-off.png');
             this.load.image('ui-hero-4-off', 'assets/default/images/chars/4/ui-off.png');
+            // main
+            this.load.image('main-bg', 'assets/states/main/images/bg/s-background.png');
+            this.load.image('main-bridge-back', 'assets/states/main/images/bg/s-bridge-back.png');
+            this.load.image('main-bridge-front', 'assets/states/main/images/bg/s-bridge-front.png');
             // attacks icons
             this.load.image('attack-icon-regular', 'assets/default/images/chars/attacks/regular.png');
             this.load.image('attack-icon-tree', 'assets/default/images/chars/attacks/tree.png');
@@ -563,8 +567,6 @@ var GameBase;
             this.load.spritesheet('operator-icon-' + GameBase.E.Operator.PLUS, 'assets/default/images/operator-icon-plus.png', 15, 15, 3);
             this.load.spritesheet('operator-icon-' + GameBase.E.Operator.MINU, 'assets/default/images/operator-icon-min.png', 15, 15, 3);
             this.load.spritesheet('operator-icon-' + GameBase.E.Operator.DIVI, 'assets/default/images/operator-icon-div.png', 15, 15, 3);
-            // state main
-            this.load.image('titlepage', 'assets/states/main/images/titlepage.jpg');
         };
         Loader.prototype.create = function () {
             _super.prototype.create.call(this);
@@ -860,10 +862,7 @@ var GameBase;
         }
         Hero.prototype.create = function () {
             var _this = this;
-            // create ui
-            this.ui.create();
             _super.prototype.create.call(this);
-            this.add(this.ui);
             this.body.events.onInputDown.add(function () {
                 // deselect all others
                 GameBase.Hero.heroes.forEach(function (hero) {
@@ -1080,6 +1079,17 @@ var GameBase;
             this.enterKey.onDown.add(function () {
                 _this.transition.change('Menu', 1111, 'text', { a: true, b: [1, 2] }); // return with some foo/bar args
             }, this);
+            // add layers
+            this.addLayer('stage-back-1');
+            this.addLayer('stage-back-2');
+            this.addLayer('stage-back-3');
+            this.addLayer('chars');
+            this.addLayer('stage-front-1');
+            this.addLayer('ui');
+            // scenario sprites
+            var mainBg = this.game.add.sprite(0, 0, 'main-bg');
+            var mainBridgeBack = this.game.add.sprite(0, 0, 'main-bridge-back');
+            var mainBridgeFront = this.game.add.sprite(0, 0, 'main-bridge-front');
             // set characters group / element
             this.heroes = new Pk.PkElement(this.game);
             // create heroes
@@ -1113,9 +1123,17 @@ var GameBase;
                     hero.x = lastHero.x + lastHero.body.width + _this.charPadding;
                 }
                 //
-                hero.y = _this.game.height - hero.body.height - _this.padding - 120;
+                hero.y = _this.game.height - hero.body.height - _this.padding - 135;
+                hero.ui.create();
+                _this.addToLayer('ui', hero.ui);
                 i++;
             }, this);
+            this.addToLayer('chars', this.heroes);
+            mainBridgeBack.y = 443;
+            mainBridgeFront.y = 540;
+            this.addToLayer('stage-back-1', mainBg);
+            this.addToLayer('stage-back-2', mainBridgeBack);
+            this.addToLayer('stage-front-1', mainBridgeFront);
             this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
         };
         Main.prototype.render = function () {
@@ -1342,14 +1360,9 @@ var GameBase;
                 for (var i = 0; i < this.hero.energyMax; i++)
                     this.energiGaude.addIcon(new GameBase.Icon(this.game, energyIconKey));
                 //
-                // pos gaudes
-                /*
-                this.healthGaude.y = this.hero.body.height;
-                this.energiGaude.y = this.healthGaude.y + (this.healthGaude.height / 4) + this.gaudePadding;
-                
-                this.healthGaude.y+= this.gaudeHeroPadding;
-                this.energiGaude.y+= this.gaudeHeroPadding;
-                */
+                // pos 
+                this.x = this.hero.x;
+                this.y = this.hero.y;
                 this.bg.y = this.hero.body.height;
                 this.bg.anchor.x = .5;
                 this.bg.x = this.hero.body.width / 2;

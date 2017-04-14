@@ -23,12 +23,7 @@ module GameBase {
 
         create()
         {
-            // create ui
-            this.ui.create();
-
             super.create();
-
-            this.add(this.ui);
 
             this.body.events.onInputDown.add(()=>{
 

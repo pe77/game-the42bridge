@@ -44,7 +44,7 @@ module GameBase {
                 this.add(this.bg);
                 this.add(this.healthGaude);
                 this.add(this.energiGaude);
-
+                
                 // add heath icons
                 for (var i = 0; i < this.hero.healthMax; i++) 
                     this.healthGaude.addIcon(new GameBase.Icon(this.game, 'heath-icon'));
@@ -67,14 +67,10 @@ module GameBase {
                     this.energiGaude.addIcon(new GameBase.Icon(this.game, energyIconKey));
                 //
 
-                // pos gaudes
-                /*
-                this.healthGaude.y = this.hero.body.height;
-                this.energiGaude.y = this.healthGaude.y + (this.healthGaude.height / 4) + this.gaudePadding;
-                
-                this.healthGaude.y+= this.gaudeHeroPadding;
-                this.energiGaude.y+= this.gaudeHeroPadding;
-                */
+                // pos 
+
+                this.x = this.hero.x;
+                this.y = this.hero.y;
 
                 this.bg.y = this.hero.body.height;
                 this.bg.anchor.x = .5;

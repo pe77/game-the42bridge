@@ -84,6 +84,10 @@ module GameBase {
             this.load.image('ui-hero-3-off', 'assets/default/images/chars/3/ui-off.png');
             this.load.image('ui-hero-4-off', 'assets/default/images/chars/4/ui-off.png');
             
+            // main
+            this.load.image('main-bg', 'assets/states/main/images/bg/s-background.png');
+            this.load.image('main-bridge-back', 'assets/states/main/images/bg/s-bridge-back.png');
+            this.load.image('main-bridge-front', 'assets/states/main/images/bg/s-bridge-front.png');
  
             // attacks icons
             this.load.image('attack-icon-regular', 'assets/default/images/chars/attacks/regular.png');
@@ -95,10 +99,6 @@ module GameBase {
             this.load.spritesheet('operator-icon-' + E.Operator.PLUS, 'assets/default/images/operator-icon-plus.png', 15, 15, 3);
             this.load.spritesheet('operator-icon-' + E.Operator.MINU, 'assets/default/images/operator-icon-min.png', 15, 15, 3);
             this.load.spritesheet('operator-icon-' + E.Operator.DIVI, 'assets/default/images/operator-icon-div.png', 15, 15, 3);
-
-
-            // state main
-            this.load.image('titlepage', 'assets/states/main/images/titlepage.jpg');
         }
 
         create()
