@@ -546,11 +546,14 @@ var GameBase;
             this.load.image('mana-icon', 'assets/default/images/ui/ico-mana.png');
             this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
             // ui hero
-            this.load.spritesheet('ui-hero-bg', 'assets/default/images/ui/hero-ui-bg.png', 102, 52, 2);
-            this.load.spritesheet('ui-hero-1-op', 'assets/default/images/chars/1/operator-ui.png', 40, 42, 2);
-            this.load.spritesheet('ui-hero-2-op', 'assets/default/images/chars/2/operator-ui.png', 40, 42, 2);
-            this.load.spritesheet('ui-hero-3-op', 'assets/default/images/chars/3/operator-ui.png', 40, 42, 2);
-            this.load.spritesheet('ui-hero-4-op', 'assets/default/images/chars/4/operator-ui.png', 40, 42, 2);
+            this.load.image('ui-hero-1-on', 'assets/default/images/chars/1/ui-on.png');
+            this.load.image('ui-hero-2-on', 'assets/default/images/chars/2/ui-on.png');
+            this.load.image('ui-hero-3-on', 'assets/default/images/chars/3/ui-on.png');
+            this.load.image('ui-hero-4-on', 'assets/default/images/chars/4/ui-on.png');
+            this.load.image('ui-hero-1-off', 'assets/default/images/chars/1/ui-off.png');
+            this.load.image('ui-hero-2-off', 'assets/default/images/chars/2/ui-off.png');
+            this.load.image('ui-hero-3-off', 'assets/default/images/chars/3/ui-off.png');
+            this.load.image('ui-hero-4-off', 'assets/default/images/chars/4/ui-off.png');
             // attacks icons
             this.load.image('attack-icon-regular', 'assets/default/images/chars/attacks/regular.png');
             this.load.image('attack-icon-tree', 'assets/default/images/chars/attacks/tree.png');
@@ -852,6 +855,7 @@ var GameBase;
             _this.energyType = E.EnergyType.STAMINA;
             _this.ui = new GameBase.ui.Hero(_this.game, _this);
             _this.identification = id;
+            GameBase.Hero.heroes.push(_this);
             return _this;
         }
         Hero.prototype.create = function () {
@@ -861,11 +865,19 @@ var GameBase;
             _super.prototype.create.call(this);
             this.add(this.ui);
             this.body.events.onInputDown.add(function () {
-                _this.openAttacks();
+                // deselect all others
+                GameBase.Hero.heroes.forEach(function (hero) {
+                    if (hero.identification != _this.identification)
+                        hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
+                    //
+                });
+                // this.openAttacks();
+                _this.event.dispatch(GameBase.E.HeroEvent.OnHeroSelected);
             }, this);
         };
         return Hero;
     }(GameBase.Char));
+    Hero.heroes = [];
     GameBase.Hero = Hero;
     var E;
     (function (E) {
@@ -874,6 +886,11 @@ var GameBase;
             EnergyType[EnergyType["STAMINA"] = 0] = "STAMINA";
             EnergyType[EnergyType["MANA"] = 1] = "MANA";
         })(EnergyType = E.EnergyType || (E.EnergyType = {}));
+        var HeroEvent;
+        (function (HeroEvent) {
+            HeroEvent.OnHeroSelected = "OnHeroSelected";
+            HeroEvent.OnHeroDeselect = "OnHeroDeselect";
+        })(HeroEvent = E.HeroEvent || (E.HeroEvent = {}));
     })(E = GameBase.E || (GameBase.E = {}));
 })(GameBase || (GameBase = {}));
 /// <reference path='../../pkframe/refs.ts' />
@@ -1096,10 +1113,7 @@ var GameBase;
                     hero.x = lastHero.x + lastHero.body.width + _this.charPadding;
                 }
                 //
-                hero.y = _this.game.height - hero.body.height - _this.padding - 90;
-                // start from diferents frames
-                // hero.animationIdle.setFrame(this.game.rnd.integerInRange(1, 5));
-                console.log('hero[' + i + ']', hero.x);
+                hero.y = _this.game.height - hero.body.height - _this.padding - 120;
                 i++;
             }, this);
             this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
@@ -1297,20 +1311,17 @@ var GameBase;
                 _this.gaudeHeroPadding = 25;
                 _this.hero = hero;
                 _this.hero.body.events.onInputOver.add(_this.inputOver, _this);
-                _this.hero.body.events.onInputOut.add(_this.inputOut, _this);
+                _this.hero.body.events.onInputOut.add(_this.resetAttrs, _this);
                 return _this;
             }
             Hero.prototype.create = function () {
                 // bg
-                this.bg = this.game.add.sprite(0, 0, 'ui-hero-bg');
-                // operator
-                this.op = this.game.add.sprite(0, 0, 'ui-hero-' + this.hero.identification + '-op');
+                this.bg = this.game.add.sprite(0, 0, 'ui-hero-' + this.hero.identification + '-off');
                 // gaudes
                 this.healthGaude = new GameBase.Gaude(this.game);
                 this.energiGaude = new GameBase.Gaude(this.game);
                 // add on hero 
                 this.add(this.bg);
-                this.add(this.op);
                 this.add(this.healthGaude);
                 this.add(this.energiGaude);
                 // add heath icons
@@ -1332,29 +1343,44 @@ var GameBase;
                     this.energiGaude.addIcon(new GameBase.Icon(this.game, energyIconKey));
                 //
                 // pos gaudes
+                /*
                 this.healthGaude.y = this.hero.body.height;
                 this.energiGaude.y = this.healthGaude.y + (this.healthGaude.height / 4) + this.gaudePadding;
-                this.healthGaude.y += this.gaudeHeroPadding;
-                this.energiGaude.y += this.gaudeHeroPadding;
-                this.bg.y = this.healthGaude.y - 15;
-                this.bg.x -= 15;
-                this.op.anchor.set(0, .5);
-                this.op.x = this.bg.width - this.op.width;
-                this.op.y = this.bg.y; //  - 30;
-                this.bg.animations.add('selected'); //.play(10, true);
-                // this.bg.setFrame(1);
-                // this.bg.frame = 2;
-                this.x = this.hero.body.width / 2 - this.width / 2;
-                this.x += 10;
-                this.y += 25;
+                
+                this.healthGaude.y+= this.gaudeHeroPadding;
+                this.energiGaude.y+= this.gaudeHeroPadding;
+                */
+                this.bg.y = this.hero.body.height;
+                this.bg.anchor.x = .5;
+                this.bg.x = this.hero.body.width / 2;
+                this.healthGaude.x = this.bg.x - this.bg.width / 2;
+                this.healthGaude.x += 65;
+                this.healthGaude.y = this.bg.y + 40;
+                this.energiGaude.x = this.healthGaude.x;
+                this.energiGaude.y = this.healthGaude.y + this.gaudePadding;
+                // pos bg
+                // this.bg.y = this.healthGaude.y - 15;
+                // this.bg.x -= 15;
+                this.y += 45;
+                this.initialPosition = new Phaser.Point(this.x, this.y);
+                this.initialRotation = this.rotation;
+                this.hero.event.add(GameBase.E.HeroEvent.OnHeroSelected, this.heroSelectd, this);
+                this.hero.event.add(GameBase.E.HeroEvent.OnHeroDeselect, this.heroDeselect, this);
+            };
+            Hero.prototype.heroDeselect = function () {
+                this.bg.loadTexture('ui-hero-' + this.hero.identification + '-off');
+            };
+            Hero.prototype.heroSelectd = function () {
+                this.bg.loadTexture('ui-hero-' + this.hero.identification + '-on');
             };
             Hero.prototype.inputOver = function () {
-                this.bg.animations.frame = 1;
-                this.op.animations.frame = 1;
+                this.y -= 10;
             };
-            Hero.prototype.inputOut = function () {
-                this.bg.animations.frame = 0;
-                this.op.animations.frame = 0;
+            Hero.prototype.resetAttrs = function () {
+                this.alpha = 1;
+                this.x = this.initialPosition.x;
+                this.y = this.initialPosition.y;
+                this.rotation = this.initialRotation;
             };
             return Hero;
         }(Pk.PkElement));

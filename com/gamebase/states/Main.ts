@@ -80,12 +80,7 @@ module GameBase
 					
 				//
 
-				hero.y = this.game.height - hero.body.height - this.padding - 90;
-
-				// start from diferents frames
-				// hero.animationIdle.setFrame(this.game.rnd.integerInRange(1, 5));
-
-				console.log('hero['+i+']', hero.x)
+				hero.y = this.game.height - hero.body.height - this.padding - 120;
 
 				i++;
 			}, this);

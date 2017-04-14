@@ -74,13 +74,17 @@ module GameBase {
             this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
 
             // ui hero
-            this.load.spritesheet('ui-hero-bg', 'assets/default/images/ui/hero-ui-bg.png', 102, 52, 2);
-            this.load.spritesheet('ui-hero-1-op', 'assets/default/images/chars/1/operator-ui.png', 40, 42, 2);
-            this.load.spritesheet('ui-hero-2-op', 'assets/default/images/chars/2/operator-ui.png', 40, 42, 2);
-            this.load.spritesheet('ui-hero-3-op', 'assets/default/images/chars/3/operator-ui.png', 40, 42, 2);
-            this.load.spritesheet('ui-hero-4-op', 'assets/default/images/chars/4/operator-ui.png', 40, 42, 2);
+            this.load.image('ui-hero-1-on', 'assets/default/images/chars/1/ui-on.png');
+            this.load.image('ui-hero-2-on', 'assets/default/images/chars/2/ui-on.png');
+            this.load.image('ui-hero-3-on', 'assets/default/images/chars/3/ui-on.png');
+            this.load.image('ui-hero-4-on', 'assets/default/images/chars/4/ui-on.png');
 
-
+            this.load.image('ui-hero-1-off', 'assets/default/images/chars/1/ui-off.png');
+            this.load.image('ui-hero-2-off', 'assets/default/images/chars/2/ui-off.png');
+            this.load.image('ui-hero-3-off', 'assets/default/images/chars/3/ui-off.png');
+            this.load.image('ui-hero-4-off', 'assets/default/images/chars/4/ui-off.png');
+            
+ 
             // attacks icons
             this.load.image('attack-icon-regular', 'assets/default/images/chars/attacks/regular.png');
             this.load.image('attack-icon-tree', 'assets/default/images/chars/attacks/tree.png');

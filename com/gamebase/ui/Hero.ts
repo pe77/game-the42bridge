@@ -16,8 +16,10 @@ module GameBase {
 
             bg:Phaser.Sprite;
 
-            op:Phaser.Sprite;
-            
+            initialPosition:Phaser.Point;
+            initialRotation:number;
+
+            selectedTween:Phaser.Tween;
 
             constructor(game:Pk.PkGame, hero:GameBase.Hero)
             {
@@ -26,16 +28,13 @@ module GameBase {
                 this.hero = hero;
 
                 this.hero.body.events.onInputOver.add(this.inputOver, this);
-                this.hero.body.events.onInputOut.add(this.inputOut, this);
+                this.hero.body.events.onInputOut.add(this.resetAttrs, this);
             }
 
             create()
             {
                 // bg
-                this.bg = this.game.add.sprite(0, 0, 'ui-hero-bg');
-
-                // operator
-                this.op = this.game.add.sprite(0, 0, 'ui-hero-'+this.hero.identification +'-op');
+                this.bg = this.game.add.sprite(0, 0, 'ui-hero-'+this.hero.identification+'-off');
 
                 // gaudes
                 this.healthGaude = new GameBase.Gaude(this.game);
@@ -43,7 +42,6 @@ module GameBase {
 
                 // add on hero 
                 this.add(this.bg);
-                this.add(this.op);
                 this.add(this.healthGaude);
                 this.add(this.energiGaude);
 
@@ -70,40 +68,61 @@ module GameBase {
                 //
 
                 // pos gaudes
+                /*
                 this.healthGaude.y = this.hero.body.height;
                 this.energiGaude.y = this.healthGaude.y + (this.healthGaude.height / 4) + this.gaudePadding;
                 
                 this.healthGaude.y+= this.gaudeHeroPadding;
                 this.energiGaude.y+= this.gaudeHeroPadding;
+                */
 
-                this.bg.y = this.healthGaude.y - 15;
-                this.bg.x -= 15;
+                this.bg.y = this.hero.body.height;
+                this.bg.anchor.x = .5;
+                this.bg.x = this.hero.body.width / 2;
 
-                this.op.anchor.set(0, .5)
-                this.op.x = this.bg.width - this.op.width;
-                this.op.y = this.bg.y;//  - 30;
+                this.healthGaude.x = this.bg.x - this.bg.width / 2;
+                this.healthGaude.x += 65;
+                this.healthGaude.y = this.bg.y + 40;
 
-                this.bg.animations.add('selected');//.play(10, true);
+                this.energiGaude.x = this.healthGaude.x;
+                this.energiGaude.y = this.healthGaude.y + this.gaudePadding;
 
-                // this.bg.setFrame(1);
-                // this.bg.frame = 2;
-                
+                // pos bg
+                // this.bg.y = this.healthGaude.y - 15;
+                // this.bg.x -= 15;
 
-                this.x = this.hero.body.width / 2 - this.width / 2;
-                this.x += 10;
-                this.y += 25;
+                this.y += 45;
+
+                this.initialPosition = new Phaser.Point(this.x, this.y);
+
+                this.initialRotation = this.rotation;
+
+                this.hero.event.add(GameBase.E.HeroEvent.OnHeroSelected, this.heroSelectd, this);
+                this.hero.event.add(GameBase.E.HeroEvent.OnHeroDeselect, this.heroDeselect, this);
+
+            }
+
+            protected heroDeselect()
+            {
+                this.bg.loadTexture('ui-hero-'+this.hero.identification+'-off');
+            }
+
+            protected heroSelectd()
+            {
+                this.bg.loadTexture('ui-hero-'+this.hero.identification+'-on');
             }
 
             private inputOver()
             {
-                this.bg.animations.frame = 1;
-                this.op.animations.frame = 1;
+                this.y -= 10;
             }
 
-            private inputOut()
+            resetAttrs()
             {
-                this.bg.animations.frame = 0;
-                this.op.animations.frame = 0;
+                this.alpha = 1;
+                this.x = this.initialPosition.x;
+                this.y = this.initialPosition.y;
+                this.rotation = this.initialRotation;
             }
 
             
