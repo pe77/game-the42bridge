@@ -31,7 +31,7 @@ module GameBase
 
 			// when press the key...
             this.enterKey.onDown.add(()=>{
-                this.transition.change('Menu', 1111, 'text', {a:true, b:[1, 2]});  // return with some foo/bar args
+                // this.transition.change('Menu', 1111, 'text', {a:true, b:[1, 2]});  // return with some foo/bar args
             }, this);
 
 			// add layers
@@ -130,7 +130,7 @@ module GameBase
 
 		render()
         {
-            this.game.debug.text('(Main Screen) Press [ENTER] to Menu', 35, 35);
+            // this.game.debug.text('(Main Screen) Press [ENTER] to Menu', 35, 35);
         }
 
     }

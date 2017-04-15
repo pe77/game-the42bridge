@@ -1230,7 +1230,7 @@ var GameBase;
             this.enterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
             // when press the key...
             this.enterKey.onDown.add(function () {
-                _this.transition.change('Menu', 1111, 'text', { a: true, b: [1, 2] }); // return with some foo/bar args
+                // this.transition.change('Menu', 1111, 'text', {a:true, b:[1, 2]});  // return with some foo/bar args
             }, this);
             // add layers
             this.addLayer('stage-back-1');
@@ -1298,7 +1298,7 @@ var GameBase;
             this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
         };
         Main.prototype.render = function () {
-            this.game.debug.text('(Main Screen) Press [ENTER] to Menu', 35, 35);
+            // this.game.debug.text('(Main Screen) Press [ENTER] to Menu', 35, 35);
         };
         return Main;
     }(Pk.PkState));
