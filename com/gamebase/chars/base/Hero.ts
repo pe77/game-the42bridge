@@ -6,6 +6,7 @@ module GameBase {
     export class Hero extends GameBase.Char {
         
         ui:GameBase.ui.Hero;
+        uiAttack:GameBase.ui.Attack;
         identification:number = 0;
 
         energyType:E.EnergyType = E.EnergyType.STAMINA;
@@ -16,6 +17,7 @@ module GameBase {
         {
             super(game, body);
             this.ui = new GameBase.ui.Hero(this.game, this);
+            this.uiAttack = new GameBase.ui.Attack(this.game, this);
             this.identification = id;
 
             GameBase.Hero.heroes.push(this);
@@ -24,6 +26,9 @@ module GameBase {
         create()
         {
             super.create();
+
+            this.ui.create();
+            this.uiAttack.create();
 
             this.body.events.onInputDown.add(()=>{
 

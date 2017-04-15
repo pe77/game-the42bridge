@@ -44,7 +44,6 @@ module GameBase
 
                 slideTween.onComplete.add(function(obj){
                     // dispatch end transition | mandatory
-                    console.log('terminou animação');
                     this.event.dispatch(Pk.E.OnTransitionEndStart); 
                 }, this);
                 

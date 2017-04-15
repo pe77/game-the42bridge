@@ -12,8 +12,6 @@ module GameBase
 		{
             super.init(); // if whant override init, you need this line!
 			console.log('Menu init');
-
-            console.log('params:', param1, param2, param3);
 		}
 
     	create()

@@ -31,11 +31,11 @@ module GameBase {
             super(game);
 
             var bodySprite:Phaser.Sprite = Pk.PkUtils.createSquare(game, body.width, body.height);
-            bodySprite.alpha = .5;
+            bodySprite.alpha = .0;
             this.setBody(bodySprite);
         }
 
-        addAnimation(sprite:Phaser.Sprite, animationKey:string, fps:number = 10)
+        addAnimation(sprite:Phaser.Sprite, animationKey:string, fps:number = 10):Phaser.Sprite
         {
             var a = sprite.animations.add(animationKey);
             a.play(fps, true);
@@ -47,7 +47,7 @@ module GameBase {
             sprite.anchor.y = 1;
 
             sprite.x = this.body.width / 2;
-            sprite.y = this.body.height + 40;
+            sprite.y = this.body.height;// + 40;
 
             // sprite.anchor.set(.5, .5);
 
@@ -61,6 +61,8 @@ module GameBase {
                 animation:a,
                 sprite:sprite
             });
+
+            return sprite;
         }
 
         create()
@@ -85,8 +87,11 @@ module GameBase {
             // mouse over check
             this.body.inputEnabled = true;
             this.body.input.useHandCursor = true;
+
+            /*
             this.body.events.onInputOver.add(this.inputOver, this);
             this.body.events.onInputOut.add(this.inputOut, this);
+            */
         }
 
         private inputOver()

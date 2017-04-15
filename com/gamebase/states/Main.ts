@@ -8,14 +8,13 @@ module GameBase
 		enterKey:Phaser.Key;
 
 		heroes:Pk.PkElement;
-		charPadding:number = 50;
+		charPadding:number = 15;
 
 		padding:number = 20;
 
 		init(...args:any[])
 		{
 			super.init(args); // if whant override init, you need this line!
-			console.log('Main init', args);
 		}
 
     	create()
@@ -57,34 +56,27 @@ module GameBase
 			var druid = new GameBase.Druid(this.game);
 			druid.create();
 
-			var thief = new GameBase.Hero(this.game, new Phaser.Rectangle(0, 0, 125, 145), 2)
-			thief.addAnimation(this.game.add.sprite(0, 0, 'char2-idle'), 'idle');
-			thief.energyType = E.EnergyType.STAMINA;
+			var thief = new GameBase.Thief(this.game);
 			thief.create();
 
-			var priest = new GameBase.Hero(this.game, new Phaser.Rectangle(0, 0, 84, 220), 3)
-			priest.addAnimation(this.game.add.sprite(0, 0, 'char3-idle'), 'idle');
-			priest.energyType = E.EnergyType.MANA;
+			var priest = new GameBase.Priest(this.game);
 			priest.create();
 
-			var knight = new GameBase.Hero(this.game, new Phaser.Rectangle(0, 0, 184, 189), 4);
-			knight.addAnimation(this.game.add.sprite(0, 0, 'char4-idle'), 'idle');
-			knight.energyType = E.EnergyType.STAMINA;
+			var knight = new GameBase.Knight(this.game);
 			knight.create();
 
 			// add
+			
 			this.heroes.add(druid);
 			this.heroes.add(thief);
 			this.heroes.add(priest);
 			this.heroes.add(knight);
+			
 
 			var i = 0;
 			this.heroes.forEach((hero:GameBase.Hero)=>{
 				
 				// pos
-				// hero.x = (hero.body.width + this.charPadding) * i;
-				// hero.x += this.padding;
-
 				hero.x = this.padding;
 				
 				if(i > 0)
@@ -92,31 +84,47 @@ module GameBase
 					var lastHero = <Hero>this.heroes.getAt(i-1);
 					hero.x = lastHero.x + lastHero.body.width + this.charPadding;
 				}
-					
-				//
+				hero.y = this.game.height - hero.body.height - this.padding - 145;
+				
 
-				hero.y = this.game.height - hero.body.height - this.padding - 135;
+				// pos ui
+				hero.ui.x = 170 * i;
+				hero.ui.y = hero.y + 45;
+				hero.ui.setAsInitialCords();
 
-				hero.ui.create();
+				hero.y += 10 * i; // stars style
 
+				// pos ui
+				hero.uiAttack.x = 140 * i;
+				hero.uiAttack.y = hero.y - hero.uiAttack.height;
+				hero.uiAttack.setAsInitialCords();
+
+				
+				
+				// add ui to layer
 				this.addToLayer('ui', hero.ui);
+				this.addToLayer('ui', hero.uiAttack);
 
+				// next node
 				i++;
 			}, this);
 
+			// ????
+			knight.ui.x -= 75;
+			knight.ui.setAsInitialCords();
+
+			// add chars to layer
 			this.addToLayer('chars', this.heroes);
 
-
+			// scenario position
 			mainBridgeBack.y = 443;
 			mainBridgeFront.y = 540;
 
-			
 			this.addToLayer('stage-back-1', mainBg);
 			this.addToLayer('stage-back-2', mainBridgeBack);
 			this.addToLayer('stage-front-1', mainBridgeFront);
 			
-
-			
+			// transition
 			this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
     	}
 

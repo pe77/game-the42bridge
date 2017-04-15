@@ -13,7 +13,32 @@
 
     <!-- your game code  -->
     <script src="dist/js/app.js"></script>
-    <title>Baisc Example :: Pk Framework</title>
+
+    <style>
+        @font-face {	
+            font-family: 'StrangerBack';	
+            src: url('assets/default/fonts/StrangerBack.ttf')
+            format('truetype');
+        }
+
+        .a
+        {
+             font-family: 'StrangerBack';
+        }
+    </style>
+
+    <script src="//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+
+    <script>
+        WebFont.WebFontConfig = {
+            custom: {
+                families: ['StrangerBack'],
+                urls: ['assets/default/fonts/StrangerBack.ttf']
+            }
+        }
+
+    </script>
+    <title>NOME DO JOGO :: Pk Framework</title>
 </head>
 <body>
     <main id="game"></main>

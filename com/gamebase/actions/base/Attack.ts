@@ -68,10 +68,11 @@ module GameBase {
 
         create()
         {
-            this.icon.create(false);
+            // this.icon.create(false);
 
             // TEXTS
 
+            /*
             // create attack text :: name
             this.textName = this.game.add.text(0, 0,
 				this.name, // text
@@ -189,7 +190,7 @@ module GameBase {
             this.add(this.textEnergy);
             this.add(this.energyTypeIcon);
             this.add(operatorIcon);
-
+            */
             
             
 

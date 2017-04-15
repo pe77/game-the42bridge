@@ -6,6 +6,9 @@ module GameBase {
 
         preload()
         {
+            // utils / vendor
+            this.load.script('WebFont', 'com/gamebase/vendor/webfontloader.js');
+
             // load game loading bar
             this.load.image('game-loading-bar', 'assets/states/loader/images/loading-bar.png');
 
@@ -50,10 +53,11 @@ module GameBase {
             this.game.add.existing(this.logo);
 
             this.logo.alpha = 0;
-            
+
 
 
             //  ** ADDING Other things  ** //
+
 
             // intro
             this.load.audio('intro-sound', 'assets/states/intro/sounds/intro.mp3');
@@ -83,6 +87,16 @@ module GameBase {
             this.load.image('ui-hero-2-off', 'assets/default/images/chars/2/ui-off.png');
             this.load.image('ui-hero-3-off', 'assets/default/images/chars/3/ui-off.png');
             this.load.image('ui-hero-4-off', 'assets/default/images/chars/4/ui-off.png');
+
+
+            // ui hero attacks
+            this.load.image('ui-hero-attacks-bg-1', 'assets/default/images/ui/b-large-bg.png');
+            this.load.image('ui-hero-attack-bg', 'assets/default/images/ui/b-spell-bg.png');
+
+            this.load.image('ui-hero-operator-' + GameBase.E.Operator.DIVI, 'assets/default/images/ui/b-i-div.png');
+            this.load.image('ui-hero-operator-' + GameBase.E.Operator.MULT, 'assets/default/images/ui/b-i-multi.png');
+            this.load.image('ui-hero-operator-' + GameBase.E.Operator.PLUS, 'assets/default/images/ui/b-i-soma.png');
+            this.load.image('ui-hero-operator-' + GameBase.E.Operator.MINU, 'assets/default/images/ui/b-i-sub.png');
             
             // main
             this.load.image('main-bg', 'assets/states/main/images/bg/s-background.png');

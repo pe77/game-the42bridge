@@ -3,39 +3,37 @@
  
 module GameBase {
  
-    export class Druid extends Hero {
+    export class Knight extends Hero {
         
         constructor(game:Pk.PkGame)
         {
-            super(game, new Phaser.Rectangle(0, 0,150, 249), 1);
+            super(game, new Phaser.Rectangle(0, 0, 184, 189), 4);
 
             // energy type
-            this.energyType     = E.EnergyType.MANA;
+            this.energyType     = E.EnergyType.STAMINA;
 
             // operator
-            this.operator       = E.Operator.MULT;
+            this.operator       = E.Operator.PLUS;
         }
 
         create()
         {
-            
-
             // add attacks
             var attack1:GameBase.Attacks.Regular = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
-            attack1.energyCost = 3;
-            attack1.value = 2;
+            attack1.energyCost = 2;
+            attack1.value = 1;
 
             this.addAttack(attack1);
             
             var attack2:GameBase.Attacks.Regular = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
-            attack2.energyCost = 4;
-            attack2.value = 3;
+            attack2.energyCost = 3;
+            attack2.value = 5;
 
             this.addAttack(attack2);
 
             var attack3:GameBase.Attacks.Regular = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack3.energyCost = 5;
-            attack3.value = 4;
+            attack3.value = 15;
 
             this.addAttack(attack3);
 
@@ -43,7 +41,7 @@ module GameBase {
             
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char'+this.identification+'-idle'), 'idle');
-            aniSprite.y+=26; // padding sprite adjust
+            aniSprite.y+=28; // padding sprite adjust
         }
 
     }

@@ -15,6 +15,7 @@ module GameBase {
             gaudeHeroPadding:number = 25;
 
             bg:Phaser.Sprite;
+            attackBg:Phaser.Sprite;
 
             initialPosition:Phaser.Point;
             initialRotation:number;
@@ -29,6 +30,7 @@ module GameBase {
 
                 this.hero.body.events.onInputOver.add(this.inputOver, this);
                 this.hero.body.events.onInputOut.add(this.resetAttrs, this);
+
             }
 
             create()
@@ -68,10 +70,6 @@ module GameBase {
                 //
 
                 // pos 
-
-                this.x = this.hero.x;
-                this.y = this.hero.y;
-
                 this.bg.y = this.hero.body.height;
                 this.bg.anchor.x = .5;
                 this.bg.x = this.hero.body.width / 2;
@@ -83,19 +81,17 @@ module GameBase {
                 this.energiGaude.x = this.healthGaude.x;
                 this.energiGaude.y = this.healthGaude.y + this.gaudePadding;
 
-                // pos bg
-                // this.bg.y = this.healthGaude.y - 15;
-                // this.bg.x -= 15;
-
-                this.y += 45;
-
-                this.initialPosition = new Phaser.Point(this.x, this.y);
-
-                this.initialRotation = this.rotation;
+                this.setAsInitialCords();
 
                 this.hero.event.add(GameBase.E.HeroEvent.OnHeroSelected, this.heroSelectd, this);
                 this.hero.event.add(GameBase.E.HeroEvent.OnHeroDeselect, this.heroDeselect, this);
 
+            }
+
+            setAsInitialCords()
+            {
+                this.initialPosition = new Phaser.Point(this.x, this.y);
+                this.initialRotation = this.rotation;
             }
 
             protected heroDeselect()
@@ -105,10 +101,11 @@ module GameBase {
 
             protected heroSelectd()
             {
+                this.resetAttrs();
                 this.bg.loadTexture('ui-hero-'+this.hero.identification+'-on');
             }
 
-            private inputOver()
+            protected inputOver()
             {
                 this.y -= 10;
             }
