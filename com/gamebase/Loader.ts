@@ -99,6 +99,7 @@ module GameBase {
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.MINU, 'assets/default/images/ui/b-i-sub.png');
 
             this.load.image('ui-enemy-value-bg', 'assets/default/images/ui/b-monster-bg.png');
+            this.load.image('reload-box', 'assets/default/images/ui/reload-box.png');
 
             // monster
             this.load.spritesheet('monster1-idle', 'assets/default/images/chars/enemies/1/idle.png', 350, 480, 1);

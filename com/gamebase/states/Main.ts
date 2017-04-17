@@ -104,7 +104,7 @@ module GameBase
 
 				// pos ui
 				hero.uiAttack.x = 140 * i;
-				hero.uiAttack.y = hero.y - hero.uiAttack.height;
+				hero.uiAttack.y = hero.y - hero.uiAttack.height + 50;
 				hero.uiAttack.setAsInitialCords();
 
 				

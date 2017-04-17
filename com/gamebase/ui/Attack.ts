@@ -37,6 +37,8 @@ module GameBase {
                 // bg
                 this.attackBg = this.game.add.sprite(0, 0, 'ui-hero-attacks-bg-1');
 
+                var reloadBox = this.game.add.sprite(0, 0, 'reload-box');
+
                 this.hero.attacks.forEach((attack, i)=>{
                     
                     // bg
@@ -90,9 +92,14 @@ module GameBase {
                 this.attackBoxes.x = this.attackBg.width / 2 - this.attackBoxes.width / 2;
                 this.attackBoxes.y += 32;
 
+                // reload box pos
+                reloadBox.x = this.attackBg.x + this.attackBg.width - reloadBox.width;
+                reloadBox.y = this.attackBg.y + this.attackBg.height;
+
                 // add  
                 this.add(this.attackBg);
                 this.add(this.attackBoxes);
+                this.add(reloadBox);
                 
                 this.setAsInitialCords();
 

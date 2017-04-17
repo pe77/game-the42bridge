@@ -564,6 +564,7 @@ var GameBase;
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.PLUS, 'assets/default/images/ui/b-i-soma.png');
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.MINU, 'assets/default/images/ui/b-i-sub.png');
             this.load.image('ui-enemy-value-bg', 'assets/default/images/ui/b-monster-bg.png');
+            this.load.image('reload-box', 'assets/default/images/ui/reload-box.png');
             // monster
             this.load.spritesheet('monster1-idle', 'assets/default/images/chars/enemies/1/idle.png', 350, 480, 1);
             this.load.spritesheet('monster2-idle', 'assets/default/images/chars/enemies/2/idle.png', 650, 474, 1);
@@ -678,7 +679,7 @@ var GameBase;
             _this.attacks = [];
             _this.attackOpenDelay = 100;
             var bodySprite = Pk.PkUtils.createSquare(game, body.width, body.height);
-            bodySprite.alpha = .3;
+            bodySprite.alpha = .0;
             _this.setBody(bodySprite);
             return _this;
         }
@@ -1217,7 +1218,7 @@ var GameBase;
                 hero.y += 10 * i; // stars style
                 // pos ui
                 hero.uiAttack.x = 140 * i;
-                hero.uiAttack.y = hero.y - hero.uiAttack.height;
+                hero.uiAttack.y = hero.y - hero.uiAttack.height + 50;
                 hero.uiAttack.setAsInitialCords();
                 // add ui to layer
                 _this.addToLayer('ui', hero.ui);
@@ -1414,6 +1415,7 @@ var GameBase;
                 var _this = this;
                 // bg
                 this.attackBg = this.game.add.sprite(0, 0, 'ui-hero-attacks-bg-1');
+                var reloadBox = this.game.add.sprite(0, 0, 'reload-box');
                 this.hero.attacks.forEach(function (attack, i) {
                     // bg
                     var bg = _this.game.add.sprite(0, 0, 'ui-hero-attack-bg');
@@ -1452,9 +1454,13 @@ var GameBase;
                 });
                 this.attackBoxes.x = this.attackBg.width / 2 - this.attackBoxes.width / 2;
                 this.attackBoxes.y += 32;
+                // reload box pos
+                reloadBox.x = this.attackBg.x + this.attackBg.width - reloadBox.width;
+                reloadBox.y = this.attackBg.y + this.attackBg.height;
                 // add  
                 this.add(this.attackBg);
                 this.add(this.attackBoxes);
+                this.add(reloadBox);
                 this.setAsInitialCords();
                 this.hero.event.add(GameBase.E.HeroEvent.OnHeroSelected, this.heroSelectd, this);
                 this.hero.event.add(GameBase.E.HeroEvent.OnHeroDeselect, this.heroDeselect, this);
