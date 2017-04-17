@@ -66,10 +66,10 @@ module GameBase {
             this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
 
             // chars
-            this.load.spritesheet('char1-idle', 'assets/default/images/chars/1/idle.png', 200, 300, 1);
-            this.load.spritesheet('char2-idle', 'assets/default/images/chars/2/idle.png', 150, 200, 1);
-            this.load.spritesheet('char3-idle', 'assets/default/images/chars/3/idle.png', 150, 250, 1);
-            this.load.spritesheet('char4-idle', 'assets/default/images/chars/4/idle.png', 250, 250, 1);
+            this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/idle.png', 200, 300, 1);
+            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/idle.png', 150, 200, 1);
+            this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/idle.png', 150, 250, 1);
+            this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/idle.png', 250, 250, 1);
 
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
@@ -78,15 +78,15 @@ module GameBase {
             this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
 
             // ui hero
-            this.load.image('ui-hero-1-on', 'assets/default/images/chars/1/ui-on.png');
-            this.load.image('ui-hero-2-on', 'assets/default/images/chars/2/ui-on.png');
-            this.load.image('ui-hero-3-on', 'assets/default/images/chars/3/ui-on.png');
-            this.load.image('ui-hero-4-on', 'assets/default/images/chars/4/ui-on.png');
+            this.load.image('ui-hero-1-on', 'assets/default/images/chars/heroes/1/ui-on.png');
+            this.load.image('ui-hero-2-on', 'assets/default/images/chars/heroes/2/ui-on.png');
+            this.load.image('ui-hero-3-on', 'assets/default/images/chars/heroes/3/ui-on.png');
+            this.load.image('ui-hero-4-on', 'assets/default/images/chars/heroes/4/ui-on.png');
 
-            this.load.image('ui-hero-1-off', 'assets/default/images/chars/1/ui-off.png');
-            this.load.image('ui-hero-2-off', 'assets/default/images/chars/2/ui-off.png');
-            this.load.image('ui-hero-3-off', 'assets/default/images/chars/3/ui-off.png');
-            this.load.image('ui-hero-4-off', 'assets/default/images/chars/4/ui-off.png');
+            this.load.image('ui-hero-1-off', 'assets/default/images/chars/heroes/1/ui-off.png');
+            this.load.image('ui-hero-2-off', 'assets/default/images/chars/heroes/2/ui-off.png');
+            this.load.image('ui-hero-3-off', 'assets/default/images/chars/heroes/3/ui-off.png');
+            this.load.image('ui-hero-4-off', 'assets/default/images/chars/heroes/4/ui-off.png');
 
 
             // ui hero attacks
@@ -97,16 +97,20 @@ module GameBase {
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.MULT, 'assets/default/images/ui/b-i-multi.png');
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.PLUS, 'assets/default/images/ui/b-i-soma.png');
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.MINU, 'assets/default/images/ui/b-i-sub.png');
+
+            this.load.image('ui-enemy-value-bg', 'assets/default/images/ui/b-monster-bg.png');
+
+            // monster
+            this.load.spritesheet('monster1-idle', 'assets/default/images/chars/enemies/1/idle.png', 350, 480, 1);
+            this.load.spritesheet('monster2-idle', 'assets/default/images/chars/enemies/2/idle.png', 650, 474, 1);
+            this.load.spritesheet('monster3-idle', 'assets/default/images/chars/enemies/3/idle.png', 300, 500, 1);
+            this.load.spritesheet('monster4-idle', 'assets/default/images/chars/enemies/4/idle.png', 500, 550, 1);
             
             // main
             this.load.image('main-bg', 'assets/states/main/images/bg/s-background.png');
             this.load.image('main-bridge-back', 'assets/states/main/images/bg/s-bridge-back.png');
             this.load.image('main-bridge-front', 'assets/states/main/images/bg/s-bridge-front.png');
  
-            // attacks icons
-            this.load.image('attack-icon-regular', 'assets/default/images/chars/attacks/regular.png');
-            this.load.image('attack-icon-tree', 'assets/default/images/chars/attacks/tree.png');
-            this.load.image('attack-icon-beast', 'assets/default/images/chars/attacks/beast.png');
 
             // op icons
             this.load.spritesheet('operator-icon-' + E.Operator.MULT, 'assets/default/images/operator-icon-mult.png', 15, 15, 3);

@@ -1,5 +1,5 @@
-/// <reference path='../../pkframe/refs.ts' />
-/// <reference path='./base/Hero.ts' />
+/// <reference path='../../../pkframe/refs.ts' />
+/// <reference path='../base/Hero.ts' />
  
 module GameBase {
  

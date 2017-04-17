@@ -31,7 +31,7 @@ module GameBase {
             super(game);
 
             var bodySprite:Phaser.Sprite = Pk.PkUtils.createSquare(game, body.width, body.height);
-            bodySprite.alpha = .0;
+            bodySprite.alpha = .3;
             this.setBody(bodySprite);
         }
 
@@ -83,10 +83,6 @@ module GameBase {
         {
             this.body = body;
             this.add(this.body);
-
-            // mouse over check
-            this.body.inputEnabled = true;
-            this.body.input.useHandCursor = true;
 
             /*
             this.body.events.onInputOver.add(this.inputOver, this);

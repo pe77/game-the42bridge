@@ -538,24 +538,24 @@ var GameBase;
             this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
             this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
             // chars
-            this.load.spritesheet('char1-idle', 'assets/default/images/chars/1/idle.png', 200, 300, 1);
-            this.load.spritesheet('char2-idle', 'assets/default/images/chars/2/idle.png', 150, 200, 1);
-            this.load.spritesheet('char3-idle', 'assets/default/images/chars/3/idle.png', 150, 250, 1);
-            this.load.spritesheet('char4-idle', 'assets/default/images/chars/4/idle.png', 250, 250, 1);
+            this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/idle.png', 200, 300, 1);
+            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/idle.png', 150, 200, 1);
+            this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/idle.png', 150, 250, 1);
+            this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/idle.png', 250, 250, 1);
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
             this.load.image('stamina-icon', 'assets/default/images/ui/ico-stamina.png');
             this.load.image('mana-icon', 'assets/default/images/ui/ico-mana.png');
             this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
             // ui hero
-            this.load.image('ui-hero-1-on', 'assets/default/images/chars/1/ui-on.png');
-            this.load.image('ui-hero-2-on', 'assets/default/images/chars/2/ui-on.png');
-            this.load.image('ui-hero-3-on', 'assets/default/images/chars/3/ui-on.png');
-            this.load.image('ui-hero-4-on', 'assets/default/images/chars/4/ui-on.png');
-            this.load.image('ui-hero-1-off', 'assets/default/images/chars/1/ui-off.png');
-            this.load.image('ui-hero-2-off', 'assets/default/images/chars/2/ui-off.png');
-            this.load.image('ui-hero-3-off', 'assets/default/images/chars/3/ui-off.png');
-            this.load.image('ui-hero-4-off', 'assets/default/images/chars/4/ui-off.png');
+            this.load.image('ui-hero-1-on', 'assets/default/images/chars/heroes/1/ui-on.png');
+            this.load.image('ui-hero-2-on', 'assets/default/images/chars/heroes/2/ui-on.png');
+            this.load.image('ui-hero-3-on', 'assets/default/images/chars/heroes/3/ui-on.png');
+            this.load.image('ui-hero-4-on', 'assets/default/images/chars/heroes/4/ui-on.png');
+            this.load.image('ui-hero-1-off', 'assets/default/images/chars/heroes/1/ui-off.png');
+            this.load.image('ui-hero-2-off', 'assets/default/images/chars/heroes/2/ui-off.png');
+            this.load.image('ui-hero-3-off', 'assets/default/images/chars/heroes/3/ui-off.png');
+            this.load.image('ui-hero-4-off', 'assets/default/images/chars/heroes/4/ui-off.png');
             // ui hero attacks
             this.load.image('ui-hero-attacks-bg-1', 'assets/default/images/ui/b-large-bg.png');
             this.load.image('ui-hero-attack-bg', 'assets/default/images/ui/b-spell-bg.png');
@@ -563,14 +563,16 @@ var GameBase;
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.MULT, 'assets/default/images/ui/b-i-multi.png');
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.PLUS, 'assets/default/images/ui/b-i-soma.png');
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.MINU, 'assets/default/images/ui/b-i-sub.png');
+            this.load.image('ui-enemy-value-bg', 'assets/default/images/ui/b-monster-bg.png');
+            // monster
+            this.load.spritesheet('monster1-idle', 'assets/default/images/chars/enemies/1/idle.png', 350, 480, 1);
+            this.load.spritesheet('monster2-idle', 'assets/default/images/chars/enemies/2/idle.png', 650, 474, 1);
+            this.load.spritesheet('monster3-idle', 'assets/default/images/chars/enemies/3/idle.png', 300, 500, 1);
+            this.load.spritesheet('monster4-idle', 'assets/default/images/chars/enemies/4/idle.png', 500, 550, 1);
             // main
             this.load.image('main-bg', 'assets/states/main/images/bg/s-background.png');
             this.load.image('main-bridge-back', 'assets/states/main/images/bg/s-bridge-back.png');
             this.load.image('main-bridge-front', 'assets/states/main/images/bg/s-bridge-front.png');
-            // attacks icons
-            this.load.image('attack-icon-regular', 'assets/default/images/chars/attacks/regular.png');
-            this.load.image('attack-icon-tree', 'assets/default/images/chars/attacks/tree.png');
-            this.load.image('attack-icon-beast', 'assets/default/images/chars/attacks/beast.png');
             // op icons
             this.load.spritesheet('operator-icon-' + GameBase.E.Operator.MULT, 'assets/default/images/operator-icon-mult.png', 15, 15, 3);
             this.load.spritesheet('operator-icon-' + GameBase.E.Operator.PLUS, 'assets/default/images/operator-icon-plus.png', 15, 15, 3);
@@ -621,127 +623,6 @@ var GameBase;
             return _this;
         }
         Attack.prototype.create = function () {
-            // this.icon.create(false);
-            // TEXTS
-            /*
-            // create attack text :: name
-            this.textName = this.game.add.text(0, 0,
-                this.name, // text
-                this.textStyleName // font style
-            );
-            this.textName.align = "left";
-
-            // create attack text :: description
-            this.textDescription = this.game.add.text(0, 0,
-                this.description, // text
-                this.textStyleDescription // font style
-            );
-            this.textDescription.align = "left";
-
-            // create attack text :: value
-            this.textValue = this.game.add.text(0, 0,
-                this.value.toString(), // text
-                this.textStyleDescription // font style
-            );
-            this.textValue.align = "left";
-
-            // create attack text :: energy
-            this.textEnergy = this.game.add.text(0, 0,
-                this.energyCost.toString(), // text
-                this.textStyleDescription // font style
-            );
-            this.textEnergy.align = "left";
-
-
-            // ICONS
-
-            // select energy icon
-            var energyIconKey = '';
-            switch (this.energyType) {
-                case E.EnergyType.MANA:
-                    energyIconKey = 'mana-icon';
-                    break;
-
-                case E.EnergyType.STAMINA:
-                    energyIconKey = 'stamina-icon';
-                    break;
-            }
-
-            this.energyTypeIcon        = new GameBase.Icon(this.game, energyIconKey);
-            // this.energyTypeIcon.create(false);
-            // this.energyTypeIcon.playAnimation(8);
-
-            var operatorIcon        = new GameBase.Icon(this.game, 'operator-icon-' + this.operator);
-            // operatorIcon.create(false);
-            // operatorIcon.playAnimation(10);
-
-            // POS
-
-            this.textName.x         = this.icon.width + this.iconPadding;
-            
-            this.textDescription.x  = this.textName.x;
-            this.textDescription.y  = this.textName.height + this.textPadding;
-
-            this.textValue.x        = this.textName.x;
-            this.textValue.y        = this.textName.y - this.textValue.height - this.textPadding;
-
-            this.energyTypeIcon.x       = this.textDescription.x + this.textDescription.width - this.textEnergy.width;
-            this.energyTypeIcon.x       = this.textDescription.width < this.textName.width ? this.textName.x + this.textName.width - this.textEnergy.width : this.energyTypeIcon.x;
-            this.energyTypeIcon.y       = this.textValue.y;
-
-            this.textEnergy.x       = this.energyTypeIcon.x - this.textEnergy.width - this.iconPadding/2;
-            this.textEnergy.y       = this.textValue.y;
-
-            operatorIcon.x          = this.textValue.x + this.textValue.width + this.iconPadding/2;
-            operatorIcon.y          = this.textValue.y;
-
-            this.sizeWidth              = this.textName.width > this.textDescription.width ? this.textName.width : this.textDescription.width;
-
-            // bgs
-            this.textBg = Pk.PkUtils.createSquare(this.game, this.sizeWidth + this.bgPadding, this.textName.y + this.textName.height + this.textDescription.height + this.bgPadding);
-            this.textBg.x = this.textName.x - this.bgPadding/2;
-            this.textBg.y = this.textName.y - this.bgPadding/2;
-            this.textBg.alpha = .3;
-
-            this.iconBg = Pk.PkUtils.createSquare(this.game,
-                this.icon.width + this.bgPadding,  // x
-                this.icon.height + this.bgPadding // y
-            );
-            this.iconBg.x = this.icon.x - this.bgPadding/2;
-            this.iconBg.y = this.icon.y - this.bgPadding/2;
-            this.iconBg.alpha = .3;
-
-            this.energyBg = Pk.PkUtils.createSquare(this.game,
-                this.textEnergy.width + operatorIcon.width + (this.iconPadding/2) + this.bgPadding,  // x
-                operatorIcon.height + this.bgPadding // y
-            );
-            this.energyBg.x = this.textEnergy.x - this.bgPadding/2;
-            this.energyBg.y = this.textEnergy.y - this.bgPadding/2;
-            this.energyBg.alpha = .3;
-
-            this.valueBg = Pk.PkUtils.createSquare(this.game,
-                this.textValue.width + this.energyTypeIcon.width + (this.iconPadding/2) + this.bgPadding,  // x
-                this.energyTypeIcon.height + this.bgPadding // y
-            );
-            this.valueBg.x = this.textValue.x - this.bgPadding/2;
-            this.valueBg.y = this.textValue.y - this.bgPadding/2;
-            this.valueBg.alpha = .3;
-
-
-
-            // add elements
-            this.add(this.valueBg);
-            this.add(this.energyBg);
-            this.add(this.iconBg);
-            this.add(this.textBg);
-            this.add(this.icon);
-            this.add(this.textName);
-            this.add(this.textDescription);
-            this.add(this.textValue);
-            this.add(this.textEnergy);
-            this.add(this.energyTypeIcon);
-            this.add(operatorIcon);
-            */
             this.visible = false;
         };
         Attack.prototype.show = function (delay) {
@@ -797,7 +678,7 @@ var GameBase;
             _this.attacks = [];
             _this.attackOpenDelay = 100;
             var bodySprite = Pk.PkUtils.createSquare(game, body.width, body.height);
-            bodySprite.alpha = .0;
+            bodySprite.alpha = .3;
             _this.setBody(bodySprite);
             return _this;
         }
@@ -834,9 +715,6 @@ var GameBase;
         Char.prototype.setBody = function (body) {
             this.body = body;
             this.add(this.body);
-            // mouse over check
-            this.body.inputEnabled = true;
-            this.body.input.useHandCursor = true;
             /*
             this.body.events.onInputOver.add(this.inputOver, this);
             this.body.events.onInputOut.add(this.inputOut, this);
@@ -894,6 +772,39 @@ var GameBase;
 /// <reference path='./Char.ts' />
 var GameBase;
 (function (GameBase) {
+    var Enemy = (function (_super) {
+        __extends(Enemy, _super);
+        function Enemy(game, body, id, value) {
+            var _this = _super.call(this, game, body) || this;
+            _this.identification = 0;
+            _this.value = 0;
+            _this.ui = new GameBase.ui.Enemy(_this.game, _this);
+            _this.identification = id;
+            _this.value = value;
+            GameBase.Enemy.enemies.push(_this);
+            return _this;
+        }
+        Enemy.prototype.create = function () {
+            _super.prototype.create.call(this);
+            this.ui.create();
+        };
+        return Enemy;
+    }(GameBase.Char));
+    Enemy.enemies = [];
+    GameBase.Enemy = Enemy;
+    var E;
+    (function (E) {
+        var EnemyEvent;
+        (function (EnemyEvent) {
+            EnemyEvent.OnHeroSelected = "OnHeroSelected";
+            EnemyEvent.OnHeroDeselect = "OnHeroDeselect";
+        })(EnemyEvent = E.EnemyEvent || (E.EnemyEvent = {}));
+    })(E = GameBase.E || (GameBase.E = {}));
+})(GameBase || (GameBase = {}));
+/// <reference path='../../../pkframe/refs.ts' />
+/// <reference path='./Char.ts' />
+var GameBase;
+(function (GameBase) {
     var Hero = (function (_super) {
         __extends(Hero, _super);
         function Hero(game, body, id) {
@@ -922,6 +833,12 @@ var GameBase;
                 _this.event.dispatch(GameBase.E.HeroEvent.OnHeroSelected);
             }, this);
         };
+        Hero.prototype.setBody = function (body) {
+            _super.prototype.setBody.call(this, body);
+            // mouse over check
+            this.body.inputEnabled = true;
+            this.body.input.useHandCursor = true;
+        };
         return Hero;
     }(GameBase.Char));
     Hero.heroes = [];
@@ -940,8 +857,8 @@ var GameBase;
         })(HeroEvent = E.HeroEvent || (E.HeroEvent = {}));
     })(E = GameBase.E || (GameBase.E = {}));
 })(GameBase || (GameBase = {}));
-/// <reference path='../../pkframe/refs.ts' />
-/// <reference path='./base/Hero.ts' />
+/// <reference path='../../../pkframe/refs.ts' />
+/// <reference path='../base/Hero.ts' />
 var GameBase;
 (function (GameBase) {
     var Druid = (function (_super) {
@@ -1087,6 +1004,25 @@ var GameBase;
         return Thief;
     }(GameBase.Hero));
     GameBase.Thief = Thief;
+})(GameBase || (GameBase = {}));
+/// <reference path='../../../pkframe/refs.ts' />
+/// <reference path='../base/Hero.ts' />
+var GameBase;
+(function (GameBase) {
+    var Lizzard = (function (_super) {
+        __extends(Lizzard, _super);
+        function Lizzard(game) {
+            return _super.call(this, game, new Phaser.Rectangle(0, 0, 273, 372), 1, 42) || this;
+        }
+        Lizzard.prototype.create = function () {
+            _super.prototype.create.call(this);
+            // sprite set idle
+            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'monster' + this.identification + '-idle'), 'idle');
+            aniSprite.y += 69; // padding sprite adjust
+        };
+        return Lizzard;
+    }(GameBase.Enemy));
+    GameBase.Lizzard = Lizzard;
 })(GameBase || (GameBase = {}));
 /// <reference path='../../pkframe/refs.ts' />
 var GameBase;
@@ -1259,6 +1195,12 @@ var GameBase;
             this.heroes.add(thief);
             this.heroes.add(priest);
             this.heroes.add(knight);
+            // create a enemy
+            var lizzard = new GameBase.Lizzard(this.game);
+            lizzard.create();
+            lizzard.x = this.game.world.width - lizzard.width;
+            lizzard.y = 200;
+            lizzard.ui.updatePosition();
             var i = 0;
             this.heroes.forEach(function (hero) {
                 // pos
@@ -1288,6 +1230,9 @@ var GameBase;
             knight.ui.setAsInitialCords();
             // add chars to layer
             this.addToLayer('chars', this.heroes);
+            this.addToLayer('chars', lizzard);
+            // monster ui
+            this.addToLayer('ui', lizzard.ui);
             // scenario position
             mainBridgeBack.y = 443;
             mainBridgeFront.y = 540;
@@ -1536,6 +1481,54 @@ var GameBase;
             return Attack;
         }(Pk.PkElement));
         ui.Attack = Attack;
+    })(ui = GameBase.ui || (GameBase.ui = {}));
+})(GameBase || (GameBase = {}));
+/// <reference path='../../pkframe/refs.ts' />
+var GameBase;
+(function (GameBase) {
+    var ui;
+    (function (ui) {
+        var Enemy = (function (_super) {
+            __extends(Enemy, _super);
+            function Enemy(game, enemy) {
+                var _this = _super.call(this, game) || this;
+                _this.textStyleValues = {
+                    font: "58px StrangerBack",
+                    fill: "#643b35"
+                };
+                _this.enemy = enemy;
+                return _this;
+            }
+            Enemy.prototype.create = function () {
+                // bg
+                this.bg = this.game.add.sprite(0, 0, 'ui-enemy-value-bg');
+                // value
+                var textValue = this.game.add.text(0, 0, this.enemy.value.toString(), // text
+                this.textStyleValues // font style
+                );
+                textValue.align = "center";
+                textValue.anchor.set(0.5);
+                textValue.x = this.bg.width / 2;
+                textValue.y = this.bg.height / 2;
+                // add 
+                this.add(this.bg);
+                this.add(textValue);
+                // pos
+                this.updatePosition();
+            };
+            Enemy.prototype.updatePosition = function () {
+                // put on head 
+                this.x = this.enemy.x;
+                this.y = this.enemy.y - this.height;
+                this.setAsInitialCords();
+            };
+            Enemy.prototype.setAsInitialCords = function () {
+                this.initialPosition = new Phaser.Point(this.x, this.y);
+                this.initialRotation = this.rotation;
+            };
+            return Enemy;
+        }(Pk.PkElement));
+        ui.Enemy = Enemy;
     })(ui = GameBase.ui || (GameBase.ui = {}));
 })(GameBase || (GameBase = {}));
 /// <reference path='../../pkframe/refs.ts' />

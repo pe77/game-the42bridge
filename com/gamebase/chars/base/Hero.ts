@@ -42,9 +42,15 @@ module GameBase {
                 // this.openAttacks();
                 this.event.dispatch(GameBase.E.HeroEvent.OnHeroSelected);
             }, this);
+        }
 
-            
+        setBody(body:Phaser.Sprite)
+        {
+            super.setBody(body);
 
+            // mouse over check
+            this.body.inputEnabled = true;
+            this.body.input.useHandCursor = true;
         }
 
     }

@@ -8,6 +8,7 @@ module GameBase
 		enterKey:Phaser.Key;
 
 		heroes:Pk.PkElement;
+		enemies:Pk.PkElement;
 		charPadding:number = 15;
 
 		padding:number = 20;
@@ -71,6 +72,13 @@ module GameBase
 			this.heroes.add(thief);
 			this.heroes.add(priest);
 			this.heroes.add(knight);
+
+			// create a enemy
+			var lizzard:GameBase.Lizzard = new GameBase.Lizzard(this.game);
+			lizzard.create();
+			lizzard.x = this.game.world.width - lizzard.width;
+			lizzard.y = 200;
+			lizzard.ui.updatePosition();
 			
 
 			var i = 0;
@@ -115,6 +123,10 @@ module GameBase
 
 			// add chars to layer
 			this.addToLayer('chars', this.heroes);
+			this.addToLayer('chars', lizzard);
+
+			// monster ui
+			this.addToLayer('ui', lizzard.ui);
 
 			// scenario position
 			mainBridgeBack.y = 443;
