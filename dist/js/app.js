@@ -541,12 +541,12 @@ var GameBase;
             this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/idle.png', 200, 300, 1);
             this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/idle.png', 150, 200, 1);
             this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/idle.png', 150, 250, 1);
-            this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 201, 4);
+            this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 203.4, 20);
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
             this.load.image('stamina-icon', 'assets/default/images/ui/ico-stamina.png');
             this.load.image('mana-icon', 'assets/default/images/ui/ico-mana.png');
-            this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 20);
+            this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
             // ui hero
             this.load.image('ui-hero-1-on', 'assets/default/images/chars/heroes/1/ui-on.png');
             this.load.image('ui-hero-2-on', 'assets/default/images/chars/heroes/2/ui-on.png');
