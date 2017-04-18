@@ -38,7 +38,6 @@ module GameBase {
         addAnimation(sprite:Phaser.Sprite, animationKey:string, fps:number = 10):Phaser.Sprite
         {
             var a = sprite.animations.add(animationKey);
-            // a.play(fps, true);
 
             // this.body.addChild(sprite);
             this.add(sprite);
@@ -69,14 +68,13 @@ module GameBase {
         {
             this.animations.forEach(element => {
                 element.animation.stop();
-                element.sprite.visible = false;
-                console.log('------??')
+                element.sprite.alpha = 0;
+                
                 if(element.animation.name == key)
                 {
-                    console.log('play animation key:' + key);
                     element.animation.play(fps, loop);
                     // element.animation.restart();
-                    element.sprite.visible = true;
+                    element.sprite.alpha = 1;
                 }
             });
         }
