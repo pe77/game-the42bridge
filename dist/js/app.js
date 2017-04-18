@@ -49,7 +49,7 @@ var Pk;
                     // se houver contexto, manda pelo contexto
                     if (this.listeners[i].context) {
                         (_a = this.listeners[i].callBack).call.apply(_a, [this.listeners[i].context, data].concat(args));
-                        continue;
+                        return;
                     }
                     // dispara sem contexto mesmo
                     (_b = this.listeners[i]).callBack.apply(_b, [data].concat(args));
@@ -541,12 +541,12 @@ var GameBase;
             this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/idle.png', 200, 300, 1);
             this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/idle.png', 150, 200, 1);
             this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/idle.png', 150, 250, 1);
-            this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/idle.png', 250, 250, 1);
+            this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 201, 4);
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
             this.load.image('stamina-icon', 'assets/default/images/ui/ico-stamina.png');
             this.load.image('mana-icon', 'assets/default/images/ui/ico-mana.png');
-            this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
+            this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 20);
             // ui hero
             this.load.image('ui-hero-1-on', 'assets/default/images/chars/heroes/1/ui-on.png');
             this.load.image('ui-hero-2-on', 'assets/default/images/chars/heroes/2/ui-on.png');
@@ -686,7 +686,7 @@ var GameBase;
         Char.prototype.addAnimation = function (sprite, animationKey, fps) {
             if (fps === void 0) { fps = 10; }
             var a = sprite.animations.add(animationKey);
-            a.play(fps, true);
+            // a.play(fps, true);
             // this.body.addChild(sprite);
             this.add(sprite);
             sprite.anchor.x = 0.5;
@@ -702,6 +702,21 @@ var GameBase;
                 sprite: sprite
             });
             return sprite;
+        };
+        Char.prototype.playAnimation = function (key, fps, loop) {
+            if (fps === void 0) { fps = 10; }
+            if (loop === void 0) { loop = true; }
+            this.animations.forEach(function (element) {
+                element.animation.stop();
+                element.sprite.visible = false;
+                console.log('------??');
+                if (element.animation.name == key) {
+                    console.log('play animation key:' + key);
+                    element.animation.play(fps, loop);
+                    // element.animation.restart();
+                    element.sprite.visible = true;
+                }
+            });
         };
         Char.prototype.create = function () {
             /*
@@ -895,8 +910,6 @@ var GameBase;
     }(GameBase.Hero));
     GameBase.Druid = Druid;
 })(GameBase || (GameBase = {}));
-/// <reference path='../../pkframe/refs.ts' />
-/// <reference path='./base/Hero.ts' />
 var GameBase;
 (function (GameBase) {
     var Knight = (function (_super) {
@@ -925,8 +938,10 @@ var GameBase;
             this.addAttack(attack3);
             _super.prototype.create.call(this);
             // animation
-            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'idle');
+            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             aniSprite.y += 28; // padding sprite adjust
+            // this.animationIdle.play(10, true);
+            this.playAnimation('iddle', 10);
         };
         return Knight;
     }(GameBase.Hero));
