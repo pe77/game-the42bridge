@@ -39,7 +39,7 @@ module GameBase {
             
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char'+this.identification+'-idle'), 'iddle');
-            aniSprite.y+=28; // padding sprite adjust
+            // aniSprite.y+=28; // padding sprite adjust
 
             // this.animationIdle.play(10, true);
 
