@@ -69,7 +69,7 @@ module GameBase {
             this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/idle.png', 200, 300, 1);
             this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/idle.png', 150, 200, 1);
             this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/idle.png', 150, 250, 1);
-            this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 190, 20);
+            this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 204, 12);
 
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
