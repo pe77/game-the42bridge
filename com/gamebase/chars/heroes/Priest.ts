@@ -1,6 +1,3 @@
-/// <reference path='../../pkframe/refs.ts' />
-/// <reference path='./base/Hero.ts' />
- 
 module GameBase {
  
     export class Priest extends Hero {
@@ -40,7 +37,7 @@ module GameBase {
             super.create();
             
             // animation
-            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char'+this.identification+'-idle'), 'idle');
+            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char'+this.identification+'-idle'), 'iddle');
             aniSprite.y+=16;
 
             this.playAnimation('iddle', 10);

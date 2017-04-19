@@ -42,7 +42,7 @@ module GameBase {
             super.create();
             
             // animation
-            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char'+this.identification+'-idle'), 'idle');
+            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char'+this.identification+'-idle'), 'iddle');
             aniSprite.y+=26; // padding sprite adjust
 
             this.playAnimation('iddle', 10);

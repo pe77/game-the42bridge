@@ -1,4 +1,3 @@
-
 module GameBase {
  
     export class Knight extends Hero {

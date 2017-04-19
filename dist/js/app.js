@@ -538,19 +538,10 @@ var GameBase;
             this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
             this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
             // chars
-            this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/idle.png', 200, 300, 1);
-            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/idle.png', 150, 200, 1);
-<<<<<<< HEAD
+            this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/iddle.png', 200, 300, 1);
+            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 150, 200, 1);
             this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/iddle3.png', 183, 247, 12);
             this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 204, 12);
-=======
-            this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/idle.png', 150, 250, 1);
-<<<<<<< HEAD
-            this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 204, 12);
-=======
-            this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 250, 250, 20);
->>>>>>> a1cf0006c518fc55164cb4fef061f2d0c166fbf0
->>>>>>> 9c8a2a6d6783363bba21641a183fc63e3bb4c213
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
             this.load.image('stamina-icon', 'assets/default/images/ui/ico-stamina.png');
@@ -909,7 +900,7 @@ var GameBase;
             this.addAttack(attack3);
             _super.prototype.create.call(this);
             // animation
-            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'idle');
+            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             aniSprite.y += 26; // padding sprite adjust
             this.playAnimation('iddle', 10);
         };
@@ -953,8 +944,6 @@ var GameBase;
     }(GameBase.Hero));
     GameBase.Knight = Knight;
 })(GameBase || (GameBase = {}));
-/// <reference path='../../pkframe/refs.ts' />
-/// <reference path='./base/Hero.ts' />
 var GameBase;
 (function (GameBase) {
     var Priest = (function (_super) {
@@ -983,7 +972,7 @@ var GameBase;
             this.addAttack(attack3);
             _super.prototype.create.call(this);
             // animation
-            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'idle');
+            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             aniSprite.y += 16;
             this.playAnimation('iddle', 10);
         };
@@ -991,8 +980,6 @@ var GameBase;
     }(GameBase.Hero));
     GameBase.Priest = Priest;
 })(GameBase || (GameBase = {}));
-/// <reference path='../../pkframe/refs.ts' />
-/// <reference path='./base/Hero.ts' />
 var GameBase;
 (function (GameBase) {
     var Thief = (function (_super) {
@@ -1021,7 +1008,7 @@ var GameBase;
             this.addAttack(attack3);
             _super.prototype.create.call(this);
             // animation
-            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'idle');
+            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             aniSprite.y += 28; // padding sprite adjust
             this.playAnimation('iddle', 10);
         };

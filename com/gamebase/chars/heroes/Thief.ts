@@ -1,6 +1,3 @@
-/// <reference path='../../pkframe/refs.ts' />
-/// <reference path='./base/Hero.ts' />
- 
 module GameBase {
  
     export class Thief extends Hero {
@@ -8,7 +5,7 @@ module GameBase {
         constructor(game:Pk.PkGame)
         {
             super(game, new Phaser.Rectangle(0, 0, 125, 145), 2);
-
+ 
             // energy type
             this.energyType     = E.EnergyType.STAMINA;
 
@@ -40,7 +37,7 @@ module GameBase {
             super.create();
             
             // animation
-            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char'+this.identification+'-idle'), 'idle');
+            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char'+this.identification+'-idle'), 'iddle');
             aniSprite.y+=28; // padding sprite adjust
 
             this.playAnimation('iddle', 10);
