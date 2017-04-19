@@ -43,7 +43,7 @@ module GameBase {
 
             // this.animationIdle.play(10, true);
 
-            this.playAnimation('iddle', 10);
+            this.playAnimation('iddle', 5);
         }
 
     }

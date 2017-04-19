@@ -541,7 +541,7 @@ var GameBase;
             this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/idle.png', 200, 300, 1);
             this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/idle.png', 150, 200, 1);
             this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/idle.png', 150, 250, 1);
-            this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 204, 12);
+            this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 250, 250, 20);
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
             this.load.image('stamina-icon', 'assets/default/images/ui/ico-stamina.png');
@@ -938,7 +938,7 @@ var GameBase;
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=28; // padding sprite adjust
             // this.animationIdle.play(10, true);
-            this.playAnimation('iddle', 10);
+            this.playAnimation('iddle', 5);
         };
         return Knight;
     }(GameBase.Hero));
