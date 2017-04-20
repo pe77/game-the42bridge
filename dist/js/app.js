@@ -590,59 +590,23 @@ var GameBase;
 /// <reference path='../../../pkframe/refs.ts' />
 var GameBase;
 (function (GameBase) {
-    var Attack = (function (_super) {
-        __extends(Attack, _super);
+    var Attack = (function () {
         function Attack(game, value, energyCost, operator, energyType, name, description, icon) {
             if (name === void 0) { name = "Attack Name"; }
             if (description === void 0) { description = "Attack description. Bla Bla Bla Bla"; }
             if (icon === void 0) { icon = null; }
-            var _this = _super.call(this, game) || this;
-            _this.iconPadding = 10;
-            _this.textPadding = 1;
-            _this.bgPadding = 10;
-            _this.textStyleName = {
-                font: "18px Arial",
-                fill: "#fff"
-            };
-            _this.textStyleDescription = {
-                font: "12px Arial",
-                fill: "#fff"
-            };
-            _this.textStyleValues = {
-                font: "22px Arial",
-                fill: "#fff"
-            };
             // values
-            _this.value = value;
-            _this.energyCost = energyCost;
-            _this.operator = operator;
+            this.name = name;
+            this.value = value;
+            this.energyCost = energyCost;
+            this.operator = operator;
             // meta info
-            _this.name = name;
-            _this.description = description;
-            _this.icon = icon;
-            _this.energyType = energyType;
-            return _this;
+            this.description = description;
+            this.icon = icon;
+            this.energyType = energyType;
         }
-        Attack.prototype.create = function () {
-            this.visible = false;
-        };
-        Attack.prototype.show = function (delay) {
-            this.visible = true;
-            // save initial pos | one time only
-            if (!this.initialPos)
-                this.initialPos = new Phaser.Point(this.x, this.y);
-            //
-            this.alpha = 1;
-            this.addTween(this).from({
-                alpha: 0
-            }, 200, Phaser.Easing.Back.In, true, delay);
-            this.position.y = this.initialPos.y;
-            this.addTween(this).from({
-                y: this.initialPos.y + 50
-            }, 500, Phaser.Easing.Cubic.Out, true, delay);
-        };
         return Attack;
-    }(Pk.PkElement));
+    }());
     GameBase.Attack = Attack;
 })(GameBase || (GameBase = {}));
 /// <reference path='../../pkframe/refs.ts' />
@@ -656,9 +620,6 @@ var GameBase;
             function Regular(game, operator, energyType) {
                 return _super.call(this, game, 5, 2, operator, energyType, "Regular Attack", "Attack description. Bla Bla Bla Bla", new GameBase.Icon(game, 'attack-icon-regular')) || this;
             }
-            Regular.prototype.create = function () {
-                _super.prototype.create.call(this);
-            };
             return Regular;
         }(GameBase.Attack));
         Attacks.Regular = Regular;
@@ -742,8 +703,6 @@ var GameBase;
             this.selected = false;
         };
         Char.prototype.addAttack = function (attack) {
-            // create attack
-            attack.create();
             // add attack
             this.attacks.push(attack);
         };
@@ -844,12 +803,22 @@ var GameBase;
                 });
                 _this.event.dispatch(GameBase.E.HeroEvent.OnHeroSelected);
             }, this);
+            this.event.add(GameBase.E.HeroEvent.OnHeroReload, this.reload, this);
+            this.event.add(GameBase.E.HeroEvent.OnHeroAttack, function (target, attack) {
+                _this.attack(attack);
+            }, this);
         };
         Hero.prototype.setBody = function (body) {
             _super.prototype.setBody.call(this, body);
             // mouse over check
             this.body.inputEnabled = true;
             this.body.input.useHandCursor = true;
+        };
+        Hero.prototype.attack = function (attack) {
+            console.log('[' + this.identification + '] attack!:', attack);
+        };
+        Hero.prototype.reload = function () {
+            console.log('[' + this.identification + '] reload');
         };
         return Hero;
     }(GameBase.Char));
@@ -866,6 +835,8 @@ var GameBase;
         (function (HeroEvent) {
             HeroEvent.OnHeroSelected = "OnHeroSelected";
             HeroEvent.OnHeroDeselect = "OnHeroDeselect";
+            HeroEvent.OnHeroAttack = "OnHeroAttack";
+            HeroEvent.OnHeroReload = "OnHeroReload";
         })(HeroEvent = E.HeroEvent || (E.HeroEvent = {}));
     })(E = GameBase.E || (GameBase.E = {}));
 })(GameBase || (GameBase = {}));
@@ -1449,9 +1420,20 @@ var GameBase;
                     _this.attackBoxes.add(textValue);
                     _this.attackBoxes.add(textEnergy);
                     _this.attackBoxes.add(operatorIcon);
+                    bg.inputEnabled = true;
+                    bg.input.useHandCursor = true;
+                    bg.events.onInputDown.add(function () {
+                        _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttack, attack);
+                    }, _this);
+                    /*
                     // input events
-                    _this.attackBoxes.setAll('inputEnabled', true);
-                    _this.attackBoxes.setAll('input.useHandCursor', true);
+                    this.attackBoxes.setAll('inputEnabled', true);
+                    this.attackBoxes.setAll('input.useHandCursor', true);
+
+                    this.attackBoxes.callAll('events.onInputDown.add', 'events.onInputDown', ()=>{
+                        this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttack, attack);
+                    }, this);
+                    */
                     // pos
                     bg.x = (bg.width + 5) * i;
                     operatorIcon.x = bg.x + bg.width - 10;
@@ -1460,6 +1442,12 @@ var GameBase;
                     textValue.y = bg.y - 10;
                     textEnergy.x = bg.x + 17;
                     textEnergy.y = bg.y + bg.width - textEnergy.height + 10;
+                });
+                // input events
+                reloadBox.inputEnabled = true;
+                reloadBox.input.useHandCursor = true;
+                reloadBox.events.onInputDown.add(function () {
+                    _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroReload);
                 });
                 this.attackBoxes.x = this.attackBg.width / 2 - this.attackBoxes.width / 2;
                 this.attackBoxes.y += 32;

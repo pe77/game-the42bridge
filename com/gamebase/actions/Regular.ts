@@ -21,11 +21,6 @@ module GameBase {
                 );
 
             }
-
-            create()
-            {
-                super.create();
-            }
         }
     }
 } 

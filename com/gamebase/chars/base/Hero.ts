@@ -41,6 +41,11 @@ module GameBase {
 
                 this.event.dispatch(GameBase.E.HeroEvent.OnHeroSelected);
             }, this);
+
+            this.event.add(GameBase.E.HeroEvent.OnHeroReload, this.reload, this);
+            this.event.add(GameBase.E.HeroEvent.OnHeroAttack, (target, attack)=>{
+                this.attack(attack);
+            }, this);
         }
 
         setBody(body:Phaser.Sprite)
@@ -50,6 +55,16 @@ module GameBase {
             // mouse over check
             this.body.inputEnabled = true;
             this.body.input.useHandCursor = true;
+        }
+
+        attack(attack:GameBase.Attack)
+        {
+            console.log('[' + this.identification + '] attack!:', attack);
+        }
+
+        reload()
+        {
+            console.log('[' + this.identification + '] reload')
         }
 
     }
@@ -66,6 +81,8 @@ module GameBase {
         {
             export const OnHeroSelected:string 	= "OnHeroSelected";
             export const OnHeroDeselect:string 	= "OnHeroDeselect";
+            export const OnHeroAttack:string 	= "OnHeroAttack";
+            export const OnHeroReload:string 	= "OnHeroReload";
         }
     }
 } 

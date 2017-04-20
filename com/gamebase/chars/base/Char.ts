@@ -118,9 +118,6 @@ module GameBase {
 
         addAttack(attack:GameBase.Attack)
         {
-            // create attack
-            attack.create();
-
             // add attack
             this.attacks.push(attack);
         }

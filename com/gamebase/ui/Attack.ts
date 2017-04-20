@@ -72,9 +72,22 @@ module GameBase {
                     this.attackBoxes.add(textEnergy);
                     this.attackBoxes.add(operatorIcon);
 
+                    bg.inputEnabled = true;
+                    bg.input.useHandCursor = true;
+
+                    bg.events.onInputDown.add(()=>{
+                        this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttack, attack);
+                    }, this);
+
+                    /*
                     // input events
                     this.attackBoxes.setAll('inputEnabled', true);
                     this.attackBoxes.setAll('input.useHandCursor', true);
+
+                    this.attackBoxes.callAll('events.onInputDown.add', 'events.onInputDown', ()=>{
+                        this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttack, attack);
+                    }, this);
+                    */
 
                     // pos
                     bg.x = (bg.width+5) * i;
@@ -87,6 +100,14 @@ module GameBase {
 
                     textEnergy.x = bg.x + 17;
                     textEnergy.y = bg.y + bg.width - textEnergy.height + 10;
+                });
+
+
+                // input events
+                reloadBox.inputEnabled = true;
+                reloadBox.input.useHandCursor = true;
+                reloadBox.events.onInputDown.add(()=>{
+                    this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroReload);
                 });
 
                 this.attackBoxes.x = this.attackBg.width / 2 - this.attackBoxes.width / 2;
