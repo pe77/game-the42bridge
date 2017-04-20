@@ -39,7 +39,6 @@ module GameBase {
                     //
                 });
 
-                // this.openAttacks();
                 this.event.dispatch(GameBase.E.HeroEvent.OnHeroSelected);
             }, this);
         }

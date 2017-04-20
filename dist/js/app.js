@@ -49,7 +49,7 @@ var Pk;
                     // se houver contexto, manda pelo contexto
                     if (this.listeners[i].context) {
                         (_a = this.listeners[i].callBack).call.apply(_a, [this.listeners[i].context, data].concat(args));
-                        return;
+                        continue;
                     }
                     // dispara sem contexto mesmo
                     (_b = this.listeners[i]).callBack.apply(_b, [data].concat(args));
@@ -842,7 +842,6 @@ var GameBase;
                         hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
                     //
                 });
-                // this.openAttacks();
                 _this.event.dispatch(GameBase.E.HeroEvent.OnHeroSelected);
             }, this);
         };
