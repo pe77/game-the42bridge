@@ -110,7 +110,7 @@ module GameBase {
             this.selected = true;
         }
 
-        private inputOut()
+        private inputOut() 
         {
             this.selectedIcon.out();
             this.selected = false;

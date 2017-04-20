@@ -79,16 +79,6 @@ module GameBase {
                         this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttack, attack);
                     }, this);
 
-                    /*
-                    // input events
-                    this.attackBoxes.setAll('inputEnabled', true);
-                    this.attackBoxes.setAll('input.useHandCursor', true);
-
-                    this.attackBoxes.callAll('events.onInputDown.add', 'events.onInputDown', ()=>{
-                        this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttack, attack);
-                    }, this);
-                    */
-
                     // pos
                     bg.x = (bg.width+5) * i;
 
