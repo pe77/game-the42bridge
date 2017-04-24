@@ -63,24 +63,29 @@ module GameBase {
                     textEnergy.anchor.x = 0.5;
 
                     // operator
-
                     var operatorIcon = this.game.add.sprite(0, 0, 'ui-hero-operator-' + attack.operator);
                     
+                    var attackBox:GameBase.AttackBox = new GameBase.AttackBox(this.game);
+
                     // add
-                    this.attackBoxes.add(bg);   
-                    this.attackBoxes.add(textValue);
-                    this.attackBoxes.add(textEnergy);
-                    this.attackBoxes.add(operatorIcon);
+                    attackBox.attack = attack;
 
-                    bg.inputEnabled = true;
-                    bg.input.useHandCursor = true;
+                    attackBox.add(bg);   
+                    attackBox.add(textValue);
+                    attackBox.add(textEnergy);
+                    attackBox.add(operatorIcon);
 
-                    bg.events.onInputDown.add(()=>{
-                        this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttack, attack);
-                    }, this);
+                    attackBox.setInputElement(bg);
+                    attackBox.event.add(GameBase.E.AttackBoxEvent.OnAttackSelect, ()=>{
+                        this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttackClick, attack);
+
+                        this.heroDeselect();
+                    }, this)
+
+                    this.attackBoxes.add(attackBox); 
 
                     // pos
-                    bg.x = (bg.width+5) * i;
+                    attackBox.x = (bg.width+5) * i;
 
                     operatorIcon.x = bg.x + bg.width - 10;
                     operatorIcon.y -= 10;
@@ -95,9 +100,10 @@ module GameBase {
 
                 // input events
                 reloadBox.inputEnabled = true;
-                reloadBox.input.useHandCursor = true;
                 reloadBox.events.onInputDown.add(()=>{
-                    this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroReload);
+                    this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroReloadClick);
+
+                    this.heroDeselect();
                 });
 
                 this.attackBoxes.x = this.attackBg.width / 2 - this.attackBoxes.width / 2;
@@ -118,7 +124,6 @@ module GameBase {
                 this.hero.event.add(GameBase.E.HeroEvent.OnHeroDeselect, this.heroDeselect, this);
 
                 this.visible = false;
-
             }
 
             setAsInitialCords()
@@ -134,9 +139,34 @@ module GameBase {
 
             protected heroSelectd()
             {
+                // if hero already move
+                if(this.hero.turnMove)
+                    return;
+                //
+
+                this.updateView();
+
                 this.visible = true;
                 this.resetAttrs();
-                // this.bg.loadTexture('ui-hero-'+this.hero.identification+'-on');
+            }
+
+            updateView()
+            {
+                // check attack boxes avaliable
+                this.attackBoxes.forEach((element)=>{
+
+                    var attackBox:GameBase.AttackBox = <GameBase.AttackBox>element;
+
+                    if(attackBox.attack.energyCost > this.hero.ui.getEnergy())
+                    {
+                        attackBox.alpha = 0.5;
+                        attackBox.blockInput();
+                    }else{
+                        attackBox.alpha = 1;
+                        attackBox.releaseInput();
+                    }
+                        
+                }, this);
             }
 
             resetAttrs()

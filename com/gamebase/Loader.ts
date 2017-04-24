@@ -106,6 +106,10 @@ module GameBase {
             this.load.spritesheet('monster2-idle', 'assets/default/images/chars/enemies/2/idle.png', 650, 474, 1);
             this.load.spritesheet('monster3-idle', 'assets/default/images/chars/enemies/3/idle.png', 300, 500, 1);
             this.load.spritesheet('monster4-idle', 'assets/default/images/chars/enemies/4/idle.png', 500, 550, 1);
+
+            // battle
+            this.load.image('level-flag', 'assets/default/images/ui/d-flag.png');
+            this.load.image('endturn-button', 'assets/default/images/ui/d-bg-over.png');
             
             // main
             this.load.image('main-bg', 'assets/states/main/images/bg/s-background.png');

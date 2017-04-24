@@ -7,8 +7,12 @@ module GameBase {
         
         constructor(game:Pk.PkGame)
         {
-            super(game, new Phaser.Rectangle(0, 0, 273, 372), 1, 42);
+            super(game, new Phaser.Rectangle(0, 0, 273, 372), 1, 93);
 
+            // name
+            this.name = "Lizzard";
+
+            this.level = 5;
         }
 
         create()

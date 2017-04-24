@@ -11,6 +11,15 @@ module GameBase {
 
             // operator
             this.operator       = E.Operator.DIVI;
+
+            // name
+            this.name = "Priest";
+
+            // die turns
+            this.dieTime = 5;
+
+            // revive health
+            this.reviveHealthPoints = 2;
         }
 
         create()

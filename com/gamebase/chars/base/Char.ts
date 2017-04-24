@@ -14,6 +14,8 @@ module GameBase {
 
         body:Phaser.Sprite;
 
+        turnMove:boolean = false;
+
         side:Side = Side.RIGHT; // sprite side
 
         animationIdle:Phaser.Animation;
@@ -81,39 +83,17 @@ module GameBase {
 
         create()
         {
-            /*
-            // animation
-            this.animationIdle = this.body.animations.add('idle');
-            this.animationIdle.play(10, true); // start idle animation
-            */
-
             this.selectedIcon = new GameBase.SelectedIcon(this.game, this.body);
             this.selectedIcon.create();
 
             this.add(this.selectedIcon);
+
         }
 
         setBody(body:Phaser.Sprite):void
         {
             this.body = body;
             this.add(this.body);
-
-            /*
-            this.body.events.onInputOver.add(this.inputOver, this);
-            this.body.events.onInputOut.add(this.inputOut, this);
-            */
-        }
-
-        private inputOver()
-        {
-            this.selectedIcon.in();
-            this.selected = true;
-        }
-
-        private inputOut() 
-        {
-            this.selectedIcon.out();
-            this.selected = false;
         }
 
         addAttack(attack:GameBase.Attack)
@@ -122,25 +102,12 @@ module GameBase {
             this.attacks.push(attack);
         }
 
-        openAttacks()
+        setTurnMove(v:boolean)
         {
-            for (var i = 0; i < this.attacks.length; i++) {
-                var attack = this.attacks[i];
-                
-                // pos attacks
-                attack.x = this.x + this.body.width/2;
-                attack.y = this.y - attack.height;
-
-                // last attack position
-                if(i > 0)
-                    attack.y = this.attacks[i-1].y - attack.height - this.attacks[i-1].energyTypeIcon.height - 50;    
-                //
-
-                // show
-                attack.show(i*this.attackOpenDelay)
-                
-            }
+            this.turnMove = v;
+            this.event.dispatch(GameBase.E.CharEvent.OnCharTurnMove, this.turnMove);
         }
+
     }
 
     export module E
@@ -153,7 +120,14 @@ module GameBase {
             MINU,
             FACT
         }
+
+        export module CharEvent
+        {
+            export const OnCharTurnMove:string 	= "OnCharTurnMove";
+        }
+    
     }
+
 
 
     export module I

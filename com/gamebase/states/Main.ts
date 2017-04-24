@@ -12,6 +12,7 @@ module GameBase
 		charPadding:number = 15;
 
 		padding:number = 20;
+		battles:Array<GameBase.Battle> = [];
 
 		init(...args:any[])
 		{
@@ -20,7 +21,6 @@ module GameBase
 
     	create()
     	{
-
     		// change state bg
             this.game.stage.backgroundColor = "#938da0";
 
@@ -42,7 +42,7 @@ module GameBase
 			this.addLayer('chars');
 			this.addLayer('stage-front-1');
 			this.addLayer('ui');
-
+			this.addLayer('block');
 
 			// scenario sprites
 			var mainBg:Phaser.Sprite = this.game.add.sprite(0, 0, 'main-bg');
@@ -79,11 +79,10 @@ module GameBase
 			lizzard.x = this.game.world.width - lizzard.width;
 			lizzard.y = 200;
 			lizzard.ui.updatePosition();
-			
 
 			var i = 0;
 			this.heroes.forEach((hero:GameBase.Hero)=>{
-				
+
 				// pos
 				hero.x = this.padding;
 				
@@ -138,6 +137,23 @@ module GameBase
 			
 			// transition
 			this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
+
+			// create battles
+			var battle1:GameBase.Battle = new GameBase.Battle(this.game, this, 1);
+			battle1.create('ui', 'block');
+			battle1.addHero(druid);
+			battle1.addHero(thief);
+			battle1.addHero(priest);
+			battle1.addHero(knight);
+
+			battle1.addEnemy(lizzard);
+
+			// add battles
+			this.battles.push(battle1);
+
+
+			// start first battle
+			battle1.start();
     	}
 
 		render()

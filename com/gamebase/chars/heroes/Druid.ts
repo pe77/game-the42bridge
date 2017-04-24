@@ -14,6 +14,15 @@ module GameBase {
 
             // operator
             this.operator       = E.Operator.MULT;
+
+            // name
+            this.name = "Druid";
+
+            // die turns
+            this.dieTime = 5;
+
+            // revive health
+            this.reviveHealthPoints = 3;
         }
 
         create()

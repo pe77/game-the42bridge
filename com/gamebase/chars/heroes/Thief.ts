@@ -11,6 +11,15 @@ module GameBase {
 
             // operator
             this.operator       = E.Operator.MINU;
+
+            // name
+            this.name = "Thief";
+
+            // die turns
+            this.dieTime = 1;
+
+            // revive health
+            this.reviveHealthPoints = 2;
         }
 
         create()

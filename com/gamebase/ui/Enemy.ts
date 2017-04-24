@@ -18,6 +18,8 @@ module GameBase {
                 fill: "#643b35"
             };
 
+            textValue:Phaser.Text;
+
             constructor(game:Pk.PkGame, enemy:GameBase.Enemy)
             {
                 super(game)
@@ -32,20 +34,20 @@ module GameBase {
                 this.bg = this.game.add.sprite(0, 0, 'ui-enemy-value-bg');
 
                 // value
-                var textValue = this.game.add.text(0, 0,
+                this.textValue = this.game.add.text(0, 0,
                     this.enemy.value.toString(), // text
                     this.textStyleValues // font style
                 );
-                textValue.align = "center";
-                textValue.anchor.set(0.5);
+                this.textValue.align = "center";
+                this.textValue.anchor.set(0.5);
 
-                textValue.x = this.bg.width / 2;
-                textValue.y = this.bg.height / 2;
+                this.textValue.x = this.bg.width / 2;
+                this.textValue.y = this.bg.height / 2;
 
 
                 // add 
                 this.add(this.bg);
-                this.add(textValue);
+                this.add(this.textValue);
 
                 // pos
                 this.updatePosition();
@@ -59,6 +61,12 @@ module GameBase {
 
                 this.setAsInitialCords();
             }
+
+            updateValue()
+            {
+                this.textValue.text = this.enemy.value.toString();
+            }
+
 
             setAsInitialCords()
             {

@@ -27,5 +27,16 @@ module GameBase {
             this.energyType     = energyType;
         }
 
+
+        
+
+    }
+
+    export module E
+    {
+        export module AttackEvent
+        {
+            export const OnAttackResolve:string 	= "OnAttackResolve";
+        }
     }
 } 

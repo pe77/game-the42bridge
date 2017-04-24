@@ -47,9 +47,47 @@ module GameBase {
                 this.add(this.healthGaude);
                 this.add(this.energiGaude);
                 
+                /*
                 // add heath icons
                 for (var i = 0; i < this.hero.healthMax; i++) 
-                    this.healthGaude.addIcon(new GameBase.Icon(this.game, 'heath-icon'));
+                    this.healthGaude.addIcon(new GameBase.GaudeIcon(this.game, 'heath-icon'), i*70);
+                //
+                */
+
+                this.addHealth(this.hero.healthMax);
+                this.addEnergy(this.hero.energyMax);
+
+                // pos 
+                this.bg.y = this.hero.body.height;
+                this.bg.anchor.x = .5;
+                this.bg.x = this.hero.body.width / 2;
+
+                this.healthGaude.x = this.bg.x - this.bg.width / 2;
+                this.healthGaude.x += 65;
+                this.healthGaude.y = this.bg.y + 40;
+ 
+                this.energiGaude.x = this.healthGaude.x;
+                this.energiGaude.y = this.healthGaude.y + this.gaudePadding;
+
+                this.setAsInitialCords();
+
+                this.hero.event.add(GameBase.E.HeroEvent.OnHeroSelected, this.heroSelectd, this);
+                this.hero.event.add(GameBase.E.HeroEvent.OnHeroDeselect, this.heroDeselect, this);
+
+                // hero end turn
+                this.hero.event.add(GameBase.E.CharEvent.OnCharTurnMove,(t, turnMove)=>{
+                    // if finish turn
+                    if(turnMove)
+                        this.heroDeselect();
+                    //
+                }, this);
+            }
+
+            addEnergy(v:number)
+            {
+                // check energy max 
+                if(v+this.energiGaude.getVal() > this.hero.energyMax)
+                    v =  this.hero.energyMax - this.energiGaude.getVal(); 
                 //
 
                 // select energy icon
@@ -65,28 +103,53 @@ module GameBase {
                 }
 
                 // add energy icons
-                for (var i = 0; i < this.hero.energyMax; i++) 
-                    this.energiGaude.addIcon(new GameBase.Icon(this.game, energyIconKey));
+                for (var i = 0; i < v; i++) 
+                    this.energiGaude.addIcon(new GameBase.GaudeIcon(this.game, energyIconKey), i*80);
                 //
 
-                // pos 
-                this.bg.y = this.hero.body.height;
-                this.bg.anchor.x = .5;
-                this.bg.x = this.hero.body.width / 2;
-
-                this.healthGaude.x = this.bg.x - this.bg.width / 2;
-                this.healthGaude.x += 65;
-                this.healthGaude.y = this.bg.y + 40;
-
-                this.energiGaude.x = this.healthGaude.x;
-                this.energiGaude.y = this.healthGaude.y + this.gaudePadding;
-
-                this.setAsInitialCords();
-
-                this.hero.event.add(GameBase.E.HeroEvent.OnHeroSelected, this.heroSelectd, this);
-                this.hero.event.add(GameBase.E.HeroEvent.OnHeroDeselect, this.heroDeselect, this);
-
+                this.hero.uiAttack.updateView();
             }
+
+            addHealth(v:number)
+            {
+                // check energy max 
+                if(v+this.healthGaude.getVal() > this.hero.energyMax)
+                    v =  this.hero.healthMax - this.healthGaude.getVal(); 
+                //
+
+                // add heath icons
+                for (var i = 0; i < v; i++) 
+                    this.healthGaude.addIcon(new GameBase.GaudeIcon(this.game, 'heath-icon'), i*70);
+                //
+
+                this.hero.uiAttack.updateView();
+            }
+
+            removeEnergy(val:number)
+            {
+                this.energiGaude.subVal(val);
+
+                this.hero.uiAttack.updateView();
+            }
+
+            getEnergy():number
+            {
+                return this.energiGaude.getVal();
+            }
+
+
+            removeHealth(val:number)
+            {
+                this.healthGaude.subVal(val);
+
+                this.hero.uiAttack.updateView();
+            }
+
+            getHealth():number
+            {
+                return this.healthGaude.getVal();
+            }
+
 
             setAsInitialCords()
             {
@@ -94,19 +157,29 @@ module GameBase {
                 this.initialRotation = this.rotation;
             }
 
-            protected heroDeselect()
+            heroDeselect()
             {
                 this.bg.loadTexture('ui-hero-'+this.hero.identification+'-off');
             }
 
-            protected heroSelectd()
+            heroSelectd()
             {
+                // if hero already move
+                if(this.hero.turnMove)
+                    return;
+                //
+
                 this.resetAttrs();
                 this.bg.loadTexture('ui-hero-'+this.hero.identification+'-on');
             }
 
-            protected inputOver()
+            inputOver()
             {
+                // if hero already move
+                if(this.hero.turnMove)
+                    return;
+                //
+
                 this.y -= 10;
             }
 
