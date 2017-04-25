@@ -47,13 +47,7 @@ module GameBase {
                 this.add(this.healthGaude);
                 this.add(this.energiGaude);
                 
-                /*
-                // add heath icons
-                for (var i = 0; i < this.hero.healthMax; i++) 
-                    this.healthGaude.addIcon(new GameBase.GaudeIcon(this.game, 'heath-icon'), i*70);
-                //
-                */
-
+                // add bla
                 this.addHealth(this.hero.healthMax);
                 this.addEnergy(this.hero.energyMax);
 

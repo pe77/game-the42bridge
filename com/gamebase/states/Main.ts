@@ -126,7 +126,7 @@ module GameBase
 				hero.uiAttack.y = hero.y - hero.uiAttack.height + 50;
 				hero.uiAttack.setAsInitialCords();
 
-				
+				hero.updatePosition();
 				
 				// add ui to layer
 				this.addToLayer('ui', hero.ui);

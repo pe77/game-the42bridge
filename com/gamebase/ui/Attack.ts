@@ -79,7 +79,7 @@ module GameBase {
                     attackBox.event.add(GameBase.E.AttackBoxEvent.OnAttackSelect, ()=>{
                         this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttackClick, attack);
 
-                        this.heroDeselect();
+                        this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
                     }, this)
 
                     this.attackBoxes.add(attackBox); 
@@ -103,7 +103,7 @@ module GameBase {
                 reloadBox.events.onInputDown.add(()=>{
                     this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroReloadClick);
 
-                    this.heroDeselect();
+                    this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
                 });
 
                 this.attackBoxes.x = this.attackBg.width / 2 - this.attackBoxes.width / 2;
@@ -135,6 +135,8 @@ module GameBase {
             protected heroDeselect()
             {
                 this.visible = false;
+                this.hero.selected = false;
+                
             }
 
             protected heroSelectd()

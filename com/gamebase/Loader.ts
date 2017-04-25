@@ -67,7 +67,7 @@ module GameBase {
 
             // chars
             this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/iddle.png', 200, 300, 1);
-            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 150, 200, 1);
+            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 154, 163, 1);
             this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/iddle.png', 183, 247, 12);
             this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 204, 12);
 
@@ -83,6 +83,11 @@ module GameBase {
             this.load.image('ui-hero-3-on', 'assets/default/images/chars/heroes/3/ui-on.png');
             this.load.image('ui-hero-4-on', 'assets/default/images/chars/heroes/4/ui-on.png');
 
+            this.load.image('ui-hero-1-selected', 'assets/default/images/chars/heroes/1/selected.png');
+            this.load.image('ui-hero-2-selected', 'assets/default/images/chars/heroes/2/selected.png');
+            this.load.image('ui-hero-3-selected', 'assets/default/images/chars/heroes/3/selected.png');
+            this.load.image('ui-hero-4-selected', 'assets/default/images/chars/heroes/4/selected.png');
+            
             this.load.image('ui-hero-1-off', 'assets/default/images/chars/heroes/1/ui-off.png');
             this.load.image('ui-hero-2-off', 'assets/default/images/chars/heroes/2/ui-off.png');
             this.load.image('ui-hero-3-off', 'assets/default/images/chars/heroes/3/ui-off.png');

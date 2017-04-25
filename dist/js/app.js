@@ -595,7 +595,7 @@ var GameBase;
             this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
             // chars
             this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/iddle.png', 200, 300, 1);
-            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 150, 200, 1);
+            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 154, 163, 1);
             this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/iddle.png', 183, 247, 12);
             this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 204, 12);
             // icons
@@ -608,6 +608,10 @@ var GameBase;
             this.load.image('ui-hero-2-on', 'assets/default/images/chars/heroes/2/ui-on.png');
             this.load.image('ui-hero-3-on', 'assets/default/images/chars/heroes/3/ui-on.png');
             this.load.image('ui-hero-4-on', 'assets/default/images/chars/heroes/4/ui-on.png');
+            this.load.image('ui-hero-1-selected', 'assets/default/images/chars/heroes/1/selected.png');
+            this.load.image('ui-hero-2-selected', 'assets/default/images/chars/heroes/2/selected.png');
+            this.load.image('ui-hero-3-selected', 'assets/default/images/chars/heroes/3/selected.png');
+            this.load.image('ui-hero-4-selected', 'assets/default/images/chars/heroes/4/selected.png');
             this.load.image('ui-hero-1-off', 'assets/default/images/chars/heroes/1/ui-off.png');
             this.load.image('ui-hero-2-off', 'assets/default/images/chars/heroes/2/ui-off.png');
             this.load.image('ui-hero-3-off', 'assets/default/images/chars/heroes/3/ui-off.png');
@@ -902,7 +906,7 @@ var GameBase;
             _this.attacks = [];
             _this.attackOpenDelay = 100;
             var bodySprite = Pk.PkUtils.createSquare(game, body.width, body.height);
-            bodySprite.alpha = .3;
+            bodySprite.alpha = .0;
             _this.setBody(bodySprite);
             return _this;
         }
@@ -1120,6 +1124,7 @@ var GameBase;
         function Hero(game, body, id) {
             var _this = _super.call(this, game, body) || this;
             _this.identification = 0;
+            _this.selected = false;
             _this.energyType = E.EnergyType.STAMINA;
             _this.target = null;
             _this.dieWaiting = 0;
@@ -1137,13 +1142,20 @@ var GameBase;
             _super.prototype.create.call(this);
             this.ui.create();
             this.uiAttack.create();
+            // selected sprite
+            this.selectedSprite = this.game.add.sprite(0, 0, 'ui-hero-' + this.identification + '-selected');
+            this.add(this.selectedSprite);
+            this.selectedSprite.visible = false;
+            // events
             this.body.events.onInputDown.add(function () {
                 // deselect all others
                 GameBase.Hero.heroes.forEach(function (hero) {
-                    if (hero.identification != _this.identification)
+                    if (hero.identification != _this.identification) {
+                        hero.selected = false;
                         hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
-                    //
+                    }
                 });
+                _this.selected = true;
                 _this.event.dispatch(GameBase.E.HeroEvent.OnHeroSelected);
             }, this);
             this.event.add(GameBase.E.HeroEvent.OnHeroReloadClick, this.reload, this);
@@ -1163,11 +1175,33 @@ var GameBase;
             this.event.add(GameBase.E.AttackEvent.OnAttackResolve, function (e, enemy, damage, damageType) {
                 _this.resolveAttack(enemy, damage, damageType);
             }, this);
+            this.event.add(GameBase.E.HeroEvent.OnHeroSelected, this.heroSelectd, this);
+            this.event.add(GameBase.E.HeroEvent.OnHeroDeselect, this.heroDeselect, this);
+            this.body.events.onInputOver.add(this.inputOver, this);
+            this.body.events.onInputOut.add(this.inputOut, this);
+            this.updatePosition();
+        };
+        Hero.prototype.updatePosition = function () {
+            this.selectedSprite.y = this.body.height - this.selectedSprite.height + 11;
         };
         Hero.prototype.setBody = function (body) {
             _super.prototype.setBody.call(this, body);
             // mouse over check
             this.body.inputEnabled = true;
+        };
+        Hero.prototype.inputOut = function () {
+            if (!this.selected)
+                this.selectedSprite.visible = false;
+            //
+        };
+        Hero.prototype.inputOver = function () {
+            this.selectedSprite.visible = true;
+        };
+        Hero.prototype.heroDeselect = function () {
+            this.selectedSprite.visible = false;
+        };
+        Hero.prototype.heroSelectd = function () {
+            this.selectedSprite.visible = true;
         };
         Hero.prototype.die = function () {
             // make sure hero is realy dead
@@ -1404,7 +1438,7 @@ var GameBase;
     var Thief = (function (_super) {
         __extends(Thief, _super);
         function Thief(game) {
-            var _this = _super.call(this, game, new Phaser.Rectangle(0, 0, 125, 145), 2) || this;
+            var _this = _super.call(this, game, new Phaser.Rectangle(0, 0, 154, 163), 2) || this;
             // energy type
             _this.energyType = GameBase.E.EnergyType.STAMINA;
             // operator
@@ -1435,7 +1469,7 @@ var GameBase;
             _super.prototype.create.call(this);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
-            aniSprite.y += 28; // padding sprite adjust
+            // aniSprite.y+=18; // padding sprite adjust
             this.playAnimation('iddle', 10);
         };
         return Thief;
@@ -1776,6 +1810,7 @@ var GameBase;
                 hero.uiAttack.x = 140 * i;
                 hero.uiAttack.y = hero.y - hero.uiAttack.height + 50;
                 hero.uiAttack.setAsInitialCords();
+                hero.updatePosition();
                 // add ui to layer
                 _this.addToLayer('ui', hero.ui);
                 _this.addToLayer('ui', hero.uiAttack);
@@ -2068,7 +2103,7 @@ var GameBase;
                     attackBox.setInputElement(bg);
                     attackBox.event.add(GameBase.E.AttackBoxEvent.OnAttackSelect, function () {
                         _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttackClick, attack);
-                        _this.heroDeselect();
+                        _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
                     }, _this);
                     _this.attackBoxes.add(attackBox);
                     // pos
@@ -2084,7 +2119,7 @@ var GameBase;
                 reloadBox.inputEnabled = true;
                 reloadBox.events.onInputDown.add(function () {
                     _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroReloadClick);
-                    _this.heroDeselect();
+                    _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
                 });
                 this.attackBoxes.x = this.attackBg.width / 2 - this.attackBoxes.width / 2;
                 this.attackBoxes.y += 32;
@@ -2106,6 +2141,7 @@ var GameBase;
             };
             Attack.prototype.heroDeselect = function () {
                 this.visible = false;
+                this.hero.selected = false;
             };
             Attack.prototype.heroSelectd = function () {
                 // if hero already move
@@ -2267,12 +2303,7 @@ var GameBase;
                 this.add(this.bg);
                 this.add(this.healthGaude);
                 this.add(this.energiGaude);
-                /*
-                // add heath icons
-                for (var i = 0; i < this.hero.healthMax; i++)
-                    this.healthGaude.addIcon(new GameBase.GaudeIcon(this.game, 'heath-icon'), i*70);
-                //
-                */
+                // add bla
                 this.addHealth(this.hero.healthMax);
                 this.addEnergy(this.hero.energyMax);
                 // pos 

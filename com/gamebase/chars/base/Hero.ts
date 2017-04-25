@@ -9,6 +9,8 @@ module GameBase {
         uiAttack:GameBase.ui.Attack;
         identification:number = 0;
 
+        selected:boolean = false;
+
         energyType:E.EnergyType = E.EnergyType.STAMINA;
         target:GameBase.Char = null;
 
@@ -20,6 +22,9 @@ module GameBase {
         reloadEnergyQtn:number = 2; // how much on reload energy move
 
         static heroes:Array<GameBase.Hero> = [];
+
+        
+        selectedSprite:Phaser.Sprite;
 
         constructor(game, body, id)
         {
@@ -38,15 +43,25 @@ module GameBase {
             this.ui.create();
             this.uiAttack.create();
 
+            // selected sprite
+            this.selectedSprite = this.game.add.sprite(0, 0, 'ui-hero-'+this.identification+'-selected');
+            this.add(this.selectedSprite);
+            this.selectedSprite.visible = false;
+
+
+            // events
             this.body.events.onInputDown.add(()=>{
 
                 // deselect all others
                 GameBase.Hero.heroes.forEach(hero => {
                     if(hero.identification != this.identification)
+                    {
+                        hero.selected = false;
                         hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
-                    //
+                    }
                 });
 
+                this.selected = true;
                 this.event.dispatch(GameBase.E.HeroEvent.OnHeroSelected);
             }, this);
 
@@ -73,6 +88,19 @@ module GameBase {
                 this.resolveAttack(enemy, damage, damageType);
 
             }, this);
+
+            this.event.add(GameBase.E.HeroEvent.OnHeroSelected, this.heroSelectd, this);
+            this.event.add(GameBase.E.HeroEvent.OnHeroDeselect, this.heroDeselect, this);
+
+            this.body.events.onInputOver.add(this.inputOver, this);
+            this.body.events.onInputOut.add(this.inputOut, this);
+
+            this.updatePosition();
+        }
+
+        updatePosition()
+        {
+            this.selectedSprite.y = this.body.height - this.selectedSprite.height + 11;
         }
 
         setBody(body:Phaser.Sprite)
@@ -81,6 +109,28 @@ module GameBase {
 
             // mouse over check
             this.body.inputEnabled = true;
+        }
+
+        inputOut()
+        {
+            if(!this.selected)
+                this.selectedSprite.visible = false;
+            //
+        }
+
+        inputOver()
+        {
+            this.selectedSprite.visible = true;
+        }
+
+        heroDeselect()
+        {
+            this.selectedSprite.visible = false;
+        }
+
+        heroSelectd()
+        {
+            this.selectedSprite.visible = true;
         }
 
         die()
