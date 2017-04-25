@@ -16,10 +16,12 @@ module GameBase {
             this.name = "Thief";
 
             // die turns
-            this.dieTime = 1;
+            this.dieTime = 4;
 
             // revive health
-            this.reviveHealthPoints = 2;
+            this.reviveHealthPoints = 1;
+
+            this.reloadEnergyQtn = 4;
         }
 
         create()

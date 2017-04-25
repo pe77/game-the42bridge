@@ -64,6 +64,14 @@ module GameBase {
                     break;
             }
 
+            // check if die
+            if(this.value == 42)
+            {
+                this.alive = false;
+                this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyDie);
+            }
+                
+
         }
 
         attack()
@@ -82,7 +90,7 @@ module GameBase {
             });
 
             // if all heroes die, pass turn
-            if(!standHeroes)
+            if(!standHeroes.length)
             {
                 // wait a little time
                 setTimeout(()=>{
@@ -91,14 +99,13 @@ module GameBase {
                 return;
             }
 
-
             // select a random hero
             var hero:GameBase.Hero = standHeroes[this.game.rnd.integerInRange(0, standHeroes.length-1)];
             
             var damage:number = this.game.rnd.integerInRange(1, (this.level*2));
             var damageType:number;
 
-            damage = 5;// temp
+            // damage = 5;// temp
 
             // sort damage type
             switch(this.game.rnd.integerInRange(1, 5))
@@ -131,11 +138,8 @@ module GameBase {
             
             // wait a little and dispatch event
             setTimeout(()=>{
-                this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve);
+                this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
             }, 1500)
-
-            
-            
         }
 
         setValue(v:number)
@@ -143,6 +147,19 @@ module GameBase {
             
             this.value = Math.floor(v);
             this.ui.updateValue();
+        }
+
+        destroy()
+        {
+            // destroy ui
+            this.ui.destroy();
+
+            // remove enemies
+            this.targets = [];
+
+            super.destroy();
+
+            // console.debug('enemy ['+this.name+'] destroy:', this.event)
         }
 
     }
@@ -153,7 +170,8 @@ module GameBase {
         {
             export const OnEnemySelected:string 	= "OnEnemySelected";
             export const OnEnemyDeselect:string 	= "OnEnemyDeselect";
-            export const OnEnemyResolve:string 	= "OnEnemyResolve";
+            export const OnEnemyResolve:string 	    = "OnEnemyResolve";
+            export const OnEnemyDie:string 	        = "OnEnemyDie";
         }
 
         export enum AttackType

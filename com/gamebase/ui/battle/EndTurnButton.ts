@@ -40,8 +40,6 @@ module GameBase {
             // this.buttonBack.events.onInputOut.dispatch();
 
             this.visible = false;
-			
-            this.in();
         }
 
         in()
@@ -52,14 +50,18 @@ module GameBase {
             this.alpha = 1;
             
 
-            this.addTween(this).from(
+            var tween = this.addTween(this).from(
                 {
                     alpha:0
                 }, 
                 this.inOutTime, 
                 Phaser.Easing.Back.In,
                 true
-            )
+            );
+
+            tween.onComplete.add(()=>{
+                // this.visible = false;
+            }, this)
         }
 
         out()

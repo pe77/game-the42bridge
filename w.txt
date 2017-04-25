@@ -1,0 +1,31 @@
+level 1 - 22
+-1, x2
+
+druid - 2*
+thief - 3*
+priest- 5
+knight- 5
+
+level 2 - 76
+/2, -1, +5
+
+druid - 2 (r) = 5
+thief - 3*
+priest- 2*
+knight- 1*
+
+level 3 - 14
+x3
+
+druid - 1*
+thief - 1 (r) = 5
+priest- 2 (r) = 5
+knight- 2 (r) = 4
+
+level 4 - 208
+/4, -15, +5
+
+druid - 1 (r) = 4
+thief - 0*
+priest- 0*
+knight- 0*

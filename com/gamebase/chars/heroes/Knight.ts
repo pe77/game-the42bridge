@@ -19,7 +19,9 @@ module GameBase {
             this.dieTime = 2;
 
             // revive health
-            this.reviveHealthPoints = 3;
+            this.reviveHealthPoints = 4;
+
+            this.reloadEnergyQtn = 2;
         }
 
         create()

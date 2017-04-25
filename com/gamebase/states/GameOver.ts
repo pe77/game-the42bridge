@@ -17,7 +17,7 @@ module GameBase
 
 		render()
         {
-            this.game.debug.text('GAME OVER', 35, 35);
+            this.game.debug.text('GAME OVER -- press F5 to play again', 35, 35);
         }
     }
 

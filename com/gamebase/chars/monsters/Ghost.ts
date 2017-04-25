@@ -3,17 +3,17 @@
  
 module GameBase {
  
-    export class Lizzard extends GameBase.Enemy {
+    export class Ghost extends GameBase.Enemy {
         
         constructor(game:Pk.PkGame)
         {
-            // 22 - +1 | x2 = 42
-            super(game, new Phaser.Rectangle(0, 0, 273, 372), 1, 22);
+            // 14 - x3 = 42
+            super(game, new Phaser.Rectangle(0, 0, 220, 371), 3, 14);
 
             // name
-            this.name = "Lizzard";
+            this.name = "Ghost";
 
-            this.level = 1;
+            this.level = 3;
         }
 
         create()
@@ -22,7 +22,7 @@ module GameBase {
             
             // sprite set idle
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'monster'+this.identification+'-idle'), 'idle');
-            aniSprite.y+=69; // padding sprite adjust
+            aniSprite.y+=102; // padding sprite adjust
         }
 
     }

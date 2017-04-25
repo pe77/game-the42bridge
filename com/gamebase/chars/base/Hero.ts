@@ -17,6 +17,8 @@ module GameBase {
 
         reviveHealthPoints:number = 2; // qtn of heath when revive
 
+        reloadEnergyQtn:number = 2; // how much on reload energy move
+
         static heroes:Array<GameBase.Hero> = [];
 
         constructor(game, body, id)
@@ -96,6 +98,8 @@ module GameBase {
             // qtn of turn hero will wait die
             this.dieWaiting += this.dieTime;
 
+            this.alive = false;
+
             console.log('['+this.name+'] DIE.. waiting for ['+this.dieTime+'] turns for revive!');
         }
 
@@ -119,6 +123,8 @@ module GameBase {
 
             this.setTurnMove(false);
             this.ui.addHealth(this.reviveHealthPoints);
+
+            this.alive = true;
         }
         
         attack(attack:GameBase.Attack)
@@ -135,15 +141,14 @@ module GameBase {
             
             this.target.event.dispatch(GameBase.E.AttackEvent.OnAttackResolve, this, attack);
 
-            // call move/attack events
-            this.event.dispatch(GameBase.E.HeroEvent.OnHeroMove);
-            this.event.dispatch(GameBase.E.HeroEvent.OnHeroAttack);
-            
-
             // remove attack energy
             this.ui.removeEnergy(attack.energyCost);
 
             this.setTurnMove(true);
+
+            // call move/attack events
+            this.event.dispatch(GameBase.E.HeroEvent.OnHeroMove);
+            this.event.dispatch(GameBase.E.HeroEvent.OnHeroAttack, attack, this.target);
         }
 
 
@@ -184,7 +189,7 @@ module GameBase {
             this.event.dispatch(GameBase.E.HeroEvent.OnHeroReload);
 
             // reload energy
-            this.ui.addEnergy(2);
+            this.ui.addEnergy(this.reloadEnergyQtn);
 
             this.setTurnMove(true);
         }

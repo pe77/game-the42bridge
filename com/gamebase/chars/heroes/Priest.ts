@@ -16,10 +16,12 @@ module GameBase {
             this.name = "Priest";
 
             // die turns
-            this.dieTime = 5;
+            this.dieTime = 9;
 
             // revive health
             this.reviveHealthPoints = 2;
+
+            this.reloadEnergyQtn = 4;
         }
 
         create()

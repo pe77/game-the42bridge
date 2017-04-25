@@ -19,6 +19,8 @@ module GameBase {
 
         event:Pk.PkEvent;
 
+        finished:boolean = false;
+
         constructor(game:Pk.PkGame, state:Pk.PkState, level:number)
         {
             this.game = game;
@@ -60,10 +62,11 @@ module GameBase {
             // show level flag
             this.levelFlag.show(this.level);
 
-            
+            console.log('start battle level:', this.level)
+
             this.heroes.forEach(hero => {
                 // show heroes
-                hero.visible = true;
+                hero.ui.visible = hero.visible = true;
 
                 // set targets :: temp
                 if(this.enemies.length)
@@ -71,27 +74,115 @@ module GameBase {
                     hero.target = this.enemies[0];
                     this.enemies[0].targets.push(hero);
                 }
+
+                // event handlers
+                hero.event.add(GameBase.E.HeroEvent.OnHeroAttack, (event, a, e)=>{
+                    this.checkEndBattle();
+                }, this);
             });
 
             // show enemies
             this.enemies.forEach(enemy => {
-                enemy.visible = true;
+                enemy.ui.visible = enemy.visible = true;
+
+                enemy.event.add(GameBase.E.EnemyEvent.OnEnemyResolve, ()=>{
+                    this.checkEndBattle();
+                }, this);
             });
+
+            // show turn button
+            this.endTurnButton.in();
 
             this.event.add(GameBase.E.BattleEvent.OnEndTurn, this.nextTurn, this);
         }
 
         addHero(hero:GameBase.Hero)
         {
-            hero.visible = false;
+            hero.ui.visible = hero.visible = false;
             this.heroes.push(hero);
         }
 
         addEnemy(enemy:GameBase.Enemy)
         {
-            enemy.visible = false;
+            enemy.ui.visible = enemy.visible = false;
             this.enemies.push(enemy);
         }  
+        
+        checkEndBattle()
+        {
+            if(this.finished)
+            {
+                console.log('ignore battle:', this.level)
+                return;
+            }
+            
+            var allEnemiesDie:boolean = true;
+            for (var i = 0; i < this.enemies.length; i++)
+            {
+                if(this.enemies[i].alive)
+                {
+                    allEnemiesDie = false;
+                    break;
+                }
+                    
+            }
+
+            if(allEnemiesDie)
+            {
+                // last param is win/lost battle
+                this.endBattle(true);
+                return;
+            }
+
+            var allHeroesDie:boolean = true;
+            for (var i = 0; i < this.heroes.length; i++)
+            {
+                if(this.heroes[i].alive)
+                {
+                    allHeroesDie = false;
+                    break;
+                }
+                    
+            }
+
+            if(allHeroesDie)
+            {
+                // last param is win/lost battle
+                this.endBattle(false);
+                return;
+            }
+
+        }
+
+        endBattle(win:boolean)
+        {
+            // remove enemy hero target
+            this.heroes.forEach(hero => {
+                // hide heroes
+                hero.visible = false;
+
+                // remove hero target
+                hero.target = null;
+
+                // reset heroes move    
+                hero.setTurnMove(false);
+            });
+
+            // remove enemies and heores
+            for (var i = 0; i < this.enemies.length; i++)
+            {
+                this.enemies[i].destroy();
+            }
+
+            this.finished = true;
+
+            // dispatch end battle event
+            this.event.dispatch(GameBase.E.BattleEvent.OnBattleEnd, win);
+            
+            // block events
+            this.event.clear();
+            Pk.PkEvent.ignoreContext(this);
+        }
 
         endTurn()
         {
@@ -102,20 +193,20 @@ module GameBase {
             // enemies move
             this.enemiesMove();
             
-            
             this.heroes.forEach(hero => {
                 // check turn move for all
                 hero.setTurnMove(true);
 
                 hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
             });
-            
-            // this.state.transition.change('GameOver');
+           
         }
+
 
         nextTurn()
         {
-            console.log('next turn')
+            console.log('---- next turn ----')
+
             // reset moves
             this.enemies.forEach(enemy => {
                 enemy.setTurnMove(false);

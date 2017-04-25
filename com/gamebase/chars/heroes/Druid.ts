@@ -19,10 +19,12 @@ module GameBase {
             this.name = "Druid";
 
             // die turns
-            this.dieTime = 5;
+            this.dieTime = 8;
 
             // revive health
             this.reviveHealthPoints = 3;
+
+            this.reloadEnergyQtn = 3;
         }
 
         create()
