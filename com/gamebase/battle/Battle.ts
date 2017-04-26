@@ -77,7 +77,12 @@ module GameBase {
 
                 // event handlers
                 hero.event.add(GameBase.E.HeroEvent.OnHeroAttack, (event, a, e)=>{
-                    this.checkEndBattle();
+
+                    var hero:GameBase.Hero = <GameBase.Hero>event.target;
+                    var attack:GameBase.Attack = <GameBase.Attack>a;
+                    var enemy:GameBase.Enemy = <GameBase.Enemy>e;
+
+                    this.playHeroAttack(hero, attack, enemy);
                 }, this);
             });
 
@@ -94,6 +99,28 @@ module GameBase {
             this.endTurnButton.in();
 
             this.event.add(GameBase.E.BattleEvent.OnEndTurn, this.nextTurn, this);
+        }
+
+        playHeroAttack(hero:GameBase.Hero, attack:GameBase.Attack, enemy:GameBase.Enemy)
+        {
+            // create calculation splash
+            var hac:GameBase.HeroAttackCalculation = new GameBase.HeroAttackCalculation(this.game, attack, enemy);
+            hac.create();
+
+            this.blockBg.visible = true;
+
+            // event
+            hac.event.add(GameBase.E.HeroAttackCalculation.End, ()=>{
+                this.blockBg.visible = false;
+                this.checkEndBattle();
+            }, this);
+
+            // play animation
+            setTimeout(()=>{ // wait for lose attr animation
+                hac.show();
+            }, 700)
+            
+            
         }
 
         addHero(hero:GameBase.Hero)
@@ -164,15 +191,19 @@ module GameBase {
                 // remove hero target
                 hero.target = null;
 
-                // reset heroes move    
-                hero.setTurnMove(false);
+                // reset heroes move, if alive 
+                if(hero.alive)
+                    hero.setTurnMove(false);
+                //
             });
 
             // remove enemies and heores
             for (var i = 0; i < this.enemies.length; i++)
-            {
                 this.enemies[i].destroy();
-            }
+            //
+
+            // remove nextTurn button
+            this.endTurnButton.out();
 
             this.finished = true;
 

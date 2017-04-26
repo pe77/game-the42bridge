@@ -101,6 +101,16 @@ module GameBase {
                     this.energiGaude.addIcon(new GameBase.GaudeIcon(this.game, energyIconKey), i*80);
                 //
 
+                var attrChange:GameBase.AttributeChange = new GameBase.AttributeChange(
+                    this.game, 
+                    this.hero, 
+                    v, 
+                    <number>this.hero.energyType,
+                    true
+                );
+                attrChange.create();
+                attrChange.show();
+
                 this.hero.uiAttack.updateView();
             }
 
@@ -116,12 +126,33 @@ module GameBase {
                     this.healthGaude.addIcon(new GameBase.GaudeIcon(this.game, 'heath-icon'), i*70);
                 //
 
+                var attrChange:GameBase.AttributeChange = new GameBase.AttributeChange(
+                    this.game, 
+                    this.hero, 
+                    v, 
+                    GameBase.E.AttributeType.HEALTH,
+                    true
+                );
+                attrChange.create();
+                attrChange.show();
+
+
                 this.hero.uiAttack.updateView();
             }
 
             removeEnergy(val:number)
             {
                 this.energiGaude.subVal(val);
+
+                var attrChange:GameBase.AttributeChange = new GameBase.AttributeChange(
+                    this.game, 
+                    this.hero, 
+                    val, 
+                    <number>this.hero.energyType,
+                    false
+                );
+                attrChange.create();
+                attrChange.show();
 
                 this.hero.uiAttack.updateView();
             }
@@ -135,6 +166,16 @@ module GameBase {
             removeHealth(val:number)
             {
                 this.healthGaude.subVal(val);
+
+                var attrChange:GameBase.AttributeChange = new GameBase.AttributeChange(
+                    this.game, 
+                    this.hero, 
+                    val, 
+                    GameBase.E.AttributeType.HEALTH,
+                    false
+                );
+                attrChange.create();
+                attrChange.show();
 
                 this.hero.uiAttack.updateView();
             }

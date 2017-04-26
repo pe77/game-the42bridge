@@ -196,6 +196,15 @@ module GameBase {
 
             this.setTurnMove(true);
 
+            // play attack animation
+            this.playAttack(attack, <GameBase.Enemy>this.target);
+        }
+
+        playAttack(attack:GameBase.Attack, enemy:GameBase.Enemy)
+        {
+            // play hero attack
+            // @todo
+
             // call move/attack events
             this.event.dispatch(GameBase.E.HeroEvent.OnHeroMove);
             this.event.dispatch(GameBase.E.HeroEvent.OnHeroAttack, attack, this.target);
@@ -252,6 +261,13 @@ module GameBase {
         {
             STAMINA,
             MANA
+        }
+
+        export enum AttributeType
+        {
+            STAMINA,
+            MANA,
+            HEALTH
         }
 
         export module HeroEvent

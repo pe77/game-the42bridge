@@ -8,6 +8,7 @@ module GameBase {
         ui:GameBase.ui.Enemy;
         identification:number = 0;
         value:number = 0;
+        lastValue:number = 0;
 
         level:number = 1;
 
@@ -20,7 +21,7 @@ module GameBase {
             super(game, body);
             this.ui = new GameBase.ui.Enemy(this.game, this);
             this.identification = id;
-            this.value = value;
+            this.lastValue = this.value = value;
 
             GameBase.Enemy.enemies.push(this);
         }
@@ -122,6 +123,9 @@ module GameBase {
                     break;
             }
 
+            // for now all damage on health
+            damageType = GameBase.E.AttackType.HEATH;
+
             // if hero has no energy, change type to heath
             if(
                 damageType == GameBase.E.AttackType.ENERGY
@@ -144,8 +148,8 @@ module GameBase {
 
         setValue(v:number)
         {
-            
-            this.value = Math.floor(v);
+            this.lastValue = this.value;
+            this.value = Math.round(v);
             this.ui.updateValue();
         }
 
