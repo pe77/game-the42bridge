@@ -43,6 +43,10 @@ module GameBase {
             this.ui.create();
             this.uiAttack.create();
 
+            // add saturation filter over ui's
+            this.ui.filters = [this.saturationFilter];
+            this.uiAttack.filters = [this.saturationFilter];
+
             // selected sprite
             this.selectedSprite = this.game.add.sprite(0, 0, 'ui-hero-'+this.identification+'-selected');
             this.add(this.selectedSprite);
@@ -75,9 +79,11 @@ module GameBase {
                 
                 if(turnMove)
                 {
-                    this.body.inputEnabled = this.body.visible = false;
+                    // this.body.inputEnabled = this.body.visible = false;
+                    this.saturationFilter.uniforms.gray.value = 0.8;
                 }else{
-                    this.body.inputEnabled = this.body.visible = true;
+                    this.saturationFilter.uniforms.gray.value = 0.0;
+                    // this.body.inputEnabled = this.body.visible = true;
                 }
             }, this);
 
@@ -243,14 +249,15 @@ module GameBase {
                 return;
             //
 
-            // call move/attack events
-            this.event.dispatch(GameBase.E.HeroEvent.OnHeroMove);
-            this.event.dispatch(GameBase.E.HeroEvent.OnHeroReload);
-
             // reload energy
             this.ui.addEnergy(this.reloadEnergyQtn);
 
             this.setTurnMove(true);
+
+
+            // call move/attack events
+            this.event.dispatch(GameBase.E.HeroEvent.OnHeroMove);
+            this.event.dispatch(GameBase.E.HeroEvent.OnHeroReload);
         }
 
     }

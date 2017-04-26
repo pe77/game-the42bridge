@@ -77,8 +77,12 @@ module GameBase {
 
                     attackBox.setInputElement(bg);
                     attackBox.event.add(GameBase.E.AttackBoxEvent.OnAttackSelect, ()=>{
+                        // if hero already move, ignore action
+                        if(this.hero.turnMove)
+                            return;
+                        //
+                        
                         this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttackClick, attack);
-
                         this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
                     }, this)
 
@@ -101,8 +105,13 @@ module GameBase {
                 // input events
                 reloadBox.inputEnabled = true;
                 reloadBox.events.onInputDown.add(()=>{
+                    
+                    // if hero already move, ignore action
+                    if(this.hero.turnMove)
+                        return;
+                    //
+                    
                     this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroReloadClick);
-
                     this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
                 });
 
@@ -141,10 +150,6 @@ module GameBase {
 
             protected heroSelectd()
             {
-                // if hero already move
-                if(this.hero.turnMove)
-                    return;
-                //
 
                 this.updateView();
 

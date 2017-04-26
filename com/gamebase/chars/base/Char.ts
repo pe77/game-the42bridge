@@ -19,6 +19,7 @@ module GameBase {
         side:Side = Side.RIGHT; // sprite side
 
         animationIdle:Phaser.Animation;
+        currentAnimation:GameBase.I.CharAnimations;
         animations:Array<GameBase.I.CharAnimations> = [];
 
         selected:boolean = false;
@@ -28,6 +29,9 @@ module GameBase {
 
         attackOpenDelay:number = 100;
 
+        saturationFilter:Phaser.Filter;
+        
+
         constructor(game:Pk.PkGame, body:Phaser.Rectangle)
         {
             super(game);
@@ -35,6 +39,11 @@ module GameBase {
             var bodySprite:Phaser.Sprite = Pk.PkUtils.createSquare(game, body.width, body.height);
             bodySprite.alpha = .0;
             this.setBody(bodySprite);
+
+
+            // saturation filter
+            this.saturationFilter = this.game.add.filter('Gray');
+            this.saturationFilter.uniforms.gray.value = 0.0; // default: no filter intensit 
         }
 
         addAnimation(sprite:Phaser.Sprite, animationKey:string, fps:number = 10):Phaser.Sprite
@@ -50,13 +59,8 @@ module GameBase {
             sprite.x = this.body.width / 2;
             sprite.y = this.body.height;// + 40;
 
-            // sprite.anchor.set(.5, .5);
-
-            //sprite.position = this.body.position; 
-            
-
-            // this.body.events.
-            // sprite.y = this.body.y;
+            // add saturation filter
+            sprite.filters = [this.saturationFilter];
 
             this.animations.push({
                 animation:a,
@@ -77,6 +81,9 @@ module GameBase {
                     element.animation.play(fps, loop);
                     // element.animation.restart();
                     element.sprite.alpha = 1;
+
+                    this.currentAnimation = element;
+                    
                 }
             });
         }
@@ -87,6 +94,8 @@ module GameBase {
             this.selectedIcon.create();
 
             this.add(this.selectedIcon);
+
+            
 
         }
 

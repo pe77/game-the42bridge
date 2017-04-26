@@ -84,6 +84,11 @@ module GameBase {
 
                     this.playHeroAttack(hero, attack, enemy);
                 }, this);
+
+                hero.event.add(GameBase.E.HeroEvent.OnHeroReload, (event)=>{
+                    // if all move, auto click end turn button
+                    this.checkIfAllHeroesMove();
+                }, this);
             });
 
             // show enemies
@@ -112,7 +117,16 @@ module GameBase {
             // event
             hac.event.add(GameBase.E.HeroAttackCalculation.End, ()=>{
                 this.blockBg.visible = false;
-                this.checkEndBattle();
+
+                if(this.checkEndBattle())
+                    return;
+                //
+                
+
+                // if all move, auto click end turn button
+                this.checkIfAllHeroesMove();
+                //
+                
             }, this);
 
             // play animation
@@ -135,14 +149,8 @@ module GameBase {
             this.enemies.push(enemy);
         }  
         
-        checkEndBattle()
+        checkEndBattle():boolean
         {
-            if(this.finished)
-            {
-                console.log('ignore battle:', this.level)
-                return;
-            }
-            
             var allEnemiesDie:boolean = true;
             for (var i = 0; i < this.enemies.length; i++)
             {
@@ -158,7 +166,7 @@ module GameBase {
             {
                 // last param is win/lost battle
                 this.endBattle(true);
-                return;
+                return true;
             }
 
             var allHeroesDie:boolean = true;
@@ -176,9 +184,23 @@ module GameBase {
             {
                 // last param is win/lost battle
                 this.endBattle(false);
-                return;
+                return true;
             }
 
+            return false;
+
+        }
+
+        checkIfAllHeroesMove()
+        {
+            // if all heroes move
+            var allHeroesMove:boolean = true;
+            for (var i = 0; i < this.heroes.length; i++)
+                if(!this.heroes[i].turnMove)
+                    return;
+            //
+
+            this.endTurnButton.event.dispatch(GameBase.E.ButtonEvent.OnClick);
         }
 
         endBattle(win:boolean)
