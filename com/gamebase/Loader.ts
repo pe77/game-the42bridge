@@ -66,9 +66,9 @@ module GameBase {
             this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
 
             // chars
-            this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/iddle.png', 200, 300, 1);
-            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 154, 163, 1);
-            this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/iddle.png', 183, 247, 12);
+            this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/iddle.png', 158, 263, 12);
+            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 138, 166, 12);
+            this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/iddle.png', 180, 245, 12);
             this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 204, 12);
 
             // icons

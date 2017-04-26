@@ -128,7 +128,7 @@ module GameBase {
                 {
                     result:this.lastValue
                 }, 
-                3000,
+                2000,
                 Phaser.Easing.Elastic.Out,
                 false
             );
@@ -145,7 +145,6 @@ module GameBase {
 
             tween.onComplete.add(()=>{
                 
-                console.debug('update enemy value');
                 this.enemy.setValue(this.result);
 
                 var tweenBoxOut:Phaser.Tween = this.addTween(this.textBox).to(

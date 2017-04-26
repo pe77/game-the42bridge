@@ -594,9 +594,9 @@ var GameBase;
             this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
             this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
             // chars
-            this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/iddle.png', 200, 300, 1);
-            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 154, 163, 1);
-            this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/iddle.png', 183, 247, 12);
+            this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/iddle.png', 158, 263, 12);
+            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 138, 166, 12);
+            this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/iddle.png', 180, 245, 12);
             this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 204, 12);
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
@@ -1382,7 +1382,7 @@ var GameBase;
             this.addAttack(attack3);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
-            aniSprite.y += 26; // padding sprite adjust
+            // aniSprite.y+=26; // padding sprite adjust
             this.playAnimation('iddle', 10);
             _super.prototype.create.call(this);
         };
@@ -1468,7 +1468,7 @@ var GameBase;
             this.addAttack(attack3);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
-            aniSprite.y += 16;
+            // aniSprite.y+=16;
             this.playAnimation('iddle', 10);
             _super.prototype.create.call(this);
         };
@@ -1845,7 +1845,9 @@ var GameBase;
                 }
                 hero.y = _this.game.height - hero.body.height - _this.padding - 145;
                 // pos ui
-                hero.ui.x = 170 * i;
+                if (i > 0)
+                    hero.ui.x = lastHero.ui.x + lastHero.ui.width + 10; // DONT WORK
+                //
                 hero.ui.y = hero.y + 45;
                 hero.ui.setAsInitialCords();
                 hero.y += 10 * i; // stars style
@@ -1860,8 +1862,14 @@ var GameBase;
                 // next node
                 i++;
             }, this);
-            // ????
-            knight.ui.x -= 75;
+            // ???? 
+            druid.ui.x = 0;
+            druid.ui.setAsInitialCords();
+            thief.ui.x = 168;
+            thief.ui.setAsInitialCords();
+            priest.ui.x = 356;
+            priest.ui.setAsInitialCords();
+            knight.ui.x = 454;
             knight.ui.setAsInitialCords();
             // add chars to layer
             this.addToLayer('chars', this.heroes);
@@ -2752,7 +2760,7 @@ var GameBase;
             this.visible = true;
             var tween = this.addTween(this).from({
                 result: this.lastValue
-            }, 3000, Phaser.Easing.Elastic.Out, false);
+            }, 2000, Phaser.Easing.Elastic.Out, false);
             tween.onUpdateCallback(function () {
                 // release value
                 _this.result = Math.round(_this.result);
@@ -2760,7 +2768,6 @@ var GameBase;
                 _this.updateCalcTexts();
             }, this);
             tween.onComplete.add(function () {
-                console.debug('update enemy value');
                 _this.enemy.setValue(_this.result);
                 var tweenBoxOut = _this.addTween(_this.textBox).to({
                     x: _this.textBox.x + 150,
