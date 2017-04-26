@@ -594,14 +594,17 @@ var GameBase;
             this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
             this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
             // chars
-            this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/iddle.png', 200, 300, 1);
-            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 154, 163, 1);
-            this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/iddle.png', 183, 247, 12);
+            this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/iddle.png', 158, 263, 12);
+            this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 138, 166, 12);
+            this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/iddle.png', 180, 245, 12);
             this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 204, 12);
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
+            this.load.image('health-icon-large', 'assets/default/images/ui/ico-health-large.png');
             this.load.image('stamina-icon', 'assets/default/images/ui/ico-stamina.png');
+            this.load.image('stamina-icon-large', 'assets/default/images/ui/ico-stamina-large.png');
             this.load.image('mana-icon', 'assets/default/images/ui/ico-mana.png');
+            this.load.image('mana-icon-large', 'assets/default/images/ui/ico-mana-large.png');
             this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
             // ui hero
             this.load.image('ui-hero-1-on', 'assets/default/images/chars/heroes/1/ui-on.png');
@@ -619,6 +622,7 @@ var GameBase;
             // ui hero attacks
             this.load.image('ui-hero-attacks-bg-1', 'assets/default/images/ui/b-large-bg.png');
             this.load.image('ui-hero-attack-bg', 'assets/default/images/ui/b-spell-bg.png');
+            this.load.image('ui-hero-attack-calculate', 'assets/default/images/ui/s-calculate.png');
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.DIVI, 'assets/default/images/ui/b-i-div.png');
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.MULT, 'assets/default/images/ui/b-i-multi.png');
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.PLUS, 'assets/default/images/ui/b-i-soma.png');
@@ -745,7 +749,10 @@ var GameBase;
                 }
                 // event handlers
                 hero.event.add(GameBase.E.HeroEvent.OnHeroAttack, function (event, a, e) {
-                    _this.checkEndBattle();
+                    var hero = event.target;
+                    var attack = a;
+                    var enemy = e;
+                    _this.playHeroAttack(hero, attack, enemy);
                 }, _this);
             });
             // show enemies
@@ -758,6 +765,22 @@ var GameBase;
             // show turn button
             this.endTurnButton.in();
             this.event.add(GameBase.E.BattleEvent.OnEndTurn, this.nextTurn, this);
+        };
+        Battle.prototype.playHeroAttack = function (hero, attack, enemy) {
+            var _this = this;
+            // create calculation splash
+            var hac = new GameBase.HeroAttackCalculation(this.game, attack, enemy);
+            hac.create();
+            this.blockBg.visible = true;
+            // event
+            hac.event.add(GameBase.E.HeroAttackCalculation.End, function () {
+                _this.blockBg.visible = false;
+                _this.checkEndBattle();
+            }, this);
+            // play animation
+            setTimeout(function () {
+                hac.show();
+            }, 700);
         };
         Battle.prototype.addHero = function (hero) {
             hero.ui.visible = hero.visible = false;
@@ -804,13 +827,17 @@ var GameBase;
                 hero.visible = false;
                 // remove hero target
                 hero.target = null;
-                // reset heroes move    
-                hero.setTurnMove(false);
+                // reset heroes move, if alive 
+                if (hero.alive)
+                    hero.setTurnMove(false);
+                //
             });
             // remove enemies and heores
-            for (var i = 0; i < this.enemies.length; i++) {
+            for (var i = 0; i < this.enemies.length; i++)
                 this.enemies[i].destroy();
-            }
+            //
+            // remove nextTurn button
+            this.endTurnButton.out();
             this.finished = true;
             // dispatch end battle event
             this.event.dispatch(GameBase.E.BattleEvent.OnBattleEnd, win);
@@ -993,11 +1020,12 @@ var GameBase;
             var _this = _super.call(this, game, body) || this;
             _this.identification = 0;
             _this.value = 0;
+            _this.lastValue = 0;
             _this.level = 1;
             _this.targets = [];
             _this.ui = new GameBase.ui.Enemy(_this.game, _this);
             _this.identification = id;
-            _this.value = value;
+            _this.lastValue = _this.value = value;
             GameBase.Enemy.enemies.push(_this);
             return _this;
         }
@@ -1070,6 +1098,8 @@ var GameBase;
                     damageType = GameBase.E.AttackType.ENERGY;
                     break;
             }
+            // for now all damage on health
+            damageType = GameBase.E.AttackType.HEATH;
             // if hero has no energy, change type to heath
             if (damageType == GameBase.E.AttackType.ENERGY
                 &&
@@ -1084,7 +1114,8 @@ var GameBase;
             }, 1500);
         };
         Enemy.prototype.setValue = function (v) {
-            this.value = Math.floor(v);
+            this.lastValue = this.value;
+            this.value = Math.round(v);
             this.ui.updateValue();
         };
         Enemy.prototype.destroy = function () {
@@ -1245,6 +1276,12 @@ var GameBase;
             // remove attack energy
             this.ui.removeEnergy(attack.energyCost);
             this.setTurnMove(true);
+            // play attack animation
+            this.playAttack(attack, this.target);
+        };
+        Hero.prototype.playAttack = function (attack, enemy) {
+            // play hero attack
+            // @todo
             // call move/attack events
             this.event.dispatch(GameBase.E.HeroEvent.OnHeroMove);
             this.event.dispatch(GameBase.E.HeroEvent.OnHeroAttack, attack, this.target);
@@ -1290,6 +1327,12 @@ var GameBase;
             EnergyType[EnergyType["STAMINA"] = 0] = "STAMINA";
             EnergyType[EnergyType["MANA"] = 1] = "MANA";
         })(EnergyType = E.EnergyType || (E.EnergyType = {}));
+        var AttributeType;
+        (function (AttributeType) {
+            AttributeType[AttributeType["STAMINA"] = 0] = "STAMINA";
+            AttributeType[AttributeType["MANA"] = 1] = "MANA";
+            AttributeType[AttributeType["HEALTH"] = 2] = "HEALTH";
+        })(AttributeType = E.AttributeType || (E.AttributeType = {}));
         var HeroEvent;
         (function (HeroEvent) {
             HeroEvent.OnHeroSelected = "OnHeroSelected";
@@ -1326,22 +1369,22 @@ var GameBase;
         Druid.prototype.create = function () {
             // add attacks
             var attack1 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
-            attack1.energyCost = 3;
+            attack1.energyCost = 2;
             attack1.value = 2;
             this.addAttack(attack1);
-            var attack2 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
+            var attack2 = new GameBase.Attacks.Regular(this.game, GameBase.E.Operator.MINU, this.energyType);
             attack2.energyCost = 4;
-            attack2.value = 3;
+            attack2.value = 2;
             this.addAttack(attack2);
             var attack3 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack3.energyCost = 5;
-            attack3.value = 4;
+            attack3.value = 3;
             this.addAttack(attack3);
-            _super.prototype.create.call(this);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
-            aniSprite.y += 26; // padding sprite adjust
+            // aniSprite.y+=26; // padding sprite adjust
             this.playAnimation('iddle', 10);
+            _super.prototype.create.call(this);
         };
         return Druid;
     }(GameBase.Hero));
@@ -1372,19 +1415,19 @@ var GameBase;
             attack1.energyCost = 2;
             attack1.value = 1;
             this.addAttack(attack1);
-            var attack2 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
-            attack2.energyCost = 3;
-            attack2.value = 5;
+            var attack2 = new GameBase.Attacks.Regular(this.game, GameBase.E.Operator.MINU, this.energyType);
+            attack2.energyCost = 4;
+            attack2.value = 3;
             this.addAttack(attack2);
             var attack3 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack3.energyCost = 5;
             attack3.value = 15;
             this.addAttack(attack3);
-            _super.prototype.create.call(this);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=28; // padding sprite adjust
             this.playAnimation('iddle', 10);
+            _super.prototype.create.call(this);
         };
         return Knight;
     }(GameBase.Hero));
@@ -1415,19 +1458,19 @@ var GameBase;
             attack1.energyCost = 3;
             attack1.value = 2;
             this.addAttack(attack1);
-            var attack2 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
+            var attack2 = new GameBase.Attacks.Regular(this.game, GameBase.E.Operator.PLUS, this.energyType);
             attack2.energyCost = 4;
-            attack2.value = 3;
+            attack2.value = 2;
             this.addAttack(attack2);
             var attack3 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack3.energyCost = 5;
-            attack3.value = 4;
+            attack3.value = 3;
             this.addAttack(attack3);
-            _super.prototype.create.call(this);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
-            aniSprite.y += 16;
+            // aniSprite.y+=16;
             this.playAnimation('iddle', 10);
+            _super.prototype.create.call(this);
         };
         return Priest;
     }(GameBase.Hero));
@@ -1458,19 +1501,19 @@ var GameBase;
             attack1.energyCost = 2;
             attack1.value = 1;
             this.addAttack(attack1);
-            var attack2 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
-            attack2.energyCost = 3;
-            attack2.value = 5;
+            var attack2 = new GameBase.Attacks.Regular(this.game, GameBase.E.Operator.PLUS, this.energyType);
+            attack2.energyCost = 4;
+            attack2.value = 3;
             this.addAttack(attack2);
             var attack3 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack3.energyCost = 5;
             attack3.value = 15;
             this.addAttack(attack3);
-            _super.prototype.create.call(this);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=18; // padding sprite adjust
             this.playAnimation('iddle', 10);
+            _super.prototype.create.call(this);
         };
         return Thief;
     }(GameBase.Hero));
@@ -1802,7 +1845,9 @@ var GameBase;
                 }
                 hero.y = _this.game.height - hero.body.height - _this.padding - 145;
                 // pos ui
-                hero.ui.x = 170 * i;
+                if (i > 0)
+                    hero.ui.x = lastHero.ui.x + lastHero.ui.width + 10; // DONT WORK
+                //
                 hero.ui.y = hero.y + 45;
                 hero.ui.setAsInitialCords();
                 hero.y += 10 * i; // stars style
@@ -1817,8 +1862,14 @@ var GameBase;
                 // next node
                 i++;
             }, this);
-            // ????
-            knight.ui.x -= 75;
+            // ???? 
+            druid.ui.x = 0;
+            druid.ui.setAsInitialCords();
+            thief.ui.x = 168;
+            thief.ui.setAsInitialCords();
+            priest.ui.x = 356;
+            priest.ui.setAsInitialCords();
+            knight.ui.x = 454;
             knight.ui.setAsInitialCords();
             // add chars to layer
             this.addToLayer('chars', this.heroes);
@@ -2345,6 +2396,9 @@ var GameBase;
                 for (var i = 0; i < v; i++)
                     this.energiGaude.addIcon(new GameBase.GaudeIcon(this.game, energyIconKey), i * 80);
                 //
+                var attrChange = new GameBase.AttributeChange(this.game, this.hero, v, this.hero.energyType, true);
+                attrChange.create();
+                attrChange.show();
                 this.hero.uiAttack.updateView();
             };
             Hero.prototype.addHealth = function (v) {
@@ -2356,10 +2410,16 @@ var GameBase;
                 for (var i = 0; i < v; i++)
                     this.healthGaude.addIcon(new GameBase.GaudeIcon(this.game, 'heath-icon'), i * 70);
                 //
+                var attrChange = new GameBase.AttributeChange(this.game, this.hero, v, GameBase.E.AttributeType.HEALTH, true);
+                attrChange.create();
+                attrChange.show();
                 this.hero.uiAttack.updateView();
             };
             Hero.prototype.removeEnergy = function (val) {
                 this.energiGaude.subVal(val);
+                var attrChange = new GameBase.AttributeChange(this.game, this.hero, val, this.hero.energyType, false);
+                attrChange.create();
+                attrChange.show();
                 this.hero.uiAttack.updateView();
             };
             Hero.prototype.getEnergy = function () {
@@ -2367,6 +2427,9 @@ var GameBase;
             };
             Hero.prototype.removeHealth = function (val) {
                 this.healthGaude.subVal(val);
+                var attrChange = new GameBase.AttributeChange(this.game, this.hero, val, GameBase.E.AttributeType.HEALTH, false);
+                attrChange.create();
+                attrChange.show();
                 this.hero.uiAttack.updateView();
             };
             Hero.prototype.getHealth = function () {
@@ -2620,6 +2683,127 @@ var GameBase;
 })(GameBase || (GameBase = {}));
 var GameBase;
 (function (GameBase) {
+    var HeroAttackCalculation = (function (_super) {
+        __extends(HeroAttackCalculation, _super);
+        function HeroAttackCalculation(game, attack, enemy) {
+            var _this = _super.call(this, game) || this;
+            _this.attack = attack;
+            _this.enemy = enemy;
+            _this.lastValue = _this.enemy.lastValue;
+            _this.result = _this.enemy.value;
+            _this.enemy.setValue(_this.enemy.lastValue);
+            return _this;
+        }
+        HeroAttackCalculation.prototype.create = function () {
+            this.textBox = this.game.add.group();
+            // text bg
+            this.textBg = this.game.add.sprite(0, 0, 'ui-hero-attack-calculate');
+            // bg bg! // same world size
+            this.bg = Pk.PkUtils.createSquare(this.game, this.game.world.width, this.game.world.height, "#000");
+            this.bg.alpha = .3;
+            this.attackText = this.game.add.text(0, 0, '', {
+                font: "108px StrangerBack",
+                fill: "#833716"
+            } // font style
+            );
+            this.resultText = this.game.add.text(0, 0, this.enemy.value.toString(), // text
+            {
+                font: "161px StrangerBack",
+                fill: "#303f49"
+            } // font style
+            );
+            this.texts = this.game.add.group();
+            this.texts.add(this.attackText);
+            this.texts.add(this.resultText);
+            // text calcs
+            this.updateCalcTexts();
+            // pos
+            this.updatePos();
+            this.textBox.add(this.textBg);
+            this.textBox.add(this.texts);
+            this.add(this.bg);
+            this.add(this.textBox);
+            this.visible = false;
+        };
+        HeroAttackCalculation.prototype.updatePos = function () {
+            this.textBg.anchor.set(.5, .5);
+            this.textBg.x = this.game.world.centerX;
+            this.textBg.y = this.game.world.centerY;
+            this.resultText.x = this.attackText.width + 2;
+            this.resultText.y -= 20;
+            this.texts.x = this.textBg.x - this.texts.width / 2 - 20;
+            this.texts.y = this.textBg.y - this.texts.height / 2 + 55;
+            this.texts.rotation -= 0.14;
+        };
+        HeroAttackCalculation.prototype.updateCalcTexts = function () {
+            var operator = '+';
+            switch (this.attack.operator) {
+                case GameBase.E.Operator.PLUS:
+                    operator = '+';
+                    break;
+                case GameBase.E.Operator.MINU:
+                    operator = '-';
+                    break;
+                case GameBase.E.Operator.DIVI:
+                    operator = ' / ';
+                    break;
+                case GameBase.E.Operator.MULT:
+                    operator = 'x';
+                    break;
+            }
+            this.attackText.text = this.lastValue.toString() + operator + this.attack.value.toString() + '=';
+            this.resultText.text = this.result.toString();
+        };
+        HeroAttackCalculation.prototype.show = function () {
+            var _this = this;
+            // hold value
+            this.visible = true;
+            var tween = this.addTween(this).from({
+                result: this.lastValue
+            }, 2000, Phaser.Easing.Elastic.Out, false);
+            tween.onUpdateCallback(function () {
+                // release value
+                _this.result = Math.round(_this.result);
+                // text calcs
+                _this.updateCalcTexts();
+            }, this);
+            tween.onComplete.add(function () {
+                _this.enemy.setValue(_this.result);
+                var tweenBoxOut = _this.addTween(_this.textBox).to({
+                    x: _this.textBox.x + 150,
+                    alpha: 0
+                }, 200, Phaser.Easing.Cubic.In, true);
+                _this.addTween(_this.bg).to({
+                    alpha: 0
+                }, 200, Phaser.Easing.Cubic.Out, true);
+                tweenBoxOut.onComplete.add(function () {
+                    _this.event.dispatch(GameBase.E.HeroAttackCalculation.End);
+                    _this.destroy();
+                }, _this);
+            }, this);
+            // anime boxs and back
+            this.addTween(this.textBox).from({
+                x: this.textBox.x - 150,
+                alpha: 0
+            }, 200, Phaser.Easing.Cubic.Out, true);
+            this.addTween(this.bg).from({
+                alpha: 0
+            }, 200, Phaser.Easing.Cubic.Out, true);
+            tween.start();
+        };
+        return HeroAttackCalculation;
+    }(Pk.PkElement));
+    GameBase.HeroAttackCalculation = HeroAttackCalculation;
+    var E;
+    (function (E) {
+        var HeroAttackCalculation;
+        (function (HeroAttackCalculation) {
+            HeroAttackCalculation.End = "HeroAttackCalculationEnd";
+        })(HeroAttackCalculation = E.HeroAttackCalculation || (E.HeroAttackCalculation = {}));
+    })(E = GameBase.E || (GameBase.E = {}));
+})(GameBase || (GameBase = {}));
+var GameBase;
+(function (GameBase) {
     var LevelFlag = (function (_super) {
         __extends(LevelFlag, _super);
         function LevelFlag() {
@@ -2672,6 +2856,72 @@ var GameBase;
             LevelFlagEvent.OnEndShow = "OnEndShow";
         })(LevelFlagEvent = E.LevelFlagEvent || (E.LevelFlagEvent = {}));
     })(E = GameBase.E || (GameBase.E = {}));
+})(GameBase || (GameBase = {}));
+var GameBase;
+(function (GameBase) {
+    var AttributeChange = (function (_super) {
+        __extends(AttributeChange, _super);
+        function AttributeChange(game, target, value, type, sum) {
+            var _this = _super.call(this, game) || this;
+            _this.sum = true;
+            _this.value = value;
+            _this.type = type;
+            _this.target = target;
+            _this.sum = sum;
+            return _this;
+        }
+        AttributeChange.prototype.create = function () {
+            var iconKeyType = 'stamina';
+            switch (this.type) {
+                case GameBase.E.AttributeType.HEALTH:
+                    iconKeyType = 'health';
+                    break;
+                case GameBase.E.AttributeType.STAMINA:
+                    iconKeyType = 'stamina';
+                    break;
+                case GameBase.E.AttributeType.MANA:
+                    iconKeyType = 'mana';
+                    break;
+            }
+            this.icon = this.game.add.sprite(0, 0, iconKeyType + '-icon-large');
+            this.icon.alpha = 0.7;
+            var operator = this.sum ? '+' : '-';
+            this.text = this.game.add.text(0, 0, operator + '' + this.value, {
+                font: "42px StrangerBack",
+                fill: "#fff"
+            } // font style
+            );
+            this.text.setShadow(3, 3, 'rgba(0,0,0,0.9)', 2);
+            this.add(this.icon);
+            this.add(this.text);
+            this.text.anchor.x = 0.5;
+            this.text.x = this.icon.width / 2;
+            this.text.y = 0;
+            // pos
+            this.x = this.target.ui.x + this.target.body.width / 2;
+            this.y = this.target.ui.y - this.target.ui.height;
+            this.visible = false;
+        };
+        AttributeChange.prototype.show = function () {
+            var _this = this;
+            this.visible = true;
+            var tweenIn = this.addTween(this).from({
+                y: this.y + 30,
+                alpha: 0
+            }, 300, Phaser.Easing.Back.In, true);
+            tweenIn.onComplete.add(function () {
+                var tweenOut = _this.addTween(_this).to({
+                    y: _this.y - 30,
+                    alpha: 0
+                }, 300, Phaser.Easing.Back.Out, true, 1500);
+                tweenOut.onComplete.add(function () {
+                    _this.destroy();
+                }, _this);
+            }, this);
+        };
+        return AttributeChange;
+    }(Pk.PkElement));
+    GameBase.AttributeChange = AttributeChange;
 })(GameBase || (GameBase = {}));
 var GameBase;
 (function (GameBase) {

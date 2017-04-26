@@ -113,9 +113,10 @@ module GameBase
 				}
 				hero.y = this.game.height - hero.body.height - this.padding - 145;
 				
-
 				// pos ui
-				hero.ui.x = 170 * i;
+				if(i > 0)
+					hero.ui.x = lastHero.ui.x + lastHero.ui.width + 10; // DONT WORK
+				//
 				hero.ui.y = hero.y + 45;
 				hero.ui.setAsInitialCords();
 
@@ -136,9 +137,12 @@ module GameBase
 				i++;
 			}, this);
 
-			// ????
-			knight.ui.x -= 75;
-			knight.ui.setAsInitialCords();
+			// ???? 
+			druid.ui.x = 0; druid.ui.setAsInitialCords();
+			thief.ui.x = 168; thief.ui.setAsInitialCords();
+			priest.ui.x = 356; priest.ui.setAsInitialCords();
+			knight.ui.x = 454; knight.ui.setAsInitialCords();
+			
 
 			// add chars to layer
 			this.addToLayer('chars', this.heroes);
