@@ -588,6 +588,8 @@ var GameBase;
             this.game.add.existing(this.logo);
             this.logo.alpha = 0;
             //  ** ADDING Other things  ** //
+            // scripts
+            this.load.script('gray', 'assets/default/scripts/filters/Gray.js');
             // intro
             this.load.audio('intro-sound', 'assets/states/intro/sounds/intro.mp3');
             this.load.image('intro-1', 'assets/states/intro/images/1.jpg');
@@ -754,6 +756,10 @@ var GameBase;
                     var enemy = e;
                     _this.playHeroAttack(hero, attack, enemy);
                 }, _this);
+                hero.event.add(GameBase.E.HeroEvent.OnHeroReload, function (event) {
+                    // if all move, auto click end turn button
+                    _this.checkIfAllHeroesMove();
+                }, _this);
             });
             // show enemies
             this.enemies.forEach(function (enemy) {
@@ -775,7 +781,12 @@ var GameBase;
             // event
             hac.event.add(GameBase.E.HeroAttackCalculation.End, function () {
                 _this.blockBg.visible = false;
-                _this.checkEndBattle();
+                if (_this.checkEndBattle())
+                    return;
+                //
+                // if all move, auto click end turn button
+                _this.checkIfAllHeroesMove();
+                //
             }, this);
             // play animation
             setTimeout(function () {
@@ -791,10 +802,6 @@ var GameBase;
             this.enemies.push(enemy);
         };
         Battle.prototype.checkEndBattle = function () {
-            if (this.finished) {
-                console.log('ignore battle:', this.level);
-                return;
-            }
             var allEnemiesDie = true;
             for (var i = 0; i < this.enemies.length; i++) {
                 if (this.enemies[i].alive) {
@@ -805,7 +812,7 @@ var GameBase;
             if (allEnemiesDie) {
                 // last param is win/lost battle
                 this.endBattle(true);
-                return;
+                return true;
             }
             var allHeroesDie = true;
             for (var i = 0; i < this.heroes.length; i++) {
@@ -817,8 +824,18 @@ var GameBase;
             if (allHeroesDie) {
                 // last param is win/lost battle
                 this.endBattle(false);
-                return;
+                return true;
             }
+            return false;
+        };
+        Battle.prototype.checkIfAllHeroesMove = function () {
+            // if all heroes move
+            var allHeroesMove = true;
+            for (var i = 0; i < this.heroes.length; i++)
+                if (!this.heroes[i].turnMove)
+                    return;
+            //
+            this.endTurnButton.event.dispatch(GameBase.E.ButtonEvent.OnClick);
         };
         Battle.prototype.endBattle = function (win) {
             // remove enemy hero target
@@ -935,6 +952,9 @@ var GameBase;
             var bodySprite = Pk.PkUtils.createSquare(game, body.width, body.height);
             bodySprite.alpha = .0;
             _this.setBody(bodySprite);
+            // saturation filter
+            _this.saturationFilter = _this.game.add.filter('Gray');
+            _this.saturationFilter.uniforms.gray.value = 0.0; // default: no filter intensit 
             return _this;
         }
         Char.prototype.addAnimation = function (sprite, animationKey, fps) {
@@ -946,10 +966,8 @@ var GameBase;
             sprite.anchor.y = 1;
             sprite.x = this.body.width / 2;
             sprite.y = this.body.height; // + 40;
-            // sprite.anchor.set(.5, .5);
-            //sprite.position = this.body.position; 
-            // this.body.events.
-            // sprite.y = this.body.y;
+            // add saturation filter
+            sprite.filters = [this.saturationFilter];
             this.animations.push({
                 animation: a,
                 sprite: sprite
@@ -957,6 +975,7 @@ var GameBase;
             return sprite;
         };
         Char.prototype.playAnimation = function (key, fps, loop) {
+            var _this = this;
             if (fps === void 0) { fps = 10; }
             if (loop === void 0) { loop = true; }
             this.animations.forEach(function (element) {
@@ -966,6 +985,7 @@ var GameBase;
                     element.animation.play(fps, loop);
                     // element.animation.restart();
                     element.sprite.alpha = 1;
+                    _this.currentAnimation = element;
                 }
             });
         };
@@ -1173,6 +1193,9 @@ var GameBase;
             _super.prototype.create.call(this);
             this.ui.create();
             this.uiAttack.create();
+            // add saturation filter over ui's
+            this.ui.filters = [this.saturationFilter];
+            this.uiAttack.filters = [this.saturationFilter];
             // selected sprite
             this.selectedSprite = this.game.add.sprite(0, 0, 'ui-hero-' + this.identification + '-selected');
             this.add(this.selectedSprite);
@@ -1196,10 +1219,12 @@ var GameBase;
             // hero end turn
             this.event.add(GameBase.E.CharEvent.OnCharTurnMove, function (t, turnMove) {
                 if (turnMove) {
-                    _this.body.inputEnabled = _this.body.visible = false;
+                    // this.body.inputEnabled = this.body.visible = false;
+                    _this.saturationFilter.uniforms.gray.value = 0.8;
                 }
                 else {
-                    _this.body.inputEnabled = _this.body.visible = true;
+                    _this.saturationFilter.uniforms.gray.value = 0.0;
+                    // this.body.inputEnabled = this.body.visible = true;
                 }
             }, this);
             // attack resolve handler
@@ -1309,12 +1334,12 @@ var GameBase;
             if (this.turnMove)
                 return;
             //
-            // call move/attack events
-            this.event.dispatch(GameBase.E.HeroEvent.OnHeroMove);
-            this.event.dispatch(GameBase.E.HeroEvent.OnHeroReload);
             // reload energy
             this.ui.addEnergy(this.reloadEnergyQtn);
             this.setTurnMove(true);
+            // call move/attack events
+            this.event.dispatch(GameBase.E.HeroEvent.OnHeroMove);
+            this.event.dispatch(GameBase.E.HeroEvent.OnHeroReload);
         };
         return Hero;
     }(GameBase.Char));
@@ -1371,15 +1396,15 @@ var GameBase;
             var attack1 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack1.energyCost = 2;
             attack1.value = 2;
-            this.addAttack(attack1);
             var attack2 = new GameBase.Attacks.Regular(this.game, GameBase.E.Operator.MINU, this.energyType);
             attack2.energyCost = 4;
             attack2.value = 2;
-            this.addAttack(attack2);
             var attack3 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack3.energyCost = 5;
             attack3.value = 3;
+            this.addAttack(attack1);
             this.addAttack(attack3);
+            this.addAttack(attack2);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=26; // padding sprite adjust
@@ -1414,15 +1439,15 @@ var GameBase;
             var attack1 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack1.energyCost = 2;
             attack1.value = 1;
-            this.addAttack(attack1);
             var attack2 = new GameBase.Attacks.Regular(this.game, GameBase.E.Operator.MINU, this.energyType);
             attack2.energyCost = 4;
             attack2.value = 3;
-            this.addAttack(attack2);
             var attack3 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack3.energyCost = 5;
             attack3.value = 15;
+            this.addAttack(attack1);
             this.addAttack(attack3);
+            this.addAttack(attack2);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=28; // padding sprite adjust
@@ -1457,15 +1482,15 @@ var GameBase;
             var attack1 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack1.energyCost = 3;
             attack1.value = 2;
-            this.addAttack(attack1);
             var attack2 = new GameBase.Attacks.Regular(this.game, GameBase.E.Operator.PLUS, this.energyType);
             attack2.energyCost = 4;
             attack2.value = 2;
-            this.addAttack(attack2);
             var attack3 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack3.energyCost = 5;
             attack3.value = 3;
+            this.addAttack(attack1);
             this.addAttack(attack3);
+            this.addAttack(attack2);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=16;
@@ -1500,15 +1525,15 @@ var GameBase;
             var attack1 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack1.energyCost = 2;
             attack1.value = 1;
-            this.addAttack(attack1);
             var attack2 = new GameBase.Attacks.Regular(this.game, GameBase.E.Operator.PLUS, this.energyType);
             attack2.energyCost = 4;
             attack2.value = 3;
-            this.addAttack(attack2);
             var attack3 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack3.energyCost = 5;
             attack3.value = 15;
+            this.addAttack(attack1);
             this.addAttack(attack3);
+            this.addAttack(attack2);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=18; // padding sprite adjust
@@ -2153,6 +2178,10 @@ var GameBase;
                     attackBox.add(operatorIcon);
                     attackBox.setInputElement(bg);
                     attackBox.event.add(GameBase.E.AttackBoxEvent.OnAttackSelect, function () {
+                        // if hero already move, ignore action
+                        if (_this.hero.turnMove)
+                            return;
+                        //
                         _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttackClick, attack);
                         _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
                     }, _this);
@@ -2169,6 +2198,10 @@ var GameBase;
                 // input events
                 reloadBox.inputEnabled = true;
                 reloadBox.events.onInputDown.add(function () {
+                    // if hero already move, ignore action
+                    if (_this.hero.turnMove)
+                        return;
+                    //
                     _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroReloadClick);
                     _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
                 });
@@ -2195,10 +2228,6 @@ var GameBase;
                 this.hero.selected = false;
             };
             Attack.prototype.heroSelectd = function () {
-                // if hero already move
-                if (this.hero.turnMove)
-                    return;
-                //
                 this.updateView();
                 this.visible = true;
                 this.resetAttrs();

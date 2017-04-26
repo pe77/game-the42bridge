@@ -58,6 +58,9 @@ module GameBase {
 
             //  ** ADDING Other things  ** //
 
+            // scripts
+            this.load.script('gray', 'assets/default/scripts/filters/Gray.js')
+
 
             // intro
             this.load.audio('intro-sound', 'assets/states/intro/sounds/intro.mp3');
