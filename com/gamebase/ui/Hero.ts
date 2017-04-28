@@ -52,11 +52,13 @@ module GameBase {
                 this.addEnergy(this.hero.energyMax);
 
                 // pos 
+                /*
                 this.bg.y = this.hero.body.height;
                 this.bg.anchor.x = .5;
                 this.bg.x = this.hero.body.width / 2;
+                */
 
-                this.healthGaude.x = this.bg.x - this.bg.width / 2;
+                // this.healthGaude.x += this.healthGaude.width / 2;
                 this.healthGaude.x += 65;
                 this.healthGaude.y = this.bg.y + 40;
  

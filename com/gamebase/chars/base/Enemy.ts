@@ -194,7 +194,7 @@ module GameBase {
             // select a random hero
             var hero:GameBase.Hero = standHeroes[this.game.rnd.integerInRange(0, standHeroes.length-1)];
             
-            var damage:number = this.game.rnd.integerInRange(1, (this.level*2));
+            var damage:number = this.game.rnd.integerInRange(1, (this.level+2));
             var damageType:number;
 
             // damage = 5;// temp

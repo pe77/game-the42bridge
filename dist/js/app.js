@@ -644,10 +644,10 @@ var GameBase;
             this.load.image('main-bridge-back', 'assets/states/main/images/bg/s-bridge-back.png');
             this.load.image('main-bridge-front', 'assets/states/main/images/bg/s-bridge-front.png');
             // op icons
-            this.load.spritesheet('operator-icon-' + GameBase.E.Operator.MULT, 'assets/default/images/operator-icon-mult.png', 15, 15, 3);
-            this.load.spritesheet('operator-icon-' + GameBase.E.Operator.PLUS, 'assets/default/images/operator-icon-plus.png', 15, 15, 3);
-            this.load.spritesheet('operator-icon-' + GameBase.E.Operator.MINU, 'assets/default/images/operator-icon-min.png', 15, 15, 3);
-            this.load.spritesheet('operator-icon-' + GameBase.E.Operator.DIVI, 'assets/default/images/operator-icon-div.png', 15, 15, 3);
+            // this.load.spritesheet('operator-icon-' + E.Operator.MULT, 'assets/default/images/operator-icon-mult.png', 15, 15, 3);
+            // this.load.spritesheet('operator-icon-' + E.Operator.PLUS, 'assets/default/images/operator-icon-plus.png', 15, 15, 3);
+            // this.load.spritesheet('operator-icon-' + E.Operator.MINU, 'assets/default/images/operator-icon-min.png', 15, 15, 3);
+            // this.load.spritesheet('operator-icon-' + E.Operator.DIVI, 'assets/default/images/operator-icon-div.png', 15, 15, 3);
         };
         Loader.prototype.create = function () {
             _super.prototype.create.call(this);
@@ -1180,7 +1180,7 @@ var GameBase;
             }
             // select a random hero
             var hero = standHeroes[this.game.rnd.integerInRange(0, standHeroes.length - 1)];
-            var damage = this.game.rnd.integerInRange(1, (this.level * 2));
+            var damage = this.game.rnd.integerInRange(1, (this.level + 2));
             var damageType;
             // damage = 5;// temp
             // sort damage type
@@ -1922,22 +1922,22 @@ var GameBase;
             var lizzard = new GameBase.Lizzard(this.game);
             lizzard.create();
             lizzard.x = this.game.world.width - lizzard.width;
-            lizzard.y = 200;
+            lizzard.y = 170;
             lizzard.ui.updatePosition();
             var wolf = new GameBase.Wolf(this.game);
             wolf.create();
             wolf.x = this.game.world.width - wolf.body.width;
-            wolf.y = 260;
+            wolf.y = 230;
             wolf.ui.updatePosition();
             var ghost = new GameBase.Ghost(this.game);
             ghost.create();
             ghost.x = this.game.world.width - ghost.width;
-            ghost.y = 200;
+            ghost.y = 170;
             ghost.ui.updatePosition();
             var devil = new GameBase.Devil(this.game);
             devil.create();
             devil.x = this.game.world.width - devil.width;
-            devil.y = 150;
+            devil.y = 120;
             devil.ui.updatePosition();
             var i = 0;
             this.heroes.forEach(function (hero) {
@@ -1947,48 +1947,47 @@ var GameBase;
                     var lastHero = _this.heroes.getAt(i - 1);
                     hero.x = lastHero.x + lastHero.body.width + _this.charPadding;
                 }
-                hero.y = _this.game.height - hero.body.height - _this.padding - 145;
+                hero.y = _this.game.height - hero.body.height - 195 + (i * 5);
                 // pos ui
                 if (i > 0)
-                    hero.ui.x = lastHero.ui.x + lastHero.ui.width + 10; // DONT WORK
+                    hero.ui.x = lastHero.ui.x + lastHero.ui.width - 10; // WORK
                 //
-                hero.ui.y = hero.y + 45;
+                hero.ui.y = _this.game.world.height - hero.ui.height - _this.padding;
                 hero.ui.setAsInitialCords();
-                hero.y += 10 * i; // stars style
                 // pos ui
                 hero.uiAttack.x = 140 * i;
                 hero.uiAttack.y = hero.y - hero.uiAttack.height + 50;
                 hero.uiAttack.setAsInitialCords();
                 hero.updatePosition();
-                // add ui to layer
-                _this.addToLayer('ui', hero.ui);
-                _this.addToLayer('ui', hero.uiAttack);
                 // next node
                 i++;
             }, this);
             // ???? 
-            druid.ui.x = 0;
-            druid.ui.setAsInitialCords();
-            thief.ui.x = 168;
-            thief.ui.setAsInitialCords();
-            priest.ui.x = 356;
-            priest.ui.setAsInitialCords();
-            knight.ui.x = 454;
-            knight.ui.setAsInitialCords();
+            /*
+            druid.ui.x = 0; druid.ui.setAsInitialCords();
+            thief.ui.x = 168; thief.ui.setAsInitialCords();
+            priest.ui.x = 356; priest.ui.setAsInitialCords();
+            knight.ui.x = 454; knight.ui.setAsInitialCords();
+            */
             // add chars to layer
             this.addToLayer('chars', this.heroes);
             this.addToLayer('chars', lizzard);
             this.addToLayer('chars', wolf);
             this.addToLayer('chars', ghost);
             this.addToLayer('chars', devil);
+            // add hero ui
+            this.heroes.forEach(function (hero) {
+                _this.addToLayer('ui', hero.ui);
+                _this.addToLayer('ui', hero.uiAttack);
+            }, this);
             // monster ui
             this.addToLayer('ui', lizzard.ui);
             this.addToLayer('ui', wolf.ui);
             this.addToLayer('ui', ghost.ui);
             this.addToLayer('ui', devil.ui);
             // scenario position
-            mainBridgeBack.y = 443;
-            mainBridgeFront.y = 540;
+            mainBridgeBack.y = 413;
+            mainBridgeFront.y = 510;
             this.addToLayer('stage-back-1', mainBg);
             this.addToLayer('stage-back-2', mainBridgeBack);
             this.addToLayer('stage-front-1', mainBridgeFront);
@@ -2001,14 +2000,14 @@ var GameBase;
             this.heroes.forEach(function (hero) {
                 battle1.addHero(hero);
             }, this);
-            battle1.addEnemy(wolf);
+            battle1.addEnemy(lizzard);
             var battle2 = new GameBase.Battle(this.game, this, 2);
             battle2.create('ui', 'block');
             // add heroes and enemies
             this.heroes.forEach(function (hero) {
                 battle2.addHero(hero);
             }, this);
-            battle2.addEnemy(lizzard);
+            battle2.addEnemy(wolf);
             var battle3 = new GameBase.Battle(this.game, this, 3);
             battle3.create('ui', 'block');
             // add heroes and enemies
@@ -2469,10 +2468,12 @@ var GameBase;
                 this.addHealth(this.hero.healthMax);
                 this.addEnergy(this.hero.energyMax);
                 // pos 
+                /*
                 this.bg.y = this.hero.body.height;
                 this.bg.anchor.x = .5;
                 this.bg.x = this.hero.body.width / 2;
-                this.healthGaude.x = this.bg.x - this.bg.width / 2;
+                */
+                // this.healthGaude.x += this.healthGaude.width / 2;
                 this.healthGaude.x += 65;
                 this.healthGaude.y = this.bg.y + 40;
                 this.energiGaude.x = this.healthGaude.x;
@@ -2634,6 +2635,7 @@ var GameBase;
             // get create 4 squares | 2 top, 2 down
             this.topIcons = this.game.add.group();
             this.botIcons = this.game.add.group();
+            return;
             // create
             var topLeft = this.game.add.sprite(0, 0, 'selected-icon');
             var topRight = this.game.add.sprite(0, 0, 'selected-icon');
@@ -2920,23 +2922,24 @@ var GameBase;
         function LevelFlag() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
             _this.inOutTime = 500;
-            _this.showTime = 3000;
+            _this.showTime = 5000;
             return _this;
         }
         LevelFlag.prototype.create = function () {
             var flagSprite = this.game.add.sprite(0, 0, 'level-flag');
-            this.flagText = this.game.add.text(0, 0, 'Level X', // text
+            this.flagText = this.game.add.text(0, 0, 'Chapter X', // text
             {
-                font: "58px StrangerBack",
+                font: "52px StrangerBack",
                 fill: "#e5d4c5"
             } // font style
             );
             this.flagText.anchor.x = 0.5;
             this.flagText.x = flagSprite.width / 2;
-            this.flagText.y += 25;
+            this.flagText.y += 35;
             this.add(flagSprite);
             this.add(this.flagText);
             this.x = this.game.width / 2 - this.width / 2;
+            this.y -= 10;
             // this.fixedToCamera = true;
             this.visible = false;
         };
@@ -2945,7 +2948,7 @@ var GameBase;
             this.addTween(this).from({
                 y: this.height * (-1)
             }, this.inOutTime, Phaser.Easing.Back.Out, true);
-            this.flagText.text = 'Level ' + level;
+            this.flagText.text = 'Chapter ' + level;
             this.visible = true;
             setTimeout(function () {
                 var tween = _this.addTween(_this).to({

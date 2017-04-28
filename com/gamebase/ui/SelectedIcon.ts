@@ -30,6 +30,8 @@ module GameBase {
             this.topIcons = this.game.add.group();
             this.botIcons = this.game.add.group();
 
+            return;
+
             // create
             var topLeft     = this.game.add.sprite(0, 0, 'selected-icon');
             var topRight    = this.game.add.sprite(0, 0, 'selected-icon');

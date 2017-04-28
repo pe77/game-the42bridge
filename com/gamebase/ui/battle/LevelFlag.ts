@@ -8,28 +8,29 @@ module GameBase {
         flagText:Phaser.Text;
 
         inOutTime:number = 500;
-        showTime:number = 3000;
+        showTime:number = 5000;
 
         create()
         {
 			var flagSprite:Phaser.Sprite = this.game.add.sprite(0, 0, 'level-flag');
 
 			this.flagText = this.game.add.text(0, 0,
-				'Level X', // text
+				'Chapter X', // text
 				{
-					font: "58px StrangerBack",
+					font: "52px StrangerBack",
 					fill: "#e5d4c5"
 				} // font style
 			);
 
 			this.flagText.anchor.x = 0.5;
 			this.flagText.x = flagSprite.width / 2;
-			this.flagText.y += 25;
+			this.flagText.y += 35;
 
 			this.add(flagSprite);
 			this.add(this.flagText);
 
 			this.x = this.game.width / 2 - this.width / 2;
+            this.y -= 10;
 
             // this.fixedToCamera = true;
 
@@ -48,7 +49,7 @@ module GameBase {
                 true
             );
 
-            this.flagText.text = 'Level ' + level;
+            this.flagText.text = 'Chapter ' + level;
             this.visible = true;
 
             setTimeout(()=>{
