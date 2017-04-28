@@ -57,15 +57,21 @@ module GameBase {
             sprite.anchor.y = 1;
 
             sprite.x = this.body.width / 2;
-            sprite.y = this.body.height;// + 40;
+            sprite.y = this.body.height;// + 40; 
 
             // add saturation filter
-            sprite.filters = [this.saturationFilter];
+            // sprite.filters = [this.saturationFilter];
 
             this.animations.push({
                 animation:a,
                 sprite:sprite
             });
+
+            if(!this.currentAnimation)
+            {
+                this.currentAnimation = this.animations[0];
+            }
+            
 
             return sprite;
         }

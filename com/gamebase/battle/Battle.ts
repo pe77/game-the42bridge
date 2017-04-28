@@ -116,22 +116,43 @@ module GameBase {
 
             // event
             hac.event.add(GameBase.E.HeroAttackCalculation.End, ()=>{
-                this.blockBg.visible = false;
-
-                if(this.checkEndBattle())
-                    return;
-                //
                 
 
-                // if all move, auto click end turn button
-                this.checkIfAllHeroesMove();
-                //
+                if(!enemy.alive)
+                {
+                    console.log('play dead animation--')
+                    enemy.playDeadAnimation();
+
+                    enemy.event.add(GameBase.E.EnemyEvent.OnEnemyDieAnimationEnd, ()=>{
+
+                        this.blockBg.visible = false;
+                        
+                        if(this.checkEndBattle())
+                            return;
+                        //
+                        
+                        // if all move, auto click end turn button
+                        this.checkIfAllHeroesMove();
+                    }, this);
+                }else{
+                    this.blockBg.visible = false;
+
+                    if(this.checkEndBattle())
+                        return;
+                    //
+                    
+                    // if all move, auto click end turn button
+                    this.checkIfAllHeroesMove();
+                }
+
+                
                 
             }, this);
 
             // play animation
             setTimeout(()=>{ // wait for lose attr animation
                 hac.show();
+                //
             }, 700)
             
             
@@ -220,9 +241,11 @@ module GameBase {
             });
 
             // remove enemies and heores
+            /*
             for (var i = 0; i < this.enemies.length; i++)
                 this.enemies[i].destroy();
             //
+            */
 
             // remove nextTurn button
             this.endTurnButton.out();

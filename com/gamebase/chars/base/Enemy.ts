@@ -67,12 +67,99 @@ module GameBase {
 
             // check if die
             if(this.value == 42)
-            {
-                this.alive = false;
-                this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyDie);
-            }
+                this.die(false);
+            //
                 
 
+        }
+
+        playDeadAnimation(dispatchDieEvent:boolean = true)
+        {
+            this.currentAnimation.animation.stop();
+            //
+
+            // "remove" ui
+            this.addTween(this.ui).to({alpha:0, y:-15}, 100).start();
+
+            var step = {v:0};
+            var t:Phaser.Tween = this.addTween(step).to(
+                {
+                    v:100
+                },
+                400,
+                Phaser.Easing.Default,
+                true
+            );
+            // tint to black
+            var startColor = 0xffffff;
+            var endColor = 0x000000;
+            t.onUpdateCallback(()=>{
+                this.currentAnimation.sprite.tint = Phaser.Color.interpolateColor(startColor, endColor,100, step.v);
+            }, this);
+
+            // bug fix
+            t.onComplete.add(()=>{
+                this.currentAnimation.sprite.tint = endColor;
+            }, this);
+
+
+            // final value text
+            var finalText = this.game.add.text(0, 0, 
+                this.value.toString(), 
+                {
+					font: "138px StrangerBack",
+					fill: "#edddd0"
+				}
+            )
+
+            // pos / add
+            finalText.anchor.set(.5, .5);
+            finalText.x = this.body.width / 2;
+            finalText.y = this.body.height / 2;
+            this.add(finalText);
+            finalText.scale.set(3, 3);
+            
+            // splash nunber
+            this.addTween(finalText.scale).to(
+                {
+                    x:1,
+                    y:1,
+                },
+                600,
+                Phaser.Easing.Elastic.Out,
+                true
+            ).onComplete.add(()=>{
+                this.addTween(this).to(
+                    {alpha:0},
+                    300, 
+                    Phaser.Easing.Default,
+                    true
+                ).onComplete.add(()=>{
+                    
+                    // dispatch dead event
+                    if(dispatchDieEvent)
+                        this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyDieAnimationEnd);
+                    //
+
+                    this.destroy();
+                }, this)
+            }, this);
+
+        }
+
+        die(playDeadAnimation:boolean = true)
+        {
+            // set as dead
+            this.alive = false;
+
+            if(playDeadAnimation)
+            {
+                this.playDeadAnimation(true);
+                return;
+            }
+
+            // dispatch dead event
+            this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyDie);
         }
 
         attack()
@@ -162,8 +249,6 @@ module GameBase {
             this.targets = [];
 
             super.destroy();
-
-            // console.debug('enemy ['+this.name+'] destroy:', this.event)
         }
 
     }
@@ -176,6 +261,7 @@ module GameBase {
             export const OnEnemyDeselect:string 	= "OnEnemyDeselect";
             export const OnEnemyResolve:string 	    = "OnEnemyResolve";
             export const OnEnemyDie:string 	        = "OnEnemyDie";
+            export const OnEnemyDieAnimationEnd:string 	        = "OnEnemyDieAnimationEnd";
         }
 
         export enum AttackType

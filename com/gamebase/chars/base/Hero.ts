@@ -151,12 +151,18 @@ module GameBase {
                 this.setTurnMove(true);
             //
 
+            // play die animation 
+            // ...
+
             // qtn of turn hero will wait die
             this.dieWaiting += this.dieTime;
 
             this.alive = false;
 
             console.log('['+this.name+'] DIE.. waiting for ['+this.dieTime+'] turns for revive!');
+
+            // dispatch die event
+            this.event.dispatch(GameBase.E.HeroEvent.OnHeroDie);
         }
 
         // if die, wait for 2 turns and return with 2 health points
@@ -282,6 +288,7 @@ module GameBase {
             export const OnHeroSelected:string 	= "OnHeroSelected";
             export const OnHeroDeselect:string 	= "OnHeroDeselect";
             export const OnHeroMove:string 	    = "OnHeroMove";
+            export const OnHeroDie:string 	    = "OnHeroDie";
             export const OnHeroAttackClick:string 	= "OnHeroAttackClick";
             export const OnHeroReloadClick:string 	= "OnHeroReloadClick";
             export const OnHeroAttack:string 	= "OnHeroAttack";

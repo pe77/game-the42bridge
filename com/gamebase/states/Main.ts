@@ -220,6 +220,10 @@ module GameBase
 
 			// start calling battles
 			this.callNextBattle();
+
+			setTimeout(()=>{
+				// lizzard.die();
+			}, 1500)
     	}
 
 		callNextBattle()
