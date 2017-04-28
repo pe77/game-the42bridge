@@ -780,17 +780,31 @@ var GameBase;
             this.blockBg.visible = true;
             // event
             hac.event.add(GameBase.E.HeroAttackCalculation.End, function () {
-                _this.blockBg.visible = false;
-                if (_this.checkEndBattle())
-                    return;
-                //
-                // if all move, auto click end turn button
-                _this.checkIfAllHeroesMove();
-                //
+                if (!enemy.alive) {
+                    console.log('play dead animation--');
+                    enemy.playDeadAnimation();
+                    enemy.event.add(GameBase.E.EnemyEvent.OnEnemyDieAnimationEnd, function () {
+                        _this.blockBg.visible = false;
+                        if (_this.checkEndBattle())
+                            return;
+                        //
+                        // if all move, auto click end turn button
+                        _this.checkIfAllHeroesMove();
+                    }, _this);
+                }
+                else {
+                    _this.blockBg.visible = false;
+                    if (_this.checkEndBattle())
+                        return;
+                    //
+                    // if all move, auto click end turn button
+                    _this.checkIfAllHeroesMove();
+                }
             }, this);
             // play animation
             setTimeout(function () {
                 hac.show();
+                //
             }, 700);
         };
         Battle.prototype.addHero = function (hero) {
@@ -850,9 +864,11 @@ var GameBase;
                 //
             });
             // remove enemies and heores
+            /*
             for (var i = 0; i < this.enemies.length; i++)
                 this.enemies[i].destroy();
             //
+            */
             // remove nextTurn button
             this.endTurnButton.out();
             this.finished = true;
@@ -965,13 +981,16 @@ var GameBase;
             sprite.anchor.x = 0.5;
             sprite.anchor.y = 1;
             sprite.x = this.body.width / 2;
-            sprite.y = this.body.height; // + 40;
+            sprite.y = this.body.height; // + 40; 
             // add saturation filter
-            sprite.filters = [this.saturationFilter];
+            // sprite.filters = [this.saturationFilter];
             this.animations.push({
                 animation: a,
                 sprite: sprite
             });
+            if (!this.currentAnimation) {
+                this.currentAnimation = this.animations[0];
+            }
             return sprite;
         };
         Char.prototype.playAnimation = function (key, fps, loop) {
@@ -1077,10 +1096,66 @@ var GameBase;
                     break;
             }
             // check if die
-            if (this.value == 42) {
-                this.alive = false;
-                this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyDie);
+            if (this.value == 42)
+                this.die(false);
+            //
+        };
+        Enemy.prototype.playDeadAnimation = function (dispatchDieEvent) {
+            var _this = this;
+            if (dispatchDieEvent === void 0) { dispatchDieEvent = true; }
+            this.currentAnimation.animation.stop();
+            //
+            // "remove" ui
+            this.addTween(this.ui).to({ alpha: 0, y: -15 }, 100).start();
+            var step = { v: 0 };
+            var t = this.addTween(step).to({
+                v: 100
+            }, 400, Phaser.Easing.Default, true);
+            // tint to black
+            var startColor = 0xffffff;
+            var endColor = 0x000000;
+            t.onUpdateCallback(function () {
+                _this.currentAnimation.sprite.tint = Phaser.Color.interpolateColor(startColor, endColor, 100, step.v);
+            }, this);
+            // bug fix
+            t.onComplete.add(function () {
+                _this.currentAnimation.sprite.tint = endColor;
+            }, this);
+            // final value text
+            var finalText = this.game.add.text(0, 0, this.value.toString(), {
+                font: "138px StrangerBack",
+                fill: "#edddd0"
+            });
+            // pos / add
+            finalText.anchor.set(.5, .5);
+            finalText.x = this.body.width / 2;
+            finalText.y = this.body.height / 2;
+            this.add(finalText);
+            finalText.scale.set(3, 3);
+            // splash nunber
+            this.addTween(finalText.scale).to({
+                x: 1,
+                y: 1,
+            }, 600, Phaser.Easing.Elastic.Out, true).onComplete.add(function () {
+                _this.addTween(_this).to({ alpha: 0 }, 300, Phaser.Easing.Default, true).onComplete.add(function () {
+                    // dispatch dead event
+                    if (dispatchDieEvent)
+                        _this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyDieAnimationEnd);
+                    //
+                    _this.destroy();
+                }, _this);
+            }, this);
+        };
+        Enemy.prototype.die = function (playDeadAnimation) {
+            if (playDeadAnimation === void 0) { playDeadAnimation = true; }
+            // set as dead
+            this.alive = false;
+            if (playDeadAnimation) {
+                this.playDeadAnimation(true);
+                return;
             }
+            // dispatch dead event
+            this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyDie);
         };
         Enemy.prototype.attack = function () {
             var _this = this;
@@ -1144,7 +1219,6 @@ var GameBase;
             // remove enemies
             this.targets = [];
             _super.prototype.destroy.call(this);
-            // console.debug('enemy ['+this.name+'] destroy:', this.event)
         };
         return Enemy;
     }(GameBase.Char));
@@ -1158,6 +1232,7 @@ var GameBase;
             EnemyEvent.OnEnemyDeselect = "OnEnemyDeselect";
             EnemyEvent.OnEnemyResolve = "OnEnemyResolve";
             EnemyEvent.OnEnemyDie = "OnEnemyDie";
+            EnemyEvent.OnEnemyDieAnimationEnd = "OnEnemyDieAnimationEnd";
         })(EnemyEvent = E.EnemyEvent || (E.EnemyEvent = {}));
         var AttackType;
         (function (AttackType) {
@@ -1268,10 +1343,14 @@ var GameBase;
             if (!this.turnMove)
                 this.setTurnMove(true);
             //
+            // play die animation 
+            // ...
             // qtn of turn hero will wait die
             this.dieWaiting += this.dieTime;
             this.alive = false;
             console.log('[' + this.name + '] DIE.. waiting for [' + this.dieTime + '] turns for revive!');
+            // dispatch die event
+            this.event.dispatch(GameBase.E.HeroEvent.OnHeroDie);
         };
         // if die, wait for 2 turns and return with 2 health points
         Hero.prototype.dieResolve = function () {
@@ -1363,6 +1442,7 @@ var GameBase;
             HeroEvent.OnHeroSelected = "OnHeroSelected";
             HeroEvent.OnHeroDeselect = "OnHeroDeselect";
             HeroEvent.OnHeroMove = "OnHeroMove";
+            HeroEvent.OnHeroDie = "OnHeroDie";
             HeroEvent.OnHeroAttackClick = "OnHeroAttackClick";
             HeroEvent.OnHeroReloadClick = "OnHeroReloadClick";
             HeroEvent.OnHeroAttack = "OnHeroAttack";
@@ -1450,7 +1530,7 @@ var GameBase;
             this.addAttack(attack2);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
-            // aniSprite.y+=28; // padding sprite adjust
+            aniSprite.y += 18; // padding sprite adjust
             this.playAnimation('iddle', 10);
             _super.prototype.create.call(this);
         };
@@ -1463,7 +1543,7 @@ var GameBase;
     var Priest = (function (_super) {
         __extends(Priest, _super);
         function Priest(game) {
-            var _this = _super.call(this, game, new Phaser.Rectangle(0, 0, 84, 220), 3) || this;
+            var _this = _super.call(this, game, new Phaser.Rectangle(0, 0, 84, 230), 3) || this;
             // energy type
             _this.energyType = GameBase.E.EnergyType.MANA;
             // operator
@@ -1578,7 +1658,7 @@ var GameBase;
         function Ghost(game) {
             var _this = 
             // 14 - x3 = 42
-            _super.call(this, game, new Phaser.Rectangle(0, 0, 220, 371), 3, 14) || this;
+            _super.call(this, game, new Phaser.Rectangle(0, 0, 220, 371), 3, 22) || this;
             // name
             _this.name = "Ghost";
             _this.level = 3;
@@ -1603,7 +1683,7 @@ var GameBase;
         function Lizzard(game) {
             var _this = 
             // 22 - +1 | x2 = 42
-            _super.call(this, game, new Phaser.Rectangle(0, 0, 273, 372), 1, 22) || this;
+            _super.call(this, game, new Phaser.Rectangle(0, 0, 273, 372), 1, 41) || this;
             // name
             _this.name = "Lizzard";
             _this.level = 1;
@@ -1951,6 +2031,9 @@ var GameBase;
             this.battles.push(battle4);
             // start calling battles
             this.callNextBattle();
+            setTimeout(function () {
+                // lizzard.die();
+            }, 1500);
         };
         Main.prototype.callNextBattle = function () {
             var _this = this;

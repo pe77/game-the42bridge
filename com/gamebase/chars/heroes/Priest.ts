@@ -4,7 +4,7 @@ module GameBase {
         
         constructor(game:Pk.PkGame)
         {
-            super(game, new Phaser.Rectangle(0, 0, 84, 220), 3);
+            super(game, new Phaser.Rectangle(0, 0, 84, 230), 3);
 
             // energy type
             this.energyType     = E.EnergyType.MANA;

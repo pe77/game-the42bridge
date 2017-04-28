@@ -8,7 +8,7 @@ module GameBase {
         constructor(game:Pk.PkGame)
         {
             // 22 - +1 | x2 = 42
-            super(game, new Phaser.Rectangle(0, 0, 273, 372), 1, 22);
+            super(game, new Phaser.Rectangle(0, 0, 273, 372), 1, 41);
 
             // name
             this.name = "Lizzard";
