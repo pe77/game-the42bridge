@@ -129,6 +129,10 @@ module GameBase {
                 Phaser.Easing.Elastic.Out,
                 true
             ).onComplete.add(()=>{
+
+                // camera shake
+                this.game.camera.shake(0.03, 100);
+
                 this.addTween(this).to(
                     {alpha:0},
                     300, 

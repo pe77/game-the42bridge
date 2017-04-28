@@ -177,7 +177,7 @@ module GameBase
 				battle1.addHero(hero);
 			}, this);
 
-			battle1.addEnemy(lizzard); 
+			battle1.addEnemy(wolf); 
 
 
 			var battle2:GameBase.Battle = new GameBase.Battle(this.game, this, 2);
@@ -187,7 +187,7 @@ module GameBase
 			this.heroes.forEach((hero:GameBase.Hero)=>{
 				battle2.addHero(hero);
 			}, this);
-			battle2.addEnemy(wolf);
+			battle2.addEnemy(lizzard);
 
 
 			var battle3:GameBase.Battle = new GameBase.Battle(this.game, this, 3);

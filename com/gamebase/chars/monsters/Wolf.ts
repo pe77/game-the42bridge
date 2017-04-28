@@ -7,8 +7,7 @@ module GameBase {
         
         constructor(game:Pk.PkGame)
         {
-            // 76 - /2, -1, +5 = 42
-            super(game, new Phaser.Rectangle(0, 0, 547, 344), 2, 76);
+            super(game, new Phaser.Rectangle(0, 0, 561, 366), 2, 22);
 
             // name
             this.name = "Wolf";
@@ -21,8 +20,10 @@ module GameBase {
             super.create();
             
             // sprite set idle
-            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'monster'+this.identification+'-idle'), 'idle');
-            aniSprite.y+=70; // padding sprite adjust
+            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'monster'+this.identification+'-idle'), 'iddle');
+            this.playAnimation('iddle', 15);
+
+            aniSprite.y+=10; // padding sprite adjust
         }
 
     }

@@ -81,7 +81,7 @@ module GameBase {
             this.load.image('stamina-icon-large', 'assets/default/images/ui/ico-stamina-large.png');
             this.load.image('mana-icon', 'assets/default/images/ui/ico-mana.png');
             this.load.image('mana-icon-large', 'assets/default/images/ui/ico-mana-large.png');
-            this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
+            // this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
 
             // ui hero
             this.load.image('ui-hero-1-on', 'assets/default/images/chars/heroes/1/ui-on.png');
@@ -116,7 +116,7 @@ module GameBase {
 
             // monster
             this.load.spritesheet('monster1-idle', 'assets/default/images/chars/enemies/1/idle.png', 350, 480, 1);
-            this.load.spritesheet('monster2-idle', 'assets/default/images/chars/enemies/2/idle.png', 650, 474, 1);
+            this.load.spritesheet('monster2-idle', 'assets/default/images/chars/enemies/2/idle.png', 588, 392, 15);
             this.load.spritesheet('monster3-idle', 'assets/default/images/chars/enemies/3/idle.png', 300, 500, 1);
             this.load.spritesheet('monster4-idle', 'assets/default/images/chars/enemies/4/idle.png', 500, 550, 1);
 
