@@ -84,11 +84,18 @@ module GameBase {
             this.load.image('particle-4', 'assets/states/main/images/particles/p4.png');
             this.load.image('particle-5', 'assets/states/main/images/particles/p5.png');
 
-            // chars
+            // chars || iddle
             this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/iddle.png', 158, 263, 12);
             this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 138, 166, 12);
             this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/iddle.png', 180, 245, 12);
             this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 204, 12);
+
+            // dead
+            this.load.spritesheet('char1-dead', 'assets/default/images/chars/heroes/1/dead.png', 391, 304, 1);
+            this.load.spritesheet('char2-dead', 'assets/default/images/chars/heroes/2/dead.png', 391, 304, 1);
+            this.load.spritesheet('char3-dead', 'assets/default/images/chars/heroes/3/dead.png', 391, 304, 1);
+            this.load.image('char4-dead', 'assets/default/images/chars/heroes/4/dead.png');
+
 
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
@@ -115,7 +122,7 @@ module GameBase {
             this.load.image('ui-hero-4-off', 'assets/default/images/chars/heroes/4/ui-off.png');
 
             this.load.image('ui-hero-revive', 'assets/default/images/ui/a-blessed.png');
-
+            this.load.image('ui-hero-dead-count', 'assets/default/images/ui/dead-count.png');
 
             // ui hero attacks
             this.load.image('ui-hero-attacks-bg-1', 'assets/default/images/ui/b-large-bg.png');
@@ -123,7 +130,7 @@ module GameBase {
             this.load.image('ui-hero-attack-bg-' + GameBase.E.AttributeType.STAMINA, 'assets/default/images/ui/b-spell-bg-stamina.png');
 
             this.load.image('ui-hero-attack-calculate', 'assets/default/images/ui/s-calculate.png');
-
+            
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.DIVI, 'assets/default/images/ui/b-i-div.png');
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.MULT, 'assets/default/images/ui/b-i-multi.png');
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.PLUS, 'assets/default/images/ui/b-i-soma.png');
