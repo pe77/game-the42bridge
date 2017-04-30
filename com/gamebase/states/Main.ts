@@ -267,18 +267,8 @@ module GameBase
 				
 			}, 1500);
 
-			// get current state
-			var l:GameBase.Main = <GameBase.Main>Pk.PkState.currentState;
-			l.x();
-
-			// console.log('this.game.state.current:', Pk.PkState.currentState)
     	}
-
-		x()
-		{
-			console.log('foi')
-		}
-
+		
 		playSound()
         {
             // play music

@@ -2181,13 +2181,6 @@ var GameBase;
             setTimeout(function () {
                 knight.die();
             }, 1500);
-            // get current state
-            var l = Pk.PkState.currentState;
-            l.x();
-            // console.log('this.game.state.current:', Pk.PkState.currentState)
-        };
-        Main.prototype.x = function () {
-            console.log('foi');
         };
         Main.prototype.playSound = function () {
             // play music
