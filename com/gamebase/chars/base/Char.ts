@@ -37,7 +37,7 @@ module GameBase {
             super(game);
 
             var bodySprite:Phaser.Sprite = Pk.PkUtils.createSquare(game, body.width, body.height);
-            bodySprite.alpha = .3;
+            bodySprite.alpha = .0;
             this.setBody(bodySprite);
 
 

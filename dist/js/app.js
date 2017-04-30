@@ -979,7 +979,7 @@ var GameBase;
             _this.attacks = [];
             _this.attackOpenDelay = 100;
             var bodySprite = Pk.PkUtils.createSquare(game, body.width, body.height);
-            bodySprite.alpha = .3;
+            bodySprite.alpha = .0;
             _this.setBody(bodySprite);
             // saturation filter
             _this.saturationFilter = _this.game.add.filter('Gray');
