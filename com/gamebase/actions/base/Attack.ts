@@ -1,5 +1,4 @@
-/// <reference path='../../../pkframe/refs.ts' />
- 
+
 module GameBase {
  
     export class Attack 

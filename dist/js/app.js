@@ -595,6 +595,12 @@ var GameBase;
             this.load.image('intro-1', 'assets/states/intro/images/1.jpg');
             this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
             this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
+            // particles
+            this.load.image('particle-1', 'assets/states/main/images/particles/p1.png');
+            this.load.image('particle-2', 'assets/states/main/images/particles/p2.png');
+            this.load.image('particle-3', 'assets/states/main/images/particles/p3.png');
+            this.load.image('particle-4', 'assets/states/main/images/particles/p4.png');
+            this.load.image('particle-5', 'assets/states/main/images/particles/p5.png');
             // chars
             this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/iddle.png', 158, 263, 12);
             this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 138, 166, 12);
@@ -656,7 +662,6 @@ var GameBase;
     }(Pk.PkLoader));
     GameBase.Loader = Loader;
 })(GameBase || (GameBase = {}));
-/// <reference path='../../../pkframe/refs.ts' />
 var GameBase;
 (function (GameBase) {
     var Attack = (function () {
@@ -1898,6 +1903,29 @@ var GameBase;
             this.addLayer('stage-front-1');
             this.addLayer('ui');
             this.addLayer('block');
+            // scenario particles
+            var front_emitter = this.game.add.emitter(this.game.world.width, -32, 600);
+            front_emitter.makeParticles('particle-1');
+            front_emitter.maxParticleScale = 0.3;
+            front_emitter.minParticleScale = 0.1;
+            front_emitter.setYSpeed(20, 60);
+            front_emitter.setXSpeed(-20, -100);
+            front_emitter.gravity = 0;
+            front_emitter.width = this.game.world.width * 1.5;
+            front_emitter.minRotation = 0;
+            front_emitter.maxRotation = 40;
+            front_emitter.start(false, 14000, 60);
+            var back_emitter = this.game.add.emitter(this.game.world.width, -32, 600);
+            back_emitter.makeParticles('particle-2');
+            back_emitter.maxParticleScale = 0.6;
+            back_emitter.minParticleScale = 0.1;
+            back_emitter.setYSpeed(20, 30);
+            back_emitter.setXSpeed(-10, -50);
+            back_emitter.gravity = 0;
+            back_emitter.width = this.game.world.width * 2.5;
+            back_emitter.minRotation = 0;
+            back_emitter.maxRotation = 60;
+            back_emitter.start(false, 24000, 350);
             // scenario sprites
             var mainBg = this.game.add.sprite(0, 0, 'main-bg');
             var mainBridgeBack = this.game.add.sprite(0, 0, 'main-bridge-back');
@@ -1989,8 +2017,10 @@ var GameBase;
             mainBridgeBack.y = 413;
             mainBridgeFront.y = 510;
             this.addToLayer('stage-back-1', mainBg);
+            this.addToLayer('stage-back-2', back_emitter);
             this.addToLayer('stage-back-2', mainBridgeBack);
             this.addToLayer('stage-front-1', mainBridgeFront);
+            this.addToLayer('stage-front-1', front_emitter);
             // transition
             this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
             // create battles

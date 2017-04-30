@@ -23,7 +23,7 @@ module GameBase {
         {
             this.body = this.game.add.sprite(0, 0, this.iconKey);
             this.add(this.body);
-
+ 
             if(startShow)
                 this.in();
             //

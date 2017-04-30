@@ -45,6 +45,34 @@ module GameBase
 			this.addLayer('ui');
 			this.addLayer('block');
 
+			// scenario particles
+			var front_emitter = this.game.add.emitter(this.game.world.width, -32, 600);
+			front_emitter.makeParticles('particle-1');
+			front_emitter.maxParticleScale = 0.3;
+			front_emitter.minParticleScale = 0.1;
+			front_emitter.setYSpeed(20, 60);
+			front_emitter.setXSpeed(-20, -100);
+			front_emitter.gravity = 0;
+			front_emitter.width = this.game.world.width * 1.5;
+			front_emitter.minRotation = 0;
+			front_emitter.maxRotation = 40;
+
+			front_emitter.start(false, 14000, 60);
+
+
+			var back_emitter = this.game.add.emitter(this.game.world.width, -32, 600);
+			back_emitter.makeParticles('particle-2');
+			back_emitter.maxParticleScale = 0.6;
+			back_emitter.minParticleScale = 0.1;
+			back_emitter.setYSpeed(20, 30);
+			back_emitter.setXSpeed(-10, -50);
+			back_emitter.gravity = 0;
+			back_emitter.width = this.game.world.width * 2.5;
+			back_emitter.minRotation = 0;
+			back_emitter.maxRotation = 60;
+
+			back_emitter.start(false, 24000, 350);
+
 			// scenario sprites
 			var mainBg:Phaser.Sprite = this.game.add.sprite(0, 0, 'main-bg');
 			var mainBridgeBack:Phaser.Sprite = this.game.add.sprite(0, 0, 'main-bridge-back');
@@ -68,7 +96,6 @@ module GameBase
 			knight.create();
 
 			// add
-			
 			this.heroes.add(druid);
 			this.heroes.add(thief);
 			this.heroes.add(priest);
@@ -87,6 +114,7 @@ module GameBase
 			wolf.y = 230;
 			wolf.ui.updatePosition();
 
+			
 			var ghost:GameBase.Ghost = new GameBase.Ghost(this.game);
 			ghost.create();
 			ghost.x = this.game.world.width - ghost.width;
@@ -165,8 +193,13 @@ module GameBase
 			mainBridgeFront.y = 510;
 
 			this.addToLayer('stage-back-1', mainBg);
+
+			this.addToLayer('stage-back-2', back_emitter);
 			this.addToLayer('stage-back-2', mainBridgeBack);
+			
 			this.addToLayer('stage-front-1', mainBridgeFront);
+			this.addToLayer('stage-front-1', front_emitter);
+			
 			
 			// transition
 			this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);

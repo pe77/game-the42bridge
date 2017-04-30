@@ -68,6 +68,13 @@ module GameBase {
             this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
             this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
 
+            // particles
+            this.load.image('particle-1', 'assets/states/main/images/particles/p1.png');
+            this.load.image('particle-2', 'assets/states/main/images/particles/p2.png');
+            this.load.image('particle-3', 'assets/states/main/images/particles/p3.png');
+            this.load.image('particle-4', 'assets/states/main/images/particles/p4.png');
+            this.load.image('particle-5', 'assets/states/main/images/particles/p5.png');
+
             // chars
             this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/iddle.png', 158, 263, 12);
             this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 138, 166, 12);
