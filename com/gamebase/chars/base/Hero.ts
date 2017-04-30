@@ -23,6 +23,8 @@ module GameBase {
 
         static heroes:Array<GameBase.Hero> = [];
 
+        audioOver:Phaser.Sound;
+
         
         selectedSprite:Phaser.Sprite;
 
@@ -102,6 +104,10 @@ module GameBase {
             this.body.events.onInputOut.add(this.inputOut, this);
 
             this.updatePosition();
+
+
+            // audio
+            this.audioOver = this.game.add.audio('a-hero-selected');
         }
 
         updatePosition()
@@ -127,6 +133,8 @@ module GameBase {
         inputOver()
         {
             this.selectedSprite.visible = true;
+
+            this.audioOver.play();
         }
 
         heroDeselect()
