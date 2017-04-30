@@ -7,7 +7,7 @@ module GameBase {
         
         constructor(game:Pk.PkGame)
         {
-            super(game, new Phaser.Rectangle(0, 0, 220, 371), 3, 73);
+            super(game, new Phaser.Rectangle(0, 0, 215, 383), 3, 93);
 
             // name
             this.name = "Ghost";
@@ -20,8 +20,10 @@ module GameBase {
             super.create();
             
             // sprite set idle
-            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'monster'+this.identification+'-idle'), 'idle');
-            aniSprite.y+=102; // padding sprite adjust
+            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'monster'+this.identification+'-idle'), 'iddle');
+            // aniSprite.y+=102; // padding sprite adjust
+
+            this.playAnimation('iddle', 10);
         }
 
     }

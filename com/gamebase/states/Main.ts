@@ -123,7 +123,7 @@ module GameBase
 			
 			var ghost:GameBase.Ghost = new GameBase.Ghost(this.game);
 			ghost.create();
-			ghost.x = this.game.world.width - ghost.width;
+			ghost.x = this.game.world.width - ghost.width - 120;
 			ghost.y = 170;
 			ghost.ui.updatePosition();
 
@@ -219,7 +219,8 @@ module GameBase
 				battle1.addHero(hero);
 			}, this);
 
-			battle1.addEnemy(lizzard); 
+			battle1.addEnemy(ghost); 
+			// battle1.addEnemy(lizzard); 
 
 
 			var battle2:GameBase.Battle = new GameBase.Battle(this.game, this, 2);
@@ -239,7 +240,8 @@ module GameBase
 			this.heroes.forEach((hero:GameBase.Hero)=>{
 				battle3.addHero(hero);
 			}, this);
-			battle3.addEnemy(ghost);
+			// battle3.addEnemy(ghost);
+			battle3.addEnemy(lizzard); 
 
 
 			var battle4:GameBase.Battle = new GameBase.Battle(this.game, this, 4);

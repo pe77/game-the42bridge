@@ -648,7 +648,7 @@ var GameBase;
             // monster
             this.load.spritesheet('monster1-idle', 'assets/default/images/chars/enemies/1/idle.png', 350, 480, 1);
             this.load.spritesheet('monster2-idle', 'assets/default/images/chars/enemies/2/idle.png', 588, 392, 15);
-            this.load.spritesheet('monster3-idle', 'assets/default/images/chars/enemies/3/idle.png', 300, 500, 1);
+            this.load.spritesheet('monster3-idle', 'assets/default/images/chars/enemies/3/idle.png', 217, 395, 13);
             this.load.spritesheet('monster4-idle', 'assets/default/images/chars/enemies/4/idle.png', 500, 550, 1);
             // battle
             this.load.image('level-flag', 'assets/default/images/ui/d-flag.png');
@@ -979,7 +979,7 @@ var GameBase;
             _this.attacks = [];
             _this.attackOpenDelay = 100;
             var bodySprite = Pk.PkUtils.createSquare(game, body.width, body.height);
-            bodySprite.alpha = .0;
+            bodySprite.alpha = .3;
             _this.setBody(bodySprite);
             // saturation filter
             _this.saturationFilter = _this.game.add.filter('Gray');
@@ -1659,7 +1659,7 @@ var GameBase;
         function Devil(game) {
             var _this = 
             // /4, -15, +5 = 42
-            _super.call(this, game, new Phaser.Rectangle(0, 0, 409, 444), 4, 208) || this;
+            _super.call(this, game, new Phaser.Rectangle(0, 0, 409, 444), 4, -12) || this;
             // name
             _this.name = "Devil";
             _this.level = 4;
@@ -1682,7 +1682,7 @@ var GameBase;
     var Ghost = (function (_super) {
         __extends(Ghost, _super);
         function Ghost(game) {
-            var _this = _super.call(this, game, new Phaser.Rectangle(0, 0, 220, 371), 3, 73) || this;
+            var _this = _super.call(this, game, new Phaser.Rectangle(0, 0, 215, 383), 3, 93) || this;
             // name
             _this.name = "Ghost";
             _this.level = 3;
@@ -1691,8 +1691,9 @@ var GameBase;
         Ghost.prototype.create = function () {
             _super.prototype.create.call(this);
             // sprite set idle
-            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'monster' + this.identification + '-idle'), 'idle');
-            aniSprite.y += 102; // padding sprite adjust
+            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'monster' + this.identification + '-idle'), 'iddle');
+            // aniSprite.y+=102; // padding sprite adjust
+            this.playAnimation('iddle', 10);
         };
         return Ghost;
     }(GameBase.Enemy));
@@ -1981,7 +1982,7 @@ var GameBase;
             wolf.ui.updatePosition();
             var ghost = new GameBase.Ghost(this.game);
             ghost.create();
-            ghost.x = this.game.world.width - ghost.width;
+            ghost.x = this.game.world.width - ghost.width - 120;
             ghost.y = 170;
             ghost.ui.updatePosition();
             var devil = new GameBase.Devil(this.game);
@@ -2052,7 +2053,8 @@ var GameBase;
             this.heroes.forEach(function (hero) {
                 battle1.addHero(hero);
             }, this);
-            battle1.addEnemy(lizzard);
+            battle1.addEnemy(ghost);
+            // battle1.addEnemy(lizzard); 
             var battle2 = new GameBase.Battle(this.game, this, 2);
             battle2.create('ui', 'block');
             // add heroes and enemies
@@ -2066,7 +2068,8 @@ var GameBase;
             this.heroes.forEach(function (hero) {
                 battle3.addHero(hero);
             }, this);
-            battle3.addEnemy(ghost);
+            // battle3.addEnemy(ghost);
+            battle3.addEnemy(lizzard);
             var battle4 = new GameBase.Battle(this.game, this, 4);
             battle4.create('ui', 'block');
             // add heroes and enemies
