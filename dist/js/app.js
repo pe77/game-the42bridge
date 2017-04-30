@@ -615,9 +615,9 @@ var GameBase;
             this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/iddle.png', 180, 245, 12);
             this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 204, 12);
             // dead
-            this.load.spritesheet('char1-dead', 'assets/default/images/chars/heroes/1/dead.png', 391, 304, 1);
-            this.load.spritesheet('char2-dead', 'assets/default/images/chars/heroes/2/dead.png', 391, 304, 1);
-            this.load.spritesheet('char3-dead', 'assets/default/images/chars/heroes/3/dead.png', 391, 304, 1);
+            this.load.image('char1-dead', 'assets/default/images/chars/heroes/1/dead.png');
+            this.load.image('char2-dead', 'assets/default/images/chars/heroes/2/dead.png');
+            this.load.image('char3-dead', 'assets/default/images/chars/heroes/3/dead.png');
             this.load.image('char4-dead', 'assets/default/images/chars/heroes/4/dead.png');
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
@@ -653,7 +653,7 @@ var GameBase;
             this.load.image('ui-enemy-value-bg', 'assets/default/images/ui/b-monster-bg.png');
             this.load.image('reload-box', 'assets/default/images/ui/reload-box.png');
             // monster
-            this.load.spritesheet('monster1-idle', 'assets/default/images/chars/enemies/1/idle.png', 350, 480, 1);
+            this.load.spritesheet('monster1-idle', 'assets/default/images/chars/enemies/1/idle.png', 278, 365, 12);
             this.load.spritesheet('monster2-idle', 'assets/default/images/chars/enemies/2/idle.png', 588, 392, 15);
             this.load.spritesheet('monster3-idle', 'assets/default/images/chars/enemies/3/idle.png', 217, 395, 13);
             this.load.spritesheet('monster4-idle', 'assets/default/images/chars/enemies/4/idle.png', 500, 550, 1);
@@ -1803,7 +1803,7 @@ var GameBase;
         function Lizzard(game) {
             var _this = 
             // 22 - +1 | x2 = 42
-            _super.call(this, game, new Phaser.Rectangle(0, 0, 273, 372), 1, 41) || this;
+            _super.call(this, game, new Phaser.Rectangle(0, 0, 278, 365), 1, 41) || this;
             // name
             _this.name = "Lizzard";
             _this.level = 1;
@@ -1812,8 +1812,10 @@ var GameBase;
         Lizzard.prototype.create = function () {
             _super.prototype.create.call(this);
             // sprite set idle
-            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'monster' + this.identification + '-idle'), 'idle');
-            aniSprite.y += 69; // padding sprite adjust
+            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'monster' + this.identification + '-idle'), 'iddle');
+            console.log('iddle lizzard start');
+            // start from iddle animation
+            this.playAnimation('iddle', 10);
         };
         return Lizzard;
     }(GameBase.Enemy));
@@ -2068,8 +2070,8 @@ var GameBase;
             // create a enemies
             var lizzard = new GameBase.Lizzard(this.game);
             lizzard.create();
-            lizzard.x = this.game.world.width - lizzard.width;
-            lizzard.y = 170;
+            lizzard.x = this.game.world.width - lizzard.width - 100;
+            lizzard.y = 180;
             lizzard.ui.updatePosition();
             var wolf = new GameBase.Wolf(this.game);
             wolf.create();
