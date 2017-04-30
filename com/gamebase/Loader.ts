@@ -91,9 +91,9 @@ module GameBase {
             this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 204, 12);
 
             // dead
-            this.load.spritesheet('char1-dead', 'assets/default/images/chars/heroes/1/dead.png', 391, 304, 1);
-            this.load.spritesheet('char2-dead', 'assets/default/images/chars/heroes/2/dead.png', 391, 304, 1);
-            this.load.spritesheet('char3-dead', 'assets/default/images/chars/heroes/3/dead.png', 391, 304, 1);
+            this.load.image('char1-dead', 'assets/default/images/chars/heroes/1/dead.png');
+            this.load.image('char2-dead', 'assets/default/images/chars/heroes/2/dead.png');
+            this.load.image('char3-dead', 'assets/default/images/chars/heroes/3/dead.png');
             this.load.image('char4-dead', 'assets/default/images/chars/heroes/4/dead.png');
 
 
@@ -140,7 +140,7 @@ module GameBase {
             this.load.image('reload-box', 'assets/default/images/ui/reload-box.png');
 
             // monster
-            this.load.spritesheet('monster1-idle', 'assets/default/images/chars/enemies/1/idle.png', 350, 480, 1);
+            this.load.spritesheet('monster1-idle', 'assets/default/images/chars/enemies/1/idle.png', 278, 365, 12);
             this.load.spritesheet('monster2-idle', 'assets/default/images/chars/enemies/2/idle.png', 588, 392, 15);
             this.load.spritesheet('monster3-idle', 'assets/default/images/chars/enemies/3/idle.png', 217, 395, 13);
             this.load.spritesheet('monster4-idle', 'assets/default/images/chars/enemies/4/idle.png', 500, 550, 1);

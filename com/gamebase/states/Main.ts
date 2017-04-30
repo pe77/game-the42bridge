@@ -112,8 +112,8 @@ module GameBase
 			// create a enemies
 			var lizzard:GameBase.Lizzard = new GameBase.Lizzard(this.game);
 			lizzard.create();
-			lizzard.x = this.game.world.width - lizzard.width;
-			lizzard.y = 170;
+			lizzard.x = this.game.world.width - lizzard.width - 100;
+			lizzard.y = 180;
 			lizzard.ui.updatePosition();
 
 			var wolf:GameBase.Wolf = new GameBase.Wolf(this.game);
