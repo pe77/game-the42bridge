@@ -16,6 +16,8 @@ module GameBase {
 
         static enemies:Array<GameBase.Enemy> = [];
 
+        audioDie:Phaser.Sound;
+
         constructor(game, body, id, value)
         {
             super(game, body);
@@ -39,6 +41,9 @@ module GameBase {
                 this.resolveAttack(hero, attack)
 
             }, this);
+
+            // audio
+            this.audioDie = this.game.add.audio('a-enemy-die');
 
         }
 
@@ -132,6 +137,9 @@ module GameBase {
 
                 // camera shake
                 this.game.camera.shake(0.03, 100);
+
+                // play fx
+                this.audioDie.play();
 
                 this.addTween(this).to(
                     {alpha:0},

@@ -68,6 +68,15 @@ module GameBase {
             this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
             this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
 
+            // battle :: ANW2683_06_Runway-To-Ignition.mp3
+            this.load.audio('battle-sound', 'assets/states/main/audio/battle.mp3');
+            
+            // sounds fx
+            this.load.audio('a-hero-selected', 'assets/default/audio/fx/a_selecao.wav');
+            this.load.audio('a-hero-menu', 'assets/default/audio/fx/a_menuchar.wav');
+            this.load.audio('a-hero-attack-selected', 'assets/default/audio/fx/a_selGolpe.wav');
+            this.load.audio('a-enemy-die', 'assets/default/audio/fx/a_golpe.wav');
+
             // particles
             this.load.image('particle-1', 'assets/states/main/images/particles/p1.png');
             this.load.image('particle-2', 'assets/states/main/images/particles/p2.png');
@@ -88,7 +97,6 @@ module GameBase {
             this.load.image('stamina-icon-large', 'assets/default/images/ui/ico-stamina-large.png');
             this.load.image('mana-icon', 'assets/default/images/ui/ico-mana.png');
             this.load.image('mana-icon-large', 'assets/default/images/ui/ico-mana-large.png');
-            // this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
 
             // ui hero
             this.load.image('ui-hero-1-on', 'assets/default/images/chars/heroes/1/ui-on.png');
@@ -109,7 +117,8 @@ module GameBase {
 
             // ui hero attacks
             this.load.image('ui-hero-attacks-bg-1', 'assets/default/images/ui/b-large-bg.png');
-            this.load.image('ui-hero-attack-bg', 'assets/default/images/ui/b-spell-bg.png');
+            this.load.image('ui-hero-attack-bg-' + GameBase.E.AttributeType.MANA, 'assets/default/images/ui/b-spell-bg-mana.png');
+            this.load.image('ui-hero-attack-bg-' + GameBase.E.AttributeType.STAMINA, 'assets/default/images/ui/b-spell-bg-stamina.png');
 
             this.load.image('ui-hero-attack-calculate', 'assets/default/images/ui/s-calculate.png');
 

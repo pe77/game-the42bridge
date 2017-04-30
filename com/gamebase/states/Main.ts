@@ -15,6 +15,8 @@ module GameBase
 		battles:Array<GameBase.Battle> = [];
 		battleCount:number = 0;
 
+		musicBG:Phaser.Sound;
+
 		init(...args:any[])
 		{
 			super.init(args); // if whant override init, you need this line!
@@ -45,7 +47,7 @@ module GameBase
 			this.addLayer('ui');
 			this.addLayer('block');
 
-			// scenario particles
+			// scene particles
 			var front_emitter = this.game.add.emitter(this.game.world.width, -32, 600);
 			front_emitter.makeParticles('particle-1');
 			front_emitter.maxParticleScale = 0.3;
@@ -73,7 +75,11 @@ module GameBase
 
 			back_emitter.start(false, 24000, 350);
 
-			// scenario sprites
+			// audio
+            this.musicBG = this.game.add.audio('battle-sound');
+            this.musicBG.onDecoded.add(this.playSound, this); // load
+
+			// stage sprites
 			var mainBg:Phaser.Sprite = this.game.add.sprite(0, 0, 'main-bg');
 			var mainBridgeBack:Phaser.Sprite = this.game.add.sprite(0, 0, 'main-bridge-back');
 			var mainBridgeFront:Phaser.Sprite = this.game.add.sprite(0, 0, 'main-bridge-front');
@@ -150,7 +156,7 @@ module GameBase
 				hero.ui.setAsInitialCords();
 
 				// pos ui
-				hero.uiAttack.x = 140 * i;
+				hero.uiAttack.x = 160 * i - (10*i);
 				hero.uiAttack.y = hero.y - hero.uiAttack.height + 50;
 				hero.uiAttack.setAsInitialCords();
 
@@ -262,6 +268,12 @@ module GameBase
 			}, 1500)
     	}
 
+		playSound()
+        {
+            // play music
+            this.musicBG.fadeIn(1000, true);
+        }
+
 		callNextBattle()
 		{
 			// check if is play all battles
@@ -295,6 +307,14 @@ module GameBase
 		render()
         {
             // this.game.debug.text('(Main Screen) Press [ENTER] to Menu', 35, 35);
+        }
+
+		// calls when leaving state
+        shutdown()
+        {
+            if(this.musicBG.isPlaying)
+                this.musicBG.stop();
+            //
         }
 
     }

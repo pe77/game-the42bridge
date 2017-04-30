@@ -595,6 +595,13 @@ var GameBase;
             this.load.image('intro-1', 'assets/states/intro/images/1.jpg');
             this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
             this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
+            // battle :: ANW2683_06_Runway-To-Ignition.mp3
+            this.load.audio('battle-sound', 'assets/states/main/audio/battle.mp3');
+            // sounds fx
+            this.load.audio('a-hero-selected', 'assets/default/audio/fx/a_selecao.wav');
+            this.load.audio('a-hero-menu', 'assets/default/audio/fx/a_menuchar.wav');
+            this.load.audio('a-hero-attack-selected', 'assets/default/audio/fx/a_selGolpe.wav');
+            this.load.audio('a-enemy-die', 'assets/default/audio/fx/a_golpe.wav');
             // particles
             this.load.image('particle-1', 'assets/states/main/images/particles/p1.png');
             this.load.image('particle-2', 'assets/states/main/images/particles/p2.png');
@@ -613,7 +620,6 @@ var GameBase;
             this.load.image('stamina-icon-large', 'assets/default/images/ui/ico-stamina-large.png');
             this.load.image('mana-icon', 'assets/default/images/ui/ico-mana.png');
             this.load.image('mana-icon-large', 'assets/default/images/ui/ico-mana-large.png');
-            // this.load.spritesheet('selected-icon', 'assets/default/images/selectable-icon.png', 22, 16, 3);
             // ui hero
             this.load.image('ui-hero-1-on', 'assets/default/images/chars/heroes/1/ui-on.png');
             this.load.image('ui-hero-2-on', 'assets/default/images/chars/heroes/2/ui-on.png');
@@ -629,7 +635,8 @@ var GameBase;
             this.load.image('ui-hero-4-off', 'assets/default/images/chars/heroes/4/ui-off.png');
             // ui hero attacks
             this.load.image('ui-hero-attacks-bg-1', 'assets/default/images/ui/b-large-bg.png');
-            this.load.image('ui-hero-attack-bg', 'assets/default/images/ui/b-spell-bg.png');
+            this.load.image('ui-hero-attack-bg-' + GameBase.E.AttributeType.MANA, 'assets/default/images/ui/b-spell-bg-mana.png');
+            this.load.image('ui-hero-attack-bg-' + GameBase.E.AttributeType.STAMINA, 'assets/default/images/ui/b-spell-bg-stamina.png');
             this.load.image('ui-hero-attack-calculate', 'assets/default/images/ui/s-calculate.png');
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.DIVI, 'assets/default/images/ui/b-i-div.png');
             this.load.image('ui-hero-operator-' + GameBase.E.Operator.MULT, 'assets/default/images/ui/b-i-multi.png');
@@ -1083,6 +1090,8 @@ var GameBase;
                 var attack = a;
                 _this.resolveAttack(hero, attack);
             }, this);
+            // audio
+            this.audioDie = this.game.add.audio('a-enemy-die');
         };
         Enemy.prototype.resolveAttack = function (hero, attack) {
             console.log('hero[' + hero.name + '] attack [' + this.name + ']');
@@ -1144,6 +1153,8 @@ var GameBase;
             }, 600, Phaser.Easing.Elastic.Out, true).onComplete.add(function () {
                 // camera shake
                 _this.game.camera.shake(0.03, 100);
+                // play fx
+                _this.audioDie.play();
                 _this.addTween(_this).to({ alpha: 0 }, 300, Phaser.Easing.Default, true).onComplete.add(function () {
                     // dispatch dead event
                     if (dispatchDieEvent)
@@ -1318,6 +1329,8 @@ var GameBase;
             this.body.events.onInputOver.add(this.inputOver, this);
             this.body.events.onInputOut.add(this.inputOut, this);
             this.updatePosition();
+            // audio
+            this.audioOver = this.game.add.audio('a-hero-selected');
         };
         Hero.prototype.updatePosition = function () {
             this.selectedSprite.y = this.body.height - this.selectedSprite.height + 11;
@@ -1334,6 +1347,7 @@ var GameBase;
         };
         Hero.prototype.inputOver = function () {
             this.selectedSprite.visible = true;
+            this.audioOver.play();
         };
         Hero.prototype.heroDeselect = function () {
             this.selectedSprite.visible = false;
@@ -1495,7 +1509,8 @@ var GameBase;
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=26; // padding sprite adjust
-            this.playAnimation('iddle', 10);
+            this.playAnimation('iddle', 11);
+            this.currentAnimation.animation.frame = 2;
             _super.prototype.create.call(this);
         };
         return Druid;
@@ -1538,7 +1553,8 @@ var GameBase;
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             aniSprite.y += 18; // padding sprite adjust
-            this.playAnimation('iddle', 10);
+            this.playAnimation('iddle', 12);
+            this.currentAnimation.animation.frame = 6;
             _super.prototype.create.call(this);
         };
         return Knight;
@@ -1581,7 +1597,8 @@ var GameBase;
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=16;
-            this.playAnimation('iddle', 10);
+            this.playAnimation('iddle', 9);
+            this.currentAnimation.animation.frame = 7;
             _super.prototype.create.call(this);
         };
         return Priest;
@@ -1624,7 +1641,8 @@ var GameBase;
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=18; // padding sprite adjust
-            this.playAnimation('iddle', 10);
+            this.playAnimation('iddle', 16);
+            this.currentAnimation.animation.frame = 10;
             _super.prototype.create.call(this);
         };
         return Thief;
@@ -1903,7 +1921,7 @@ var GameBase;
             this.addLayer('stage-front-1');
             this.addLayer('ui');
             this.addLayer('block');
-            // scenario particles
+            // scene particles
             var front_emitter = this.game.add.emitter(this.game.world.width, -32, 600);
             front_emitter.makeParticles('particle-1');
             front_emitter.maxParticleScale = 0.3;
@@ -1926,7 +1944,10 @@ var GameBase;
             back_emitter.minRotation = 0;
             back_emitter.maxRotation = 60;
             back_emitter.start(false, 24000, 350);
-            // scenario sprites
+            // audio
+            this.musicBG = this.game.add.audio('battle-sound');
+            this.musicBG.onDecoded.add(this.playSound, this); // load
+            // stage sprites
             var mainBg = this.game.add.sprite(0, 0, 'main-bg');
             var mainBridgeBack = this.game.add.sprite(0, 0, 'main-bridge-back');
             var mainBridgeFront = this.game.add.sprite(0, 0, 'main-bridge-front');
@@ -1983,7 +2004,7 @@ var GameBase;
                 hero.ui.y = _this.game.world.height - hero.ui.height - _this.padding;
                 hero.ui.setAsInitialCords();
                 // pos ui
-                hero.uiAttack.x = 140 * i;
+                hero.uiAttack.x = 160 * i - (10 * i);
                 hero.uiAttack.y = hero.y - hero.uiAttack.height + 50;
                 hero.uiAttack.setAsInitialCords();
                 hero.updatePosition();
@@ -2063,6 +2084,10 @@ var GameBase;
                 // lizzard.die();
             }, 1500);
         };
+        Main.prototype.playSound = function () {
+            // play music
+            this.musicBG.fadeIn(1000, true);
+        };
         Main.prototype.callNextBattle = function () {
             var _this = this;
             // check if is play all battles
@@ -2090,6 +2115,12 @@ var GameBase;
         };
         Main.prototype.render = function () {
             // this.game.debug.text('(Main Screen) Press [ENTER] to Menu', 35, 35);
+        };
+        // calls when leaving state
+        Main.prototype.shutdown = function () {
+            if (this.musicBG.isPlaying)
+                this.musicBG.stop();
+            //
         };
         return Main;
     }(Pk.PkState));
@@ -2263,7 +2294,7 @@ var GameBase;
                 var reloadBox = this.game.add.sprite(0, 0, 'reload-box');
                 this.hero.attacks.forEach(function (attack, i) {
                     // bg
-                    var bg = _this.game.add.sprite(0, 0, 'ui-hero-attack-bg');
+                    var bg = _this.game.add.sprite(0, 0, 'ui-hero-attack-bg-' + _this.hero.energyType);
                     // value
                     var textValue = _this.game.add.text(0, 0, attack.value.toString(), // text
                     _this.textStyleValues // font style
@@ -2293,6 +2324,7 @@ var GameBase;
                         if (_this.hero.turnMove)
                             return;
                         //
+                        _this.audioSelect.play();
                         _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttackClick, attack);
                         _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
                     }, _this);
@@ -2313,6 +2345,7 @@ var GameBase;
                     if (_this.hero.turnMove)
                         return;
                     //
+                    _this.audioSelect.play();
                     _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroReloadClick);
                     _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
                 });
@@ -2329,6 +2362,9 @@ var GameBase;
                 this.hero.event.add(GameBase.E.HeroEvent.OnHeroSelected, this.heroSelectd, this);
                 this.hero.event.add(GameBase.E.HeroEvent.OnHeroDeselect, this.heroDeselect, this);
                 this.visible = false;
+                // audio
+                this.audioOpen = this.game.add.audio('a-hero-menu');
+                this.audioSelect = this.game.add.audio('a-hero-attack-selected');
             };
             Attack.prototype.setAsInitialCords = function () {
                 this.initialPosition = new Phaser.Point(this.x, this.y);
@@ -2342,6 +2378,7 @@ var GameBase;
                 this.updateView();
                 this.visible = true;
                 this.resetAttrs();
+                this.audioOpen.play();
             };
             Attack.prototype.updateView = function () {
                 var _this = this;

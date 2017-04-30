@@ -24,6 +24,9 @@ module GameBase {
                 fill: "#fff"
             };
 
+            audioOpen:Phaser.Sound;
+            audioSelect:Phaser.Sound;
+
             constructor(game:Pk.PkGame, hero:GameBase.Hero)
             {
                 super(game)
@@ -42,7 +45,7 @@ module GameBase {
                 this.hero.attacks.forEach((attack, i)=>{
                     
                     // bg
-                    var bg = this.game.add.sprite(0, 0, 'ui-hero-attack-bg');
+                    var bg = this.game.add.sprite(0, 0, 'ui-hero-attack-bg-' + this.hero.energyType);
 
                     // value
                     var textValue = this.game.add.text(0, 0,
@@ -81,6 +84,8 @@ module GameBase {
                         if(this.hero.turnMove)
                             return;
                         //
+
+                        this.audioSelect.play();
                         
                         this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttackClick, attack);
                         this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
@@ -110,6 +115,8 @@ module GameBase {
                     if(this.hero.turnMove)
                         return;
                     //
+
+                    this.audioSelect.play();
                     
                     this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroReloadClick);
                     this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
@@ -133,6 +140,10 @@ module GameBase {
                 this.hero.event.add(GameBase.E.HeroEvent.OnHeroDeselect, this.heroDeselect, this);
 
                 this.visible = false;
+
+                // audio
+                this.audioOpen = this.game.add.audio('a-hero-menu');
+                this.audioSelect = this.game.add.audio('a-hero-attack-selected');
             }
 
             setAsInitialCords()
@@ -155,6 +166,8 @@ module GameBase {
 
                 this.visible = true;
                 this.resetAttrs();
+
+                this.audioOpen.play();
             }
 
             updateView()
