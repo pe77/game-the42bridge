@@ -291,6 +291,7 @@ var Pk;
         };
         PkState.prototype.create = function () {
             // console.log('PkState create');
+            Pk.PkState.currentState = this;
         };
         return PkState;
     }(Phaser.State));
@@ -608,11 +609,16 @@ var GameBase;
             this.load.image('particle-3', 'assets/states/main/images/particles/p3.png');
             this.load.image('particle-4', 'assets/states/main/images/particles/p4.png');
             this.load.image('particle-5', 'assets/states/main/images/particles/p5.png');
-            // chars
+            // chars || iddle
             this.load.spritesheet('char1-idle', 'assets/default/images/chars/heroes/1/iddle.png', 158, 263, 12);
             this.load.spritesheet('char2-idle', 'assets/default/images/chars/heroes/2/iddle.png', 138, 166, 12);
             this.load.spritesheet('char3-idle', 'assets/default/images/chars/heroes/3/iddle.png', 180, 245, 12);
             this.load.spritesheet('char4-idle', 'assets/default/images/chars/heroes/4/iddle.png', 211, 204, 12);
+            // dead
+            this.load.spritesheet('char1-dead', 'assets/default/images/chars/heroes/1/dead.png', 391, 304, 1);
+            this.load.spritesheet('char2-dead', 'assets/default/images/chars/heroes/2/dead.png', 391, 304, 1);
+            this.load.spritesheet('char3-dead', 'assets/default/images/chars/heroes/3/dead.png', 391, 304, 1);
+            this.load.image('char4-dead', 'assets/default/images/chars/heroes/4/dead.png');
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
             this.load.image('health-icon-large', 'assets/default/images/ui/ico-health-large.png');
@@ -634,6 +640,7 @@ var GameBase;
             this.load.image('ui-hero-3-off', 'assets/default/images/chars/heroes/3/ui-off.png');
             this.load.image('ui-hero-4-off', 'assets/default/images/chars/heroes/4/ui-off.png');
             this.load.image('ui-hero-revive', 'assets/default/images/ui/a-blessed.png');
+            this.load.image('ui-hero-dead-count', 'assets/default/images/ui/dead-count.png');
             // ui hero attacks
             this.load.image('ui-hero-attacks-bg-1', 'assets/default/images/ui/b-large-bg.png');
             this.load.image('ui-hero-attack-bg-' + GameBase.E.AttributeType.MANA, 'assets/default/images/ui/b-spell-bg-mana.png');
@@ -1199,6 +1206,9 @@ var GameBase;
             var hero = standHeroes[this.game.rnd.integerInRange(0, standHeroes.length - 1)];
             var damage = this.game.rnd.integerInRange(1, (this.level + 2));
             var damageType;
+            // calcule hero DR
+            damage -= hero.damageReduction;
+            damage = damage <= 0 ? 1 : damage;
             // damage = 5;// temp
             // sort damage type
             switch (this.game.rnd.integerInRange(1, 5)) {
@@ -1275,9 +1285,11 @@ var GameBase;
             _this.dieWaiting = 0;
             _this.dieTime = 5; // qtn of turn hero will wait die
             _this.reviveHealthPoints = 2; // qtn of heath when revive
+            _this.damageReduction = 0; // DR
             _this.reloadEnergyQtn = 2; // how much on reload energy move
             _this.ui = new GameBase.ui.Hero(_this.game, _this);
             _this.uiAttack = new GameBase.ui.Attack(_this.game, _this);
+            _this.deadCount = new GameBase.ui.DeadCount(_this.game, _this);
             _this.identification = id;
             GameBase.Hero.heroes.push(_this);
             return _this;
@@ -1287,6 +1299,8 @@ var GameBase;
             _super.prototype.create.call(this);
             this.ui.create();
             this.uiAttack.create();
+            this.deadCount.create();
+            this.add(this.deadCount);
             // add saturation filter over ui's
             this.ui.filters = [this.saturationFilter];
             this.uiAttack.filters = [this.saturationFilter];
@@ -1329,6 +1343,8 @@ var GameBase;
             this.event.add(GameBase.E.HeroEvent.OnHeroDeselect, this.heroDeselect, this);
             this.body.events.onInputOver.add(this.inputOver, this);
             this.body.events.onInputOut.add(this.inputOut, this);
+            this.event.add(GameBase.E.HeroEvent.OnHeroDie, this.playDeadAnimation, this);
+            this.event.add(GameBase.E.HeroEvent.OnHeroRevive, this.playReviveAnimation, this);
             this.updatePosition();
             // audio
             this.audioOver = this.game.add.audio('a-hero-selected');
@@ -1366,6 +1382,7 @@ var GameBase;
                 this.setTurnMove(true);
             //
             // play die animation 
+            // this.playDeadAnimation();
             // ...
             // qtn of turn hero will wait die
             this.dieWaiting += this.dieTime;
@@ -1374,20 +1391,79 @@ var GameBase;
             // dispatch die event
             this.event.dispatch(GameBase.E.HeroEvent.OnHeroDie);
         };
+        Hero.prototype.playReviveAnimation = function () {
+            // stop current animation
+            this.currentAnimation.animation.stop();
+            // hide dead count
+            this.deadCount.hide();
+            // change animation
+            this.playAnimation('iddle');
+            this.currentAnimation.animation.play();
+            // reset tint effect
+            this.currentAnimation.sprite.tint = 0xffffff;
+            // create revive aura
+            var reviveAura = new GameBase.ui.ReviveAura(this.game, this);
+            reviveAura.create();
+            reviveAura.show();
+            // "des"hide
+            this.currentAnimation.sprite.alpha = 0;
+            this.addTween(this.currentAnimation.sprite).to({
+                alpha: 1
+            }, 300, Phaser.Easing.Default, true).onComplete.add(function () {
+                console.log('end show revived hero');
+            }, this);
+        };
+        Hero.prototype.playDeadAnimation = function () {
+            var _this = this;
+            // stop current animation
+            this.currentAnimation.animation.stop();
+            // tint to black
+            var step = { v: 0, rv: 100 };
+            var t = this.addTween(step).to({
+                v: 100,
+                rv: 0
+            }, 300, Phaser.Easing.Default, true);
+            var startColor = 0xffffff;
+            var endColor = 0x000000;
+            // this.currentAnimation.sprite.blendMode = PIXI.blendModes.ADD;
+            t.onUpdateCallback(function () {
+                _this.currentAnimation.sprite.tint = Phaser.Color.interpolateColor(startColor, endColor, 100, step.v);
+            }, this);
+            t.onComplete.add(function () {
+                _this.currentAnimation.sprite.tint = endColor; // bug fix
+                // alpha to 0
+                _this.addTween(_this.currentAnimation.sprite).to({
+                    alpha: 0
+                }, 300, Phaser.Easing.Default, true).onComplete.add(function () {
+                    // change to dead animation
+                    _this.playAnimation('dead');
+                    // show dead animation
+                    _this.addTween(_this.currentAnimation.sprite).from({
+                        alpha: 0
+                    }, 300, Phaser.Easing.Default, true).onComplete.add(function () {
+                        // end... (?)
+                        // show dead counter
+                        _this.deadCount.show();
+                    }, _this);
+                }, _this);
+            }, this);
+        };
         // if die, wait for 2 turns and return with 2 health points
         Hero.prototype.dieResolve = function () {
-            if (!this.dieWaiting) {
+            // count
+            this.dieWaiting--;
+            if (this.dieWaiting <= 0) {
                 this.revive();
                 return;
             }
-            // count
-            this.dieWaiting--;
+            this.event.dispatch(GameBase.E.HeroEvent.OnHeroDieResolve, this);
         };
         Hero.prototype.revive = function () {
             console.log('[' + this.name + '] revive with [' + this.reviveHealthPoints + '] health points');
             this.setTurnMove(false);
             this.ui.addHealth(this.reviveHealthPoints);
             this.alive = true;
+            this.event.dispatch(GameBase.E.HeroEvent.OnHeroRevive);
         };
         Hero.prototype.attack = function (attack) {
             // check turn move
@@ -1464,7 +1540,9 @@ var GameBase;
             HeroEvent.OnHeroSelected = "OnHeroSelected";
             HeroEvent.OnHeroDeselect = "OnHeroDeselect";
             HeroEvent.OnHeroMove = "OnHeroMove";
+            HeroEvent.OnHeroRevive = "OnHeroRevive";
             HeroEvent.OnHeroDie = "OnHeroDie";
+            HeroEvent.OnHeroDieResolve = "OnHeroDieResolve";
             HeroEvent.OnHeroAttackClick = "OnHeroAttackClick";
             HeroEvent.OnHeroReloadClick = "OnHeroReloadClick";
             HeroEvent.OnHeroAttack = "OnHeroAttack";
@@ -1487,29 +1565,32 @@ var GameBase;
             // name
             _this.name = "Druid";
             // die turns
-            _this.dieTime = 8;
+            _this.dieTime = 5;
             // revive health
             _this.reviveHealthPoints = 3;
+            _this.damageReduction = 1;
             _this.reloadEnergyQtn = 3;
             return _this;
         }
         Druid.prototype.create = function () {
             // add attacks
             var attack1 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
-            attack1.energyCost = 2;
+            attack1.energyCost = 1;
             attack1.value = 2;
-            var attack2 = new GameBase.Attacks.Regular(this.game, GameBase.E.Operator.MINU, this.energyType);
-            attack2.energyCost = 4;
-            attack2.value = 2;
+            var attack2 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
+            attack2.energyCost = 3;
+            attack2.value = 3;
             var attack3 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack3.energyCost = 5;
-            attack3.value = 3;
+            attack3.value = 4;
             this.addAttack(attack1);
             this.addAttack(attack3);
             this.addAttack(attack2);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=26; // padding sprite adjust
+            // dead
+            this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-dead'), 'dead');
             this.playAnimation('iddle', 11);
             this.currentAnimation.animation.frame = 2;
             _super.prototype.create.call(this);
@@ -1531,29 +1612,35 @@ var GameBase;
             // name
             _this.name = "Knight";
             // die turns
-            _this.dieTime = 2;
+            _this.dieTime = 1;
             // revive health
             _this.reviveHealthPoints = 4;
+            _this.damageReduction = 3;
             _this.reloadEnergyQtn = 2;
             return _this;
         }
         Knight.prototype.create = function () {
             // add attacks
             var attack1 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
-            attack1.energyCost = 2;
+            attack1.energyCost = 1;
             attack1.value = 1;
-            var attack2 = new GameBase.Attacks.Regular(this.game, GameBase.E.Operator.MINU, this.energyType);
-            attack2.energyCost = 4;
-            attack2.value = 3;
+            var attack2 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
+            attack2.energyCost = 3;
+            attack2.value = 5;
             var attack3 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack3.energyCost = 5;
-            attack3.value = 15;
+            attack3.value = 13;
             this.addAttack(attack1);
             this.addAttack(attack3);
             this.addAttack(attack2);
             // animation
-            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
-            aniSprite.y += 18; // padding sprite adjust
+            // iddle
+            var iddleSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
+            iddleSprite.y += 18; // padding sprite adjust
+            // dead
+            var deadSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-dead'), 'dead');
+            // deadSprite.width = this.body.width;
+            // deadSprite.y+=20;
             this.playAnimation('iddle', 12);
             this.currentAnimation.animation.frame = 6;
             _super.prototype.create.call(this);
@@ -1575,7 +1662,7 @@ var GameBase;
             // name
             _this.name = "Priest";
             // die turns
-            _this.dieTime = 9;
+            _this.dieTime = 5;
             // revive health
             _this.reviveHealthPoints = 2;
             _this.reloadEnergyQtn = 4;
@@ -1584,20 +1671,22 @@ var GameBase;
         Priest.prototype.create = function () {
             // add attacks
             var attack1 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
-            attack1.energyCost = 3;
+            attack1.energyCost = 1;
             attack1.value = 2;
-            var attack2 = new GameBase.Attacks.Regular(this.game, GameBase.E.Operator.PLUS, this.energyType);
-            attack2.energyCost = 4;
-            attack2.value = 2;
+            var attack2 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
+            attack2.energyCost = 3;
+            attack2.value = 3;
             var attack3 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack3.energyCost = 5;
-            attack3.value = 3;
+            attack3.value = 4;
             this.addAttack(attack1);
             this.addAttack(attack3);
             this.addAttack(attack2);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=16;
+            // dead
+            this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-dead'), 'dead');
             this.playAnimation('iddle', 9);
             this.currentAnimation.animation.frame = 7;
             _super.prototype.create.call(this);
@@ -1622,26 +1711,32 @@ var GameBase;
             _this.dieTime = 4;
             // revive health
             _this.reviveHealthPoints = 1;
+            // damage reduction
+            _this.damageReduction = 2;
+            // 
             _this.reloadEnergyQtn = 4;
             return _this;
         }
         Thief.prototype.create = function () {
             // add attacks
             var attack1 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
-            attack1.energyCost = 2;
+            attack1.energyCost = 1;
             attack1.value = 1;
-            var attack2 = new GameBase.Attacks.Regular(this.game, GameBase.E.Operator.PLUS, this.energyType);
-            attack2.energyCost = 4;
-            attack2.value = 3;
+            var attack2 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
+            attack2.energyCost = 3;
+            attack2.value = 5;
             var attack3 = new GameBase.Attacks.Regular(this.game, this.operator, this.energyType);
             attack3.energyCost = 5;
-            attack3.value = 15;
+            attack3.value = 13;
             this.addAttack(attack1);
             this.addAttack(attack3);
             this.addAttack(attack2);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=18; // padding sprite adjust
+            // dead
+            this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-dead'), 'dead');
+            // start from iddle
             this.playAnimation('iddle', 16);
             this.currentAnimation.animation.frame = 10;
             _super.prototype.create.call(this);
@@ -1682,7 +1777,7 @@ var GameBase;
     var Ghost = (function (_super) {
         __extends(Ghost, _super);
         function Ghost(game) {
-            var _this = _super.call(this, game, new Phaser.Rectangle(0, 0, 215, 383), 3, 93) || this;
+            var _this = _super.call(this, game, new Phaser.Rectangle(0, 0, 215, 383), 3, 76) || this;
             // name
             _this.name = "Ghost";
             _this.level = 3;
@@ -1905,6 +2000,7 @@ var GameBase;
         };
         Main.prototype.create = function () {
             var _this = this;
+            _super.prototype.create.call(this);
             // change state bg
             this.game.stage.backgroundColor = "#938da0";
             // prevent stop update when focus out
@@ -2053,8 +2149,7 @@ var GameBase;
             this.heroes.forEach(function (hero) {
                 battle1.addHero(hero);
             }, this);
-            battle1.addEnemy(ghost);
-            // battle1.addEnemy(lizzard); 
+            battle1.addEnemy(lizzard);
             var battle2 = new GameBase.Battle(this.game, this, 2);
             battle2.create('ui', 'block');
             // add heroes and enemies
@@ -2068,8 +2163,7 @@ var GameBase;
             this.heroes.forEach(function (hero) {
                 battle3.addHero(hero);
             }, this);
-            // battle3.addEnemy(ghost);
-            battle3.addEnemy(lizzard);
+            battle3.addEnemy(ghost);
             var battle4 = new GameBase.Battle(this.game, this, 4);
             battle4.create('ui', 'block');
             // add heroes and enemies
@@ -2085,7 +2179,7 @@ var GameBase;
             // start calling battles
             this.callNextBattle();
             setTimeout(function () {
-                // lizzard.die();
+                knight.die();
             }, 1500);
         };
         Main.prototype.playSound = function () {
@@ -3107,6 +3201,123 @@ var GameBase;
         return AttributeChange;
     }(Pk.PkElement));
     GameBase.AttributeChange = AttributeChange;
+})(GameBase || (GameBase = {}));
+var GameBase;
+(function (GameBase) {
+    var ui;
+    (function (ui) {
+        var DeadCount = (function (_super) {
+            __extends(DeadCount, _super);
+            function DeadCount(game, target) {
+                var _this = _super.call(this, game) || this;
+                _this.target = target;
+                return _this;
+            }
+            DeadCount.prototype.create = function () {
+                this.icon = this.game.add.sprite(0, 0, 'ui-hero-dead-count');
+                this.text = this.game.add.text(0, 0, '0', {
+                    font: "46px StrangerBack",
+                    fill: "#4d4e50",
+                    fontWeight: 'bold'
+                } // font style
+                );
+                // this.text.setShadow(3, 3, 'rgba(0,0,0,0.9)', 2);
+                // pos
+                this.icon.anchor.x = 0.5;
+                this.icon.x = this.target.body.width / 2;
+                this.text.x = this.icon.x + 4;
+                this.text.y += 4;
+                // fix initial pos
+                this.setAsInitialCords();
+                // add
+                this.add(this.icon);
+                this.add(this.text);
+                // events
+                this.target.event.add(GameBase.E.HeroEvent.OnHeroDieResolve, this.updateValue, this);
+                // defaults
+                this.visible = false;
+            };
+            DeadCount.prototype.setAsInitialCords = function () {
+                this.initialPosition = new Phaser.Point(this.x, this.y);
+            };
+            DeadCount.prototype.resetAttrs = function () {
+                this.alpha = 1;
+                this.x = this.initialPosition.x;
+                this.y = this.initialPosition.y;
+            };
+            DeadCount.prototype.updateValue = function () {
+                // update value
+                this.text.text = (this.target.dieWaiting + 0).toString();
+                this.addTween(this).from({
+                    y: this.y - 30
+                }, 300, Phaser.Easing.Elastic.Out, true).onComplete.add(function () {
+                }, this);
+            };
+            DeadCount.prototype.show = function () {
+                // set dead count
+                this.text.text = (this.target.dieWaiting + 0).toString();
+                this.resetAttrs();
+                this.visible = true;
+                this.alpha = 1;
+                var tweenIn = this.addTween(this).from({
+                    y: this.y + 30,
+                    alpha: 0
+                }, 300, Phaser.Easing.Back.In, true);
+            };
+            DeadCount.prototype.hide = function () {
+                this.resetAttrs();
+                this.visible = true;
+                var tweenOut = this.addTween(this).to({
+                    alpha: 0,
+                    y: -30
+                }, 100, Phaser.Easing.Back.Out, true);
+            };
+            return DeadCount;
+        }(Pk.PkElement));
+        ui.DeadCount = DeadCount;
+    })(ui = GameBase.ui || (GameBase.ui = {}));
+})(GameBase || (GameBase = {}));
+var GameBase;
+(function (GameBase) {
+    var ui;
+    (function (ui) {
+        var ReviveAura = (function (_super) {
+            __extends(ReviveAura, _super);
+            function ReviveAura(game, target) {
+                var _this = _super.call(this, game) || this;
+                _this.target = target;
+                return _this;
+            }
+            ReviveAura.prototype.create = function () {
+                this.aura = this.game.add.sprite(0, 0, 'ui-hero-revive');
+                // this.text.setShadow(3, 3, 'rgba(0,0,0,0.9)', 2);
+                // pos
+                this.aura.anchor.x = 0.5;
+                this.aura.x = this.target.x + this.target.body.width / 2;
+                // add
+                this.add(this.aura);
+                // defaults
+                this.visible = false;
+            };
+            ReviveAura.prototype.show = function () {
+                var _this = this;
+                this.visible = true;
+                this.alpha = 0;
+                var tween = this.addTween(this).to({
+                    alpha: 1
+                }, 200, Phaser.Easing.Linear.None, true).onComplete.add(function () {
+                    _this.addTween(_this).to({
+                        alpha: 0
+                    }, 200, Phaser.Easing.Linear.None, true, 1000).onComplete.add(function () {
+                        console.log('end');
+                        _this.destroy();
+                    }, _this);
+                }, this);
+            };
+            return ReviveAura;
+        }(Pk.PkElement));
+        ui.ReviveAura = ReviveAura;
+    })(ui = GameBase.ui || (GameBase.ui = {}));
 })(GameBase || (GameBase = {}));
 var GameBase;
 (function (GameBase) {

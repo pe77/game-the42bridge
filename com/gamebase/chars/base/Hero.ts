@@ -5,8 +5,11 @@ module GameBase {
  
     export class Hero extends GameBase.Char {
         
+        // ui elem
         ui:GameBase.ui.Hero;
         uiAttack:GameBase.ui.Attack;
+        deadCount:GameBase.ui.DeadCount;
+
         identification:number = 0;
 
         selected:boolean = false;
@@ -15,10 +18,11 @@ module GameBase {
         target:GameBase.Char = null;
 
         dieWaiting:number = 0;
+
+
         dieTime:number = 5; // qtn of turn hero will wait die
-
         reviveHealthPoints:number = 2; // qtn of heath when revive
-
+        damageReduction:number = 0; // DR
         reloadEnergyQtn:number = 2; // how much on reload energy move
 
         static heroes:Array<GameBase.Hero> = [];
@@ -33,6 +37,7 @@ module GameBase {
             super(game, body);
             this.ui = new GameBase.ui.Hero(this.game, this);
             this.uiAttack = new GameBase.ui.Attack(this.game, this);
+            this.deadCount = new GameBase.ui.DeadCount(this.game, this);
             this.identification = id;
 
             GameBase.Hero.heroes.push(this);
@@ -44,6 +49,9 @@ module GameBase {
 
             this.ui.create();
             this.uiAttack.create();
+            this.deadCount.create();
+
+            this.add(this.deadCount);
 
             // add saturation filter over ui's
             this.ui.filters = [this.saturationFilter];
@@ -103,6 +111,9 @@ module GameBase {
             this.body.events.onInputOver.add(this.inputOver, this);
             this.body.events.onInputOut.add(this.inputOut, this);
 
+            this.event.add(GameBase.E.HeroEvent.OnHeroDie, this.playDeadAnimation, this);
+            this.event.add(GameBase.E.HeroEvent.OnHeroRevive, this.playReviveAnimation, this);
+
             this.updatePosition();
 
 
@@ -160,6 +171,7 @@ module GameBase {
             //
 
             // play die animation 
+            // this.playDeadAnimation();
             // ...
 
             // qtn of turn hero will wait die
@@ -173,18 +185,120 @@ module GameBase {
             this.event.dispatch(GameBase.E.HeroEvent.OnHeroDie);
         }
 
+        playReviveAnimation()
+        {
+            // stop current animation
+            this.currentAnimation.animation.stop();
+
+            // hide dead count
+            this.deadCount.hide();
+
+            // change animation
+            this.playAnimation('iddle');
+            this.currentAnimation.animation.play();
+
+            // reset tint effect
+            this.currentAnimation.sprite.tint = 0xffffff;
+
+            // create revive aura
+            var reviveAura:GameBase.ui.ReviveAura = new GameBase.ui.ReviveAura(this.game, this);
+            reviveAura.create();
+
+            reviveAura.show();
+
+            // "des"hide
+            this.currentAnimation.sprite.alpha = 0;
+            this.addTween(this.currentAnimation.sprite).to(
+                {
+                    alpha:1
+                },
+                300,
+                Phaser.Easing.Default,
+                true
+            ).onComplete.add(()=>{
+                console.log('end show revived hero')
+            }, this);
+            
+
+        }
+
+        playDeadAnimation()
+        {
+            // stop current animation
+            this.currentAnimation.animation.stop();
+
+            // tint to black
+            var step = {v:0, rv:100};
+            var t:Phaser.Tween = this.addTween(step).to(
+                {
+                    v:100,
+                    rv:0
+                },
+                300,
+                Phaser.Easing.Default,
+                true
+            );
+
+            var startColor = 0xffffff;
+            var endColor = 0x000000;
+
+            // this.currentAnimation.sprite.blendMode = PIXI.blendModes.ADD;
+            t.onUpdateCallback(()=>{
+                this.currentAnimation.sprite.tint = Phaser.Color.interpolateColor(startColor, endColor,100, step.v);
+            }, this);
+
+            t.onComplete.add(()=>{
+                this.currentAnimation.sprite.tint = endColor; // bug fix
+                
+                // alpha to 0
+                this.addTween(this.currentAnimation.sprite).to(
+                    {
+                        alpha:0
+                    },
+                    300,
+                    Phaser.Easing.Default,
+                    true
+                ).onComplete.add(()=>{
+                    // change to dead animation
+                    this.playAnimation('dead');
+
+                    // show dead animation
+                    this.addTween(this.currentAnimation.sprite).from(
+                        {
+                            alpha:0
+                        },
+                        300,
+                        Phaser.Easing.Default,
+                        true
+                    ).onComplete.add(()=>{
+                        // end... (?)
+                        // show dead counter
+                        this.deadCount.show();
+                    }, this);
+                    
+                }, this);
+                
+            }, this);
+
+        }
+
         // if die, wait for 2 turns and return with 2 health points
         dieResolve()
         {
-            if(!this.dieWaiting)
+            // count
+            this.dieWaiting--;
+
+            if(this.dieWaiting <= 0)
             {
                 this.revive();
                 return
             }
             
 
-            // count
-            this.dieWaiting--;
+            
+
+            this.event.dispatch(GameBase.E.HeroEvent.OnHeroDieResolve, this);
+
         }
 
         revive()
@@ -195,6 +309,8 @@ module GameBase {
             this.ui.addHealth(this.reviveHealthPoints);
 
             this.alive = true;
+
+            this.event.dispatch(GameBase.E.HeroEvent.OnHeroRevive);
         }
         
         attack(attack:GameBase.Attack)
@@ -296,7 +412,9 @@ module GameBase {
             export const OnHeroSelected:string 	= "OnHeroSelected";
             export const OnHeroDeselect:string 	= "OnHeroDeselect";
             export const OnHeroMove:string 	    = "OnHeroMove";
+            export const OnHeroRevive:string 	    = "OnHeroRevive";
             export const OnHeroDie:string 	    = "OnHeroDie";
+            export const OnHeroDieResolve:string 	    = "OnHeroDieResolve";
             export const OnHeroAttackClick:string 	= "OnHeroAttackClick";
             export const OnHeroReloadClick:string 	= "OnHeroReloadClick";
             export const OnHeroAttack:string 	= "OnHeroAttack";

@@ -205,6 +205,10 @@ module GameBase {
             var damage:number = this.game.rnd.integerInRange(1, (this.level+2));
             var damageType:number;
 
+            // calcule hero DR
+            damage -= hero.damageReduction;
+            damage = damage <= 0 ? 1 : damage;
+
             // damage = 5;// temp
 
             // sort damage type

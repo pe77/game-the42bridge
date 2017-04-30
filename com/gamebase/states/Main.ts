@@ -24,6 +24,8 @@ module GameBase
 
     	create()
     	{
+			super.create();
+
     		// change state bg
             this.game.stage.backgroundColor = "#938da0";
 
@@ -218,9 +220,7 @@ module GameBase
 			this.heroes.forEach((hero:GameBase.Hero)=>{
 				battle1.addHero(hero);
 			}, this);
-
-			battle1.addEnemy(ghost); 
-			// battle1.addEnemy(lizzard); 
+			battle1.addEnemy(lizzard); 
 
 
 			var battle2:GameBase.Battle = new GameBase.Battle(this.game, this, 2);
@@ -240,8 +240,7 @@ module GameBase
 			this.heroes.forEach((hero:GameBase.Hero)=>{
 				battle3.addHero(hero);
 			}, this);
-			// battle3.addEnemy(ghost);
-			battle3.addEnemy(lizzard); 
+			battle3.addEnemy(ghost);
 
 
 			var battle4:GameBase.Battle = new GameBase.Battle(this.game, this, 4);
@@ -254,7 +253,6 @@ module GameBase
 			battle4.addEnemy(devil);
 
 
-
 			// add battles
 			this.battles.push(battle1);
 			this.battles.push(battle2);
@@ -265,11 +263,12 @@ module GameBase
 			this.callNextBattle();
 
 			setTimeout(()=>{
-				// lizzard.die();
+				knight.die();
 				
-			}, 1500)
-    	}
+			}, 1500);
 
+    	}
+		
 		playSound()
         {
             // play music
