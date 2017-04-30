@@ -633,6 +633,7 @@ var GameBase;
             this.load.image('ui-hero-2-off', 'assets/default/images/chars/heroes/2/ui-off.png');
             this.load.image('ui-hero-3-off', 'assets/default/images/chars/heroes/3/ui-off.png');
             this.load.image('ui-hero-4-off', 'assets/default/images/chars/heroes/4/ui-off.png');
+            this.load.image('ui-hero-revive', 'assets/default/images/ui/a-blessed.png');
             // ui hero attacks
             this.load.image('ui-hero-attacks-bg-1', 'assets/default/images/ui/b-large-bg.png');
             this.load.image('ui-hero-attack-bg-' + GameBase.E.AttributeType.MANA, 'assets/default/images/ui/b-spell-bg-mana.png');
