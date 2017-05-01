@@ -87,6 +87,14 @@ module GameBase
         {
             // this.game.debug.text('(Menu Screen) Press [ENTER] to Main', 35, 35);
         }
+
+        // calls when leaving state
+        shutdown()
+        {
+            if(this.musicBG.isPlaying)
+                this.musicBG.stop();
+            //
+        }
     }
 
 }

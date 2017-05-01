@@ -457,7 +457,7 @@ var GameBase;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
             _this.canvasSize = [1280, 720];
-            _this.initialState = 'Menu';
+            _this.initialState = 'Intro';
             return _this;
         }
         return Config;
@@ -2281,6 +2281,12 @@ var GameBase;
         };
         Menu.prototype.render = function () {
             // this.game.debug.text('(Menu Screen) Press [ENTER] to Main', 35, 35);
+        };
+        // calls when leaving state
+        Menu.prototype.shutdown = function () {
+            if (this.musicBG.isPlaying)
+                this.musicBG.stop();
+            //
         };
         return Menu;
     }(Pk.PkState));
