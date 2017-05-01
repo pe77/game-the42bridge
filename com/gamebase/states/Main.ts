@@ -276,9 +276,7 @@ module GameBase
         {
             // play music
             // this.musicBG.fadeIn(1000, true);
-			this.musicBG.play();
-			this.musicBG.loop = true;
-			this.musicBG.volume = 0.5;
+			this.musicBG.play('', 0, 0.5, true);
         }
 
 		callNextBattle()

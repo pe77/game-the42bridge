@@ -600,6 +600,7 @@ var GameBase;
             this.load.audio('a-hero-menu', 'assets/default/audio/fx/a_menuchar.wav');
             this.load.audio('a-hero-attack-selected', 'assets/default/audio/fx/a_selGolpe.wav');
             this.load.audio('a-enemy-die', 'assets/default/audio/fx/a_golpe.wav');
+            this.load.audio('a-hero-res', 'assets/default/audio/fx/Ress.mp3');
             // particles
             this.load.image('particle-1', 'assets/states/main/images/particles/p1.png');
             this.load.image('particle-2', 'assets/states/main/images/particles/p2.png');
@@ -616,6 +617,12 @@ var GameBase;
             this.load.image('char2-dead', 'assets/default/images/chars/heroes/2/dead.png');
             this.load.image('char3-dead', 'assets/default/images/chars/heroes/3/dead.png');
             this.load.image('char4-dead', 'assets/default/images/chars/heroes/4/dead.png');
+            // dead by hero audio
+            // assets\default\audio\hero\4
+            this.load.audio('a-char1-dead', 'assets/default/audio/hero/1/death.mp3');
+            this.load.audio('a-char2-dead', 'assets/default/audio/hero/2/death.mp3');
+            this.load.audio('a-char3-dead', 'assets/default/audio/hero/3/death.mp3');
+            this.load.audio('a-char4-dead', 'assets/default/audio/hero/4/death.mp3');
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
             this.load.image('health-icon-large', 'assets/default/images/ui/ico-health-large.png');
@@ -1372,6 +1379,7 @@ var GameBase;
             this.updatePosition();
             // audio
             this.audioOver = this.game.add.audio('a-hero-selected');
+            this.audioDead = this.game.add.audio('a-char' + this.identification + '-dead');
         };
         Hero.prototype.updatePosition = function () {
             this.selectedSprite.y = this.body.height - this.selectedSprite.height + 11;
@@ -1441,6 +1449,8 @@ var GameBase;
             var _this = this;
             // stop current animation
             this.currentAnimation.animation.stop();
+            // play sound 
+            this.audioDead.play();
             // tint to black
             var step = { v: 0, rv: 100 };
             var t = this.addTween(step).to({
@@ -1909,7 +1919,7 @@ var GameBase;
         };
         GameOver.prototype.playSound = function () {
             // play music
-            this.musicBG.fadeIn(1000, false);
+            this.musicBG.play('', 0, 0.5, true);
         };
         GameOver.prototype.render = function () {
             // this.game.debug.text('GAME OVER -- press F5 to play again', 35, 35);
@@ -2237,9 +2247,7 @@ var GameBase;
         Main.prototype.playSound = function () {
             // play music
             // this.musicBG.fadeIn(1000, true);
-            this.musicBG.play();
-            this.musicBG.loop = true;
-            this.musicBG.volume = 0.5;
+            this.musicBG.play('', 0, 0.5, true);
         };
         Main.prototype.callNextBattle = function () {
             var _this = this;
@@ -2332,9 +2340,7 @@ var GameBase;
         };
         Menu.prototype.playSound = function () {
             // play music
-            this.musicBG.play();
-            this.musicBG.loop = true;
-            this.musicBG.volume = 0.5;
+            this.musicBG.play('', 0, 0.5, true);
         };
         Menu.prototype.render = function () {
             // this.game.debug.text('(Menu Screen) Press [ENTER] to Main', 35, 35);
@@ -3463,11 +3469,13 @@ var GameBase;
                 this.add(this.aura);
                 // defaults
                 this.visible = false;
+                this.sound = this.game.add.audio('a-hero-res');
             };
             ReviveAura.prototype.show = function () {
                 var _this = this;
                 this.visible = true;
                 this.alpha = 0;
+                this.sound.play();
                 var tween = this.addTween(this).to({
                     alpha: 1
                 }, 200, Phaser.Easing.Linear.None, true).onComplete.add(function () {

@@ -28,7 +28,7 @@ module GameBase {
         static heroes:Array<GameBase.Hero> = [];
 
         audioOver:Phaser.Sound;
-
+        audioDead:Phaser.Sound;
         
         selectedSprite:Phaser.Sprite;
 
@@ -119,6 +119,7 @@ module GameBase {
 
             // audio
             this.audioOver = this.game.add.audio('a-hero-selected');
+            this.audioDead = this.game.add.audio('a-char'+this.identification+'-dead');
         }
 
         updatePosition()
@@ -226,6 +227,9 @@ module GameBase {
         {
             // stop current animation
             this.currentAnimation.animation.stop();
+
+            // play sound 
+            this.audioDead.play();
 
             // tint to black
             var step = {v:0, rv:100};

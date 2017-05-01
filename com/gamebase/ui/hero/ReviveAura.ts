@@ -11,6 +11,8 @@ module GameBase {
             aura:Phaser.Sprite;
             initialPosition:Phaser.Point;
 
+            sound:Phaser.Sound;
+
             constructor(game:Pk.PkGame, target:GameBase.Hero)
             {
                 super(game);
@@ -31,6 +33,8 @@ module GameBase {
 
                 // defaults
                 this.visible = false;
+
+                this.sound = this.game.add.audio('a-hero-res');
             }
 
 
@@ -39,6 +43,8 @@ module GameBase {
                 this.visible = true;
 
                 this.alpha = 0;
+
+                this.sound.play();
                 var tween = this.addTween(this).to(
                     {
                         alpha:1

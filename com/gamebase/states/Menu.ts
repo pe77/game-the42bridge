@@ -77,9 +77,7 @@ module GameBase
         playSound()
         {
             // play music
-			this.musicBG.play();
-            this.musicBG.loop = true;
-			this.musicBG.volume = 0.5;
+			this.musicBG.play('', 0, 0.5, true);
         }
 
 
