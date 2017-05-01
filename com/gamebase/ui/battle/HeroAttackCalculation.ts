@@ -5,6 +5,7 @@ module GameBase {
         
         attack:GameBase.Attack;
         enemy:GameBase.Enemy;
+        hero:GameBase.Hero;
 
         textBg:Phaser.Sprite;
         bg:Phaser.Sprite;
@@ -18,12 +19,15 @@ module GameBase {
         lastValue:number;
         result:number;
 
-        constructor(game:Pk.PkGame, attack:GameBase.Attack, enemy:GameBase.Enemy)
+        heroAttackBgs:Array<Phaser.Sprite> = []
+
+        constructor(game:Pk.PkGame, attack:GameBase.Attack, enemy:GameBase.Enemy, hero:GameBase.Hero)
         {
             super(game);
 
             this.attack = attack;
             this.enemy = enemy;
+            this.hero = hero;
 
             this.lastValue = this.enemy.lastValue;
             this.result = this.enemy.value;
@@ -41,6 +45,16 @@ module GameBase {
             // bg bg! // same world size
             this.bg = Pk.PkUtils.createSquare(this.game, this.game.world.width, this.game.world.height, "#000")
             this.bg.alpha = .3;
+
+            // create hero bg attack animation 
+            for (var i = 0; i < 3; i++) {
+                var bg:Phaser.Sprite = this.game.add.sprite(0, 0, 'ui-hero-'+this.hero.identification+'-attack-' + (i+1));
+                bg.anchor.set(.5, .5);
+                bg.x += bg.width / 2;
+                bg.y += bg.height / 2;
+
+                this.heroAttackBgs.push(bg);
+            }
 
             this.attackText = this.game.add.text(0, 0,
 				'',
@@ -72,6 +86,9 @@ module GameBase {
             this.textBox.add(this.texts);
             
             this.add(this.bg);
+            for (var i = 0; i < this.heroAttackBgs.length; i++) 
+                this.add(this.heroAttackBgs[i]);
+            //
             this.add(this.textBox);
 
             this.visible = false;
@@ -157,6 +174,18 @@ module GameBase {
                     true
                 );
 
+                for (let i = 0; i < this.heroAttackBgs.length; i++) 
+                {
+                    this.addTween(this.heroAttackBgs[i]).to(
+                        {
+                            alpha:0
+                        }, 
+                        200,
+                        Phaser.Easing.Cubic.Out,
+                        true
+                    );
+                }
+
                 this.addTween(this.bg).to(
                     {
                         alpha:0
@@ -194,6 +223,33 @@ module GameBase {
             );
 
             tween.start();
+
+
+            // attack animation
+            for (let i = 0; i < this.heroAttackBgs.length; i++) 
+            {
+                this.addTween(this.heroAttackBgs[i]).from(
+                    {
+                        alpha:0
+                    },
+                    200,
+                    Phaser.Easing.Linear.None,
+                    true
+                ).onComplete.add(()=>{
+
+                    this.addTween(this.heroAttackBgs[i].scale).to(
+                        {
+                            x:1 + (i * 0.1),
+                            y:1 + (i * 0.1)
+                        },
+                        2000,
+                        Phaser.Easing.Linear.None,
+                        true
+                    )
+                    
+                }, this)
+            }
+
         }
     }
 

@@ -109,7 +109,7 @@ module GameBase {
         playHeroAttack(hero:GameBase.Hero, attack:GameBase.Attack, enemy:GameBase.Enemy)
         {
             // create calculation splash
-            var hac:GameBase.HeroAttackCalculation = new GameBase.HeroAttackCalculation(this.game, attack, enemy);
+            var hac:GameBase.HeroAttackCalculation = new GameBase.HeroAttackCalculation(this.game, attack, enemy, hero);
             hac.create();
 
             this.blockBg.visible = true;
