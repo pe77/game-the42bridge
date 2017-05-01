@@ -562,21 +562,36 @@ var GameBase;
         Loader.prototype.preload = function () {
             // ignore preloading bar
             // super.preload();
+            var _this = this;
             // creating sprites from preloadead images
-            this.loadingBar = this.add.sprite(0, 0, 'game-loading-bar');
             this.logo = this.add.sprite(0, 0, 'game-loading-logo');
-            // position loading bar | middle
-            this.loadingBar.anchor.x = 0.5;
-            this.loadingBar.x = this.game.width / 2;
-            this.loadingBar.y = this.game.height - this.loadingBar.height;
+            // create custom loading bar
+            this.loadingBar = Pk.PkUtils.createSquare(this.game, this.game.width, 20, "#ffffff");
             // set sprite as preloading
             this.load.setPreloadSprite(this.loadingBar);
+            // pos loading bar on bot
+            this.loadingBar.y = this.world.height - this.loadingBar.height;
             // positioning logo on middle
             this.logo.anchor.set(.5, .5);
             this.logo.position.set(this.game.width / 2, this.game.height / 2);
             // add a preloadead logo
             this.game.add.existing(this.logo);
             this.logo.alpha = 0;
+            this.loadingText = this.game.add.text(0, 0, '0%', // text
+            {
+                font: "150px StrangerBack",
+                fill: "#ffffff"
+            } // font style
+            );
+            this.loadingText.anchor.set(.5, .5);
+            this.loadingText.x = this.world.centerX;
+            this.loadingText.y = this.world.centerY;
+            // fileComplete
+            // this.fil
+            this.game.load.onFileComplete.add(function (progress) {
+                var v = Math.round((progress * 0.01) * 42);
+                _this.loadingText.text = v + '%';
+            }, this);
             //  ** ADDING Other things  ** //
             // scripts
             this.load.script('gray', 'assets/default/scripts/filters/Gray.js');
