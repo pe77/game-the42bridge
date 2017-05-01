@@ -3194,8 +3194,8 @@ var GameBase;
                     alpha: 0
                 }, 200, Phaser.Easing.Linear.None, true).onComplete.add(function () {
                     _this.addTween(_this.heroAttackBgs[i].scale).to({
-                        x: 1 + (i * 0.1),
-                        y: 1 + (i * 0.1)
+                        x: 1.1 + (i * 0.1),
+                        y: 1.1 + (i * 0.1)
                     }, 2000, Phaser.Easing.Linear.None, true);
                 }, this_1);
             };
