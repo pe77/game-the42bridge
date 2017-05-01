@@ -457,7 +457,7 @@ var GameBase;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
             _this.canvasSize = [1280, 720];
-            _this.initialState = 'Main';
+            _this.initialState = 'Intro';
             return _this;
         }
         return Config;
@@ -2223,7 +2223,7 @@ var GameBase;
             setTimeout(function () {
                 // knight.die();
                 // game over screen
-                _this.transition.change('GameOver', true);
+                // this.transition.change('GameOver', true);
             }, 500);
         };
         Main.prototype.playSound = function () {

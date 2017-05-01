@@ -266,7 +266,7 @@ module GameBase
 				// knight.die();
 
 				// game over screen
-				this.transition.change('GameOver', true);
+				// this.transition.change('GameOver', true);
 				
 			}, 500);
 
