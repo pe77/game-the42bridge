@@ -148,7 +148,7 @@ module GameBase {
         {
             this.selectedSprite.visible = true;
 
-            this.audioOver.play();
+            this.audioOver.play('', 0, 0.06);
         }
 
         heroDeselect()
@@ -231,7 +231,7 @@ module GameBase {
             this.currentAnimation.animation.stop();
 
             // play sound 
-            this.audioDead.play();
+            this.audioDead.play('', 0, 0.1);
 
             // tint to black
             var step = {v:0, rv:100};
@@ -335,7 +335,7 @@ module GameBase {
 
             // play attack audio
             setTimeout(()=>{
-                this.audioAttack.play();
+                this.audioAttack.play('', 0, 0.15);
             }, 700)
             
 

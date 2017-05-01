@@ -44,7 +44,7 @@ module GameBase {
 
                 this.alpha = 0;
 
-                this.sound.play();
+                this.sound.play('', 0, 0.3)
                 var tween = this.addTween(this).to(
                     {
                         alpha:1

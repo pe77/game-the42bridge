@@ -232,7 +232,7 @@ module GameBase {
                     {
                         alpha:0
                     },
-                    200,
+                    500,
                     Phaser.Easing.Linear.None,
                     true
                 );

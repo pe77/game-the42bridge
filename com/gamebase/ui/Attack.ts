@@ -85,7 +85,7 @@ module GameBase {
                             return;
                         //
 
-                        this.audioSelect.play();
+                        this.audioSelect.play('', 0, 0.15)
                         
                         this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttackClick, attack);
                         this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
@@ -116,7 +116,7 @@ module GameBase {
                         return;
                     //
 
-                    this.audioSelect.play();
+                    this.audioSelect.play('', 0, 0.6)
                     
                     this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroReloadClick);
                     this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
@@ -167,7 +167,7 @@ module GameBase {
                 this.visible = true;
                 this.resetAttrs();
 
-                this.audioOpen.play();
+                this.audioOpen.play('', 0, 0.3)
             }
 
             updateView()
