@@ -242,10 +242,21 @@ module GameBase {
             // cause a random damage
             hero.event.dispatch(GameBase.E.AttackEvent.OnAttackResolve, this, damage, damageType);
 
-            
+            // play claw animation
+            var clawAnimation:GameBase.EnemyClawDamage = new GameBase.EnemyClawDamage(this.game, this, hero);
+            clawAnimation.create();
+
+            // pos on hero body
+            clawAnimation.x = hero.x - 10;
+            clawAnimation.show();
+
+            clawAnimation.event.add(GameBase.E.EnemyClawDamage.OnEnd, ()=>{
+                this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
+            }, this);
+
             // wait a little and dispatch event
             setTimeout(()=>{
-                this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
+                // this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
             }, 1500)
         }
 

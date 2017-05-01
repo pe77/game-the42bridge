@@ -174,6 +174,8 @@ module GameBase {
             this.load.spritesheet('monster3-idle', 'assets/default/images/chars/enemies/3/idle.png', 217, 395, 13);
             this.load.spritesheet('monster4-idle', 'assets/default/images/chars/enemies/4/idle.png', 500, 550, 1);
 
+            this.load.spritesheet('monster-damage', 'assets/default/images/ui/attack/clawAttack.png', 400, 600, 6);
+
             // battle
             this.load.image('level-flag', 'assets/default/images/ui/d-flag.png');
             this.load.image('endturn-button', 'assets/default/images/ui/d-bg-over.png');

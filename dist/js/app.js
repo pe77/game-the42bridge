@@ -667,6 +667,7 @@ var GameBase;
             this.load.spritesheet('monster2-idle', 'assets/default/images/chars/enemies/2/idle.png', 588, 392, 15);
             this.load.spritesheet('monster3-idle', 'assets/default/images/chars/enemies/3/idle.png', 217, 395, 13);
             this.load.spritesheet('monster4-idle', 'assets/default/images/chars/enemies/4/idle.png', 500, 550, 1);
+            this.load.spritesheet('monster-damage', 'assets/default/images/ui/attack/clawAttack.png', 400, 600, 6);
             // battle
             this.load.image('level-flag', 'assets/default/images/ui/d-flag.png');
             this.load.image('endturn-button', 'assets/default/images/ui/d-bg-over.png');
@@ -1242,9 +1243,18 @@ var GameBase;
             }
             // cause a random damage
             hero.event.dispatch(GameBase.E.AttackEvent.OnAttackResolve, this, damage, damageType);
+            // play claw animation
+            var clawAnimation = new GameBase.EnemyClawDamage(this.game, this, hero);
+            clawAnimation.create();
+            // pos on hero body
+            clawAnimation.x = hero.x - 10;
+            clawAnimation.show();
+            clawAnimation.event.add(GameBase.E.EnemyClawDamage.OnEnd, function () {
+                _this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
+            }, this);
             // wait a little and dispatch event
             setTimeout(function () {
-                _this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
+                // this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
             }, 1500);
         };
         Enemy.prototype.setValue = function (v) {
@@ -2976,24 +2986,32 @@ var GameBase;
             this.visible = false;
         };
         EndTurnButton.prototype.in = function () {
+            var _this = this;
             this.visible = true;
             this.buttonBack.inputEnabled = true;
             this.alpha = 1;
-            var tween = this.addTween(this).from({
+            if (this.tweenOut)
+                this.tweenOut.stop();
+            //
+            this.tweenIn = this.addTween(this).from({
                 alpha: 0
             }, this.inOutTime, Phaser.Easing.Back.In, true);
-            tween.onComplete.add(function () {
-                // this.visible = false;
+            this.tweenIn.onComplete.add(function () {
+                _this.alpha = 1;
+                _this.visible = true;
             }, this);
         };
         EndTurnButton.prototype.out = function () {
             var _this = this;
             // this.buttonBack.input.useHandCursor = false;
             this.buttonBack.inputEnabled = false;
-            var tween = this.addTween(this).to({
+            if (this.tweenIn)
+                this.tweenIn.stop();
+            //
+            this.tweenOut = this.addTween(this).to({
                 alpha: 0
             }, this.inOutTime, Phaser.Easing.Back.Out, true);
-            tween.onComplete.add(function () {
+            this.tweenOut.onComplete.add(function () {
                 _this.visible = false;
             }, this);
         };
@@ -3006,6 +3024,42 @@ var GameBase;
         (function (ButtonEvent) {
             ButtonEvent.OnClick = "OnClick";
         })(ButtonEvent = E.ButtonEvent || (E.ButtonEvent = {}));
+    })(E = GameBase.E || (GameBase.E = {}));
+})(GameBase || (GameBase = {}));
+var GameBase;
+(function (GameBase) {
+    var EnemyClawDamage = (function (_super) {
+        __extends(EnemyClawDamage, _super);
+        function EnemyClawDamage(game, enemy, hero) {
+            var _this = _super.call(this, game) || this;
+            _this.hero = hero;
+            _this.enemy = enemy;
+            return _this;
+        }
+        EnemyClawDamage.prototype.create = function () {
+            this.claw = this.game.add.sprite(0, 0, 'monster-damage');
+            this.animation = this.claw.animations.add('claw');
+            this.add(this.claw);
+            this.visible = false;
+        };
+        EnemyClawDamage.prototype.show = function () {
+            var _this = this;
+            this.visible = true;
+            this.animation.play(15, false);
+            this.animation.onComplete.add(function () {
+                _this.event.dispatch(GameBase.E.EnemyClawDamage.OnEnd);
+                _this.destroy();
+            }, this);
+        };
+        return EnemyClawDamage;
+    }(Pk.PkElement));
+    GameBase.EnemyClawDamage = EnemyClawDamage;
+    var E;
+    (function (E) {
+        var EnemyClawDamage;
+        (function (EnemyClawDamage) {
+            EnemyClawDamage.OnEnd = "OnEnemyClawDamageEnd";
+        })(EnemyClawDamage = E.EnemyClawDamage || (E.EnemyClawDamage = {}));
     })(E = GameBase.E || (GameBase.E = {}));
 })(GameBase || (GameBase = {}));
 var GameBase;
