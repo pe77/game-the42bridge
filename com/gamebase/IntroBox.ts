@@ -5,45 +5,20 @@ module GameBase {
     export class IntroBox extends Pk.PkElement {
         
         image:Phaser.Sprite;
-        text:Phaser.Text;
-        padding:number = 20;
-        textStyle:any = {
-                    // font details
-					font: "25px Arial",
-					fill: "#fff", 
-					boundsAlignH: "center", 
-                    boundsAlignV: "top",
-                    wordWrap: true,
-                    wordWrapWidth: 250
-		}
+        time:number;
 
-        constructor(game:Pk.PkGame, image:Phaser.Sprite, text:string)
+        constructor(game:Pk.PkGame, image:Phaser.Sprite, time:number = 5000)
         {
             super(game);
 
             // set img
             this.image = image;
+            this.time = time;
             
-            // text.w = image.w
-            this.textStyle.wordWrapWidth = this.image.width + 100;
-
-            // create text object
-            this.text = this.game.add.text(0, 0, text, this.textStyle);
-            this.text.align = "center";
-
-            // style details
-            this.text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
-            
-            // pos
-            this.text.y += this.image.height + this.padding;
-
-            this.text.width;
-
             this.image.anchor.x = .5;
-            this.image.x = this.text.width / 2;
+            this.image.x = this.game.world.centerX;
             
             // add objs
-            this.add(this.text);
             this.add(this.image);
 
             // "display none"
@@ -63,6 +38,10 @@ module GameBase {
                 true, // auto start
                 delay // delay 
             )
+
+            setTimeout(()=>{
+                this.event.dispatch(GameBase.E.IntroBoxEvent.OnIntroBoxEnd);
+            }, this.time)
         }
 
         out(delay:number = 0)
@@ -89,6 +68,11 @@ module GameBase {
 
     export module E
     {
+        export module IntroBoxEvent
+        {
+            export const OnIntroBoxEnd:string = "OnIntroBoxEnd";
+        }
+
         export enum IntroBoxDirection
         {
             LEFT,

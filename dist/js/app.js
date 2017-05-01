@@ -457,7 +457,7 @@ var GameBase;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
             _this.canvasSize = [1280, 720];
-            _this.initialState = 'Main';
+            _this.initialState = 'Intro';
             return _this;
         }
         return Config;
@@ -468,34 +468,15 @@ var GameBase;
 (function (GameBase) {
     var IntroBox = (function (_super) {
         __extends(IntroBox, _super);
-        function IntroBox(game, image, text) {
+        function IntroBox(game, image, time) {
+            if (time === void 0) { time = 5000; }
             var _this = _super.call(this, game) || this;
-            _this.padding = 20;
-            _this.textStyle = {
-                // font details
-                font: "25px Arial",
-                fill: "#fff",
-                boundsAlignH: "center",
-                boundsAlignV: "top",
-                wordWrap: true,
-                wordWrapWidth: 250
-            };
             // set img
             _this.image = image;
-            // text.w = image.w
-            _this.textStyle.wordWrapWidth = _this.image.width + 100;
-            // create text object
-            _this.text = _this.game.add.text(0, 0, text, _this.textStyle);
-            _this.text.align = "center";
-            // style details
-            _this.text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
-            // pos
-            _this.text.y += _this.image.height + _this.padding;
-            _this.text.width;
+            _this.time = time;
             _this.image.anchor.x = .5;
-            _this.image.x = _this.text.width / 2;
+            _this.image.x = _this.game.world.centerX;
             // add objs
-            _this.add(_this.text);
             _this.add(_this.image);
             // "display none"
             _this.alpha = 0;
@@ -503,6 +484,7 @@ var GameBase;
         }
         IntroBox.prototype.in = function (delay) {
             // anim block
+            var _this = this;
             if (delay === void 0) { delay = 1500; }
             this.addTween(this).to({
                 alpha: 1
@@ -512,6 +494,9 @@ var GameBase;
             true, // auto start
             delay // delay 
             );
+            setTimeout(function () {
+                _this.event.dispatch(GameBase.E.IntroBoxEvent.OnIntroBoxEnd);
+            }, this.time);
         };
         IntroBox.prototype.out = function (delay) {
             var _this = this;
@@ -536,6 +521,10 @@ var GameBase;
     GameBase.IntroBox = IntroBox;
     var E;
     (function (E) {
+        var IntroBoxEvent;
+        (function (IntroBoxEvent) {
+            IntroBoxEvent.OnIntroBoxEnd = "OnIntroBoxEnd";
+        })(IntroBoxEvent = E.IntroBoxEvent || (E.IntroBoxEvent = {}));
         var IntroBoxDirection;
         (function (IntroBoxDirection) {
             IntroBoxDirection[IntroBoxDirection["LEFT"] = 0] = "LEFT";
@@ -591,11 +580,13 @@ var GameBase;
             //  ** ADDING Other things  ** //
             // scripts
             this.load.script('gray', 'assets/default/scripts/filters/Gray.js');
+            // generic
+            this.load.image('cinematic-bg', 'assets/states/intro/images/cinematic-bg.jpg');
             // intro
             this.load.audio('intro-sound', 'assets/states/intro/sounds/intro.mp3');
-            this.load.image('intro-1', 'assets/states/intro/images/1.jpg');
-            this.load.image('intro-2', 'assets/states/intro/images/2.jpg');
-            this.load.image('intro-3', 'assets/states/intro/images/3.jpg');
+            for (var i = 1; i <= 10; i++)
+                this.load.image('intro-' + i, 'assets/states/intro/images/Cin_00' + i + '.jpg');
+            //
             // battle :: ANW2683_06_Runway-To-Ignition.mp3
             this.load.audio('battle-sound', 'assets/states/main/audio/battle.mp3');
             // sounds fx
@@ -1873,19 +1864,25 @@ var GameBase;
         __extends(Intro, _super);
         function Intro() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
-            _this.padding = 30;
+            _this.padding = 0;
             _this.boxs = new Array();
             _this.boxsIndex = 0;
-            _this.boxsDelay = 5000;
+            _this.boxsDelay = 1000 * 8; // sec
+            _this.endIntro = false;
             return _this;
         }
         Intro.prototype.create = function () {
             // change state bg
             this.game.stage.backgroundColor = "#000";
             // add boxs
-            this.boxs.push(new GameBase.IntroBox(this.game, this.add.sprite(0, 0, 'intro-1'), "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."));
-            this.boxs.push(new GameBase.IntroBox(this.game, this.add.sprite(0, 0, 'intro-2'), "Nor again is there anyone sit who loves or pursues or desires to obtain pain of itself, because it is pain."));
-            this.boxs.push(new GameBase.IntroBox(this.game, this.add.sprite(0, 0, 'intro-3'), "Ut enim ad minima veniam, exercitationem ullam laboriosam, nisi ut aliquid ex ea commodi consequatur?"));
+            for (var i_1 = 1; i_1 <= 10; i_1++)
+                this.boxs.push(new GameBase.IntroBox(this.game, this.add.sprite(0, 0, 'intro-' + i_1)));
+            //
+            // boxs time adjust
+            this.boxs[0].time = 1000 * 8;
+            this.boxs[1].time = 1000 * 8;
+            this.boxs[2].time = 1000 * 8;
+            this.boxs[3].time = 1000 * 8;
             // pos boxs
             for (var i in this.boxs) {
                 var b = this.boxs[i];
@@ -1902,21 +1899,22 @@ var GameBase;
             this.skipButton = new Pk.PkElement(this.game);
             var skipText = this.game.add.text(0, // x
             0, // y
-            "Skip >>" // text
+            " skip" // text
             , {
                 // font details
-                font: "12px Arial",
+                font: "52px StrangerBack",
                 fill: "#fff"
             });
             skipText.align = "left";
+            skipText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
             // add in object
             this.skipButton.add(skipText);
             // enable input and hand cursor
             this.skipButton.setAll('inputEnabled', true);
             this.skipButton.setAll('input.useHandCursor', true);
             // position
-            this.skipButton.x = this.game.width - this.skipButton.width - this.padding;
-            this.skipButton.y = this.padding;
+            this.skipButton.x = this.game.width - this.skipButton.width - 30;
+            this.skipButton.y = 25;
             // skip action
             this.skipButton.callAll('events.onInputUp.add', 'events.onInputUp', this.end, this);
             // skipp button show delay
@@ -1929,42 +1927,30 @@ var GameBase;
             1500 // delay | 1.5 sec
             );
             // play boxes
-            this.playBoxs();
+            this.play();
         };
-        Intro.prototype.playBoxs = function () {
-            var _this = this;
+        Intro.prototype.play = function () {
             // if has no boxes
-            if (!this.boxs.length)
+            if (!this.boxs.length || this.endIntro)
                 return;
             //
-            // next ones
-            this.boxsInterval = setInterval(function () {
-                _this.playBox();
-            }, this.boxsDelay);
-            this.playBox();
-        };
-        Intro.prototype.playBox = function () {
-            var _this = this;
-            // finish last box
-            if (this.boxsIndex > 0)
-                this.boxs[this.boxsIndex - 1].out();
-            // 
             // if last box
             if (this.boxsIndex == this.boxs.length) {
-                setTimeout(function () {
-                    _this.end();
-                }, 1500);
+                this.end();
                 return;
             }
-            // play
-            this.boxs[this.boxsIndex].in(500);
+            this.boxs[this.boxsIndex].in();
+            this.boxs[this.boxsIndex].event.add(GameBase.E.IntroBoxEvent.OnIntroBoxEnd, this.play, this);
             // next
             this.boxsIndex++;
         };
         Intro.prototype.end = function () {
-            // change state
-            clearInterval(this.boxsInterval);
-            this.transition.change('Menu');
+            var _this = this;
+            this.endIntro = true;
+            this.musicBG.fadeOut(1000);
+            setTimeout(function () {
+                _this.transition.change('Menu');
+            }, 1000);
         };
         Intro.prototype.playSound = function () {
             // play music

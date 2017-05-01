@@ -5,15 +5,17 @@ module GameBase
 
 	export class Intro extends Pk.PkState {
 
-        padding:number = 30;
+        padding:number = 0;
         musicBG:Phaser.Sound;
 
         boxs:Array<GameBase.IntroBox> = new Array();
         boxsIndex:number = 0;
-        boxsDelay:number = 5000;
+        boxsDelay:number = 1000 * 8; // sec
         boxsInterval:number;
 
         skipButton:Pk.PkElement;
+
+        endIntro:boolean = false;
 
     	create()
     	{
@@ -21,27 +23,21 @@ module GameBase
             this.game.stage.backgroundColor = "#000";
 
             // add boxs
-            this.boxs.push(
-                new GameBase.IntroBox(
-                    this.game, 
-                    this.add.sprite(0, 0, 'intro-1'), 
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
-            );
+            for (let i = 1; i <= 10; i++) 
+                this.boxs.push(
+                    new GameBase.IntroBox(
+                        this.game, 
+                        this.add.sprite(0, 0, 'intro-' + i)
+                    )
+                );
+            //
 
-            this.boxs.push(
-                new GameBase.IntroBox(
-                    this.game, 
-                    this.add.sprite(0, 0, 'intro-2'), 
-                    "Nor again is there anyone sit who loves or pursues or desires to obtain pain of itself, because it is pain.")
-            );
-
-            this.boxs.push(
-                new GameBase.IntroBox(
-                    this.game, 
-                    this.add.sprite(0, 0, 'intro-3'), 
-                    "Ut enim ad minima veniam, exercitationem ullam laboriosam, nisi ut aliquid ex ea commodi consequatur?")
-            );
-
+            // boxs time adjust
+            this.boxs[0].time = 1000 * 8;
+            this.boxs[1].time = 1000 * 8;
+            this.boxs[2].time = 1000 * 8;
+            this.boxs[3].time = 1000 * 8;
+            
             // pos boxs
             for(var i in this.boxs)
             {
@@ -64,13 +60,14 @@ module GameBase
             var skipText = this.game.add.text(
 				0, // x
 				0, // y
-				"Skip >>" // text
+				" skip" // text
                 , {
                     // font details
-					font: "12px Arial",
+					font: "52px StrangerBack",
 					fill: "#fff"
 			});
             skipText.align = "left";
+            skipText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
 
             // add in object
             this.skipButton.add(skipText);
@@ -80,8 +77,8 @@ module GameBase
             this.skipButton.setAll('input.useHandCursor', true);
 
             // position
-            this.skipButton.x = this.game.width - this.skipButton.width - this.padding;
-            this.skipButton.y = this.padding;
+            this.skipButton.x = this.game.width - this.skipButton.width - 30;
+            this.skipButton.y = 25;
 
             // skip action
             this.skipButton.callAll('events.onInputUp.add', 'events.onInputUp', this.end, this);
@@ -97,56 +94,50 @@ module GameBase
                 1500 // delay | 1.5 sec
             )
 
+
+
+
             // play boxes
-            this.playBoxs();
-            
+            this.play();
     	}
 
-        playBoxs()
+        play()
         {
-             // if has no boxes
-            if(!this.boxs.length)
+            // if has no boxes
+            if(!this.boxs.length || this.endIntro)
                 return;
             //
-
-            // next ones
-            this.boxsInterval = setInterval(()=>{
-                this.playBox();
-            }, this.boxsDelay);
-
-            this.playBox();
-            
-        }
-
-        playBox()
-        { 
-            // finish last box
-            if(this.boxsIndex > 0)
-                this.boxs[this.boxsIndex-1].out();
-            // 
 
             // if last box
             if(this.boxsIndex == this.boxs.length)
             {
-                setTimeout(()=>{
-                    this.end();
-                }, 1500);
-
+                this.end();
                 return;
             }
 
-            // play
-            this.boxs[this.boxsIndex].in(500);
+            this.boxs[this.boxsIndex].in();
+
+            this.boxs[this.boxsIndex].event.add(
+                GameBase.E.IntroBoxEvent.OnIntroBoxEnd,
+                this.play,
+                this
+                )
 
             // next
             this.boxsIndex++;
         }
 
+
         end()
         {
-            // change state
-            clearInterval(this.boxsInterval);
-            this.transition.change('Menu'); 
+            this.endIntro = true;
+
+            this.musicBG.fadeOut(1000);
+
+            setTimeout(()=>{
+                this.transition.change('Menu'); 
+            }, 1000)
+            
         }
 
         playSound()
