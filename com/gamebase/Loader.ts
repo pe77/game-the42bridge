@@ -134,6 +134,12 @@ module GameBase {
             this.load.audio('a-char3-dead', 'assets/default/audio/hero/3/death.mp3');
             this.load.audio('a-char4-dead', 'assets/default/audio/hero/4/death.mp3');
 
+            // hero attack audio
+            this.load.audio('a-char1-attack', 'assets/default/audio/hero/1/attack.mp3');
+            this.load.audio('a-char2-attack', 'assets/default/audio/hero/2/attack.mp3');
+            this.load.audio('a-char3-attack', 'assets/default/audio/hero/3/attack.mp3');
+            this.load.audio('a-char4-attack', 'assets/default/audio/hero/4/attack.mp3');
+
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
             this.load.image('health-icon-large', 'assets/default/images/ui/ico-health-large.png');

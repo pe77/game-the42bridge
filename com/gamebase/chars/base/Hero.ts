@@ -29,6 +29,7 @@ module GameBase {
 
         audioOver:Phaser.Sound;
         audioDead:Phaser.Sound;
+        audioAttack:Phaser.Sound;
         
         selectedSprite:Phaser.Sprite;
 
@@ -120,6 +121,7 @@ module GameBase {
             // audio
             this.audioOver = this.game.add.audio('a-hero-selected');
             this.audioDead = this.game.add.audio('a-char'+this.identification+'-dead');
+            this.audioAttack = this.game.add.audio('a-char'+this.identification+'-attack');
         }
 
         updatePosition()
@@ -330,6 +332,12 @@ module GameBase {
             //
             
             this.target.event.dispatch(GameBase.E.AttackEvent.OnAttackResolve, this, attack);
+
+            // play attack audio
+            setTimeout(()=>{
+                this.audioAttack.play();
+            }, 700)
+            
 
             // remove attack energy
             this.ui.removeEnergy(attack.energyCost);

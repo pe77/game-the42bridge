@@ -265,16 +265,31 @@ module GameBase {
 
             // hide end turn button
             this.endTurnButton.out();
-            
-            // enemies move
-            this.enemiesMove();
-            
-            this.heroes.forEach(hero => {
-                // check turn move for all
-                hero.setTurnMove(true);
 
-                hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
-            });
+            // play end turn animation
+            var endTurnAnimation:GameBase.EndTurnAnimation = new GameBase.EndTurnAnimation(this.game);
+            endTurnAnimation.create();
+            endTurnAnimation.show("Enemy Turn");
+
+            // block interaction
+            this.blockBg.visible = true;
+
+            endTurnAnimation.event.add(GameBase.E.EndTurnAnimation.OnEnd, ()=>{
+
+                this.blockBg.visible = false;
+
+                // enemies move
+                this.enemiesMove();
+                
+                this.heroes.forEach(hero => {
+                    // check turn move for all
+                    hero.setTurnMove(true);
+
+                    hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
+                });
+            }, this);
+            
+            
            
         }
 
@@ -301,8 +316,16 @@ module GameBase {
             // add turn counter
             this.turn++;
 
-            // show turn end button
-            this.endTurnButton.in();
+            // play end turn animation
+            var endTurnAnimation:GameBase.EndTurnAnimation = new GameBase.EndTurnAnimation(this.game);
+            endTurnAnimation.create();
+            endTurnAnimation.show("Heroes Turn");
+
+            endTurnAnimation.event.add(GameBase.E.EndTurnAnimation.OnEnd, ()=>{
+                // show turn end button
+                this.endTurnButton.in();
+            }, this);
+        
         }
 
         enemiesMove()

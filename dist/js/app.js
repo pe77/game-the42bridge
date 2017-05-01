@@ -638,6 +638,11 @@ var GameBase;
             this.load.audio('a-char2-dead', 'assets/default/audio/hero/2/death.mp3');
             this.load.audio('a-char3-dead', 'assets/default/audio/hero/3/death.mp3');
             this.load.audio('a-char4-dead', 'assets/default/audio/hero/4/death.mp3');
+            // hero attack audio
+            this.load.audio('a-char1-attack', 'assets/default/audio/hero/1/attack.mp3');
+            this.load.audio('a-char2-attack', 'assets/default/audio/hero/2/attack.mp3');
+            this.load.audio('a-char3-attack', 'assets/default/audio/hero/3/attack.mp3');
+            this.load.audio('a-char4-attack', 'assets/default/audio/hero/4/attack.mp3');
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
             this.load.image('health-icon-large', 'assets/default/images/ui/ico-health-large.png');
@@ -936,17 +941,28 @@ var GameBase;
             Pk.PkEvent.ignoreContext(this);
         };
         Battle.prototype.endTurn = function () {
+            var _this = this;
             // hide end turn button
             this.endTurnButton.out();
-            // enemies move
-            this.enemiesMove();
-            this.heroes.forEach(function (hero) {
-                // check turn move for all
-                hero.setTurnMove(true);
-                hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
-            });
+            // play end turn animation
+            var endTurnAnimation = new GameBase.EndTurnAnimation(this.game);
+            endTurnAnimation.create();
+            endTurnAnimation.show("Enemy Turn");
+            // block interaction
+            this.blockBg.visible = true;
+            endTurnAnimation.event.add(GameBase.E.EndTurnAnimation.OnEnd, function () {
+                _this.blockBg.visible = false;
+                // enemies move
+                _this.enemiesMove();
+                _this.heroes.forEach(function (hero) {
+                    // check turn move for all
+                    hero.setTurnMove(true);
+                    hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
+                });
+            }, this);
         };
         Battle.prototype.nextTurn = function () {
+            var _this = this;
             console.log('---- next turn ----');
             // reset moves
             this.enemies.forEach(function (enemy) {
@@ -962,8 +978,14 @@ var GameBase;
             });
             // add turn counter
             this.turn++;
-            // show turn end button
-            this.endTurnButton.in();
+            // play end turn animation
+            var endTurnAnimation = new GameBase.EndTurnAnimation(this.game);
+            endTurnAnimation.create();
+            endTurnAnimation.show("Heroes Turn");
+            endTurnAnimation.event.add(GameBase.E.EndTurnAnimation.OnEnd, function () {
+                // show turn end button
+                _this.endTurnButton.in();
+            }, this);
         };
         Battle.prototype.enemiesMove = function () {
             var _this = this;
@@ -1395,6 +1417,7 @@ var GameBase;
             // audio
             this.audioOver = this.game.add.audio('a-hero-selected');
             this.audioDead = this.game.add.audio('a-char' + this.identification + '-dead');
+            this.audioAttack = this.game.add.audio('a-char' + this.identification + '-attack');
         };
         Hero.prototype.updatePosition = function () {
             this.selectedSprite.y = this.body.height - this.selectedSprite.height + 11;
@@ -1515,6 +1538,7 @@ var GameBase;
             this.event.dispatch(GameBase.E.HeroEvent.OnHeroRevive);
         };
         Hero.prototype.attack = function (attack) {
+            var _this = this;
             // check turn move
             if (this.turnMove)
                 return;
@@ -1524,6 +1548,10 @@ var GameBase;
                 return;
             //
             this.target.event.dispatch(GameBase.E.AttackEvent.OnAttackResolve, this, attack);
+            // play attack audio
+            setTimeout(function () {
+                _this.audioAttack.play();
+            }, 700);
             // remove attack energy
             this.ui.removeEnergy(attack.energyCost);
             this.setTurnMove(true);
@@ -3005,6 +3033,69 @@ var GameBase;
         (function (AttackBoxEvent) {
             AttackBoxEvent.OnAttackSelect = "OnAttackSelect";
         })(AttackBoxEvent = E.AttackBoxEvent || (E.AttackBoxEvent = {}));
+    })(E = GameBase.E || (GameBase.E = {}));
+})(GameBase || (GameBase = {}));
+var GameBase;
+(function (GameBase) {
+    var EndTurnAnimation = (function (_super) {
+        __extends(EndTurnAnimation, _super);
+        function EndTurnAnimation() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        EndTurnAnimation.prototype.create = function () {
+            // bg bg! // same world size
+            this.bg = Pk.PkUtils.createSquare(this.game, this.game.world.width, this.game.world.height, "#000");
+            this.bg.alpha = .5;
+            this.text = this.game.add.text(0, 0, "", // text
+            {
+                font: "161px StrangerBack",
+                fill: "#fff"
+            } // font style
+            );
+            this.text.anchor.set(.5, .5);
+            this.text.x = this.game.world.centerX;
+            this.text.y = this.game.world.centerY;
+            this.add(this.bg);
+            this.add(this.text);
+            this.visible = false;
+        };
+        EndTurnAnimation.prototype.show = function (text) {
+            var _this = this;
+            if (text === void 0) { text = "End Turn"; }
+            this.text.text = text;
+            this.visible = true;
+            // show bg
+            this.addTween(this.bg).from({
+                alpha: 0
+            }, 100, Phaser.Easing.Linear.None, true);
+            // show text
+            this.addTween(this.text).from({
+                x: this.text.x + 50,
+                alpha: 0
+            }, 200, Phaser.Easing.Cubic.In, true).onComplete.add(function () {
+                // hide bg after delay
+                _this.addTween(_this.bg).to({
+                    alpha: 0
+                }, 100, Phaser.Easing.Linear.None, true, 1500);
+                // hide text after delay
+                _this.addTween(_this.text).to({
+                    x: _this.text.x - 50,
+                    alpha: 1
+                }, 200, Phaser.Easing.Cubic.In, true, 1500).onComplete.add(function () {
+                    _this.event.dispatch(GameBase.E.EndTurnAnimation.OnEnd);
+                    _this.destroy();
+                }, _this);
+            }, this);
+        };
+        return EndTurnAnimation;
+    }(Pk.PkElement));
+    GameBase.EndTurnAnimation = EndTurnAnimation;
+    var E;
+    (function (E) {
+        var EndTurnAnimation;
+        (function (EndTurnAnimation) {
+            EndTurnAnimation.OnEnd = "OnEndTurnAnimationEnd";
+        })(EndTurnAnimation = E.EndTurnAnimation || (E.EndTurnAnimation = {}));
     })(E = GameBase.E || (GameBase.E = {}));
 })(GameBase || (GameBase = {}));
 var GameBase;
