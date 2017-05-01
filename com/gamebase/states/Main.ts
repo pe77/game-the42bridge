@@ -132,8 +132,8 @@ module GameBase
 
 			var devil:GameBase.Devil = new GameBase.Devil(this.game);
 			devil.create();
-			devil.x = this.game.world.width - devil.width;
-			devil.y = 120;
+			devil.x = this.game.world.width - devil.width + 40;
+			devil.y = 110;
 			devil.ui.updatePosition();
 
 			var i = 0;

@@ -457,7 +457,7 @@ var GameBase;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
             _this.canvasSize = [1280, 720];
-            _this.initialState = 'Intro';
+            _this.initialState = 'Main';
             return _this;
         }
         return Config;
@@ -666,7 +666,7 @@ var GameBase;
             this.load.spritesheet('monster1-idle', 'assets/default/images/chars/enemies/1/idle.png', 278, 365, 12);
             this.load.spritesheet('monster2-idle', 'assets/default/images/chars/enemies/2/idle.png', 588, 392, 15);
             this.load.spritesheet('monster3-idle', 'assets/default/images/chars/enemies/3/idle.png', 217, 395, 13);
-            this.load.spritesheet('monster4-idle', 'assets/default/images/chars/enemies/4/idle.png', 500, 550, 1);
+            this.load.spritesheet('monster4-idle', 'assets/default/images/chars/enemies/4/iddle.png', 561.5555555555556, 550, 16);
             this.load.spritesheet('monster-damage', 'assets/default/images/ui/attack/clawAttack.png', 400, 600, 6);
             // battle
             this.load.image('level-flag', 'assets/default/images/ui/d-flag.png');
@@ -1778,7 +1778,7 @@ var GameBase;
         function Devil(game) {
             var _this = 
             // /4, -15, +5 = 42
-            _super.call(this, game, new Phaser.Rectangle(0, 0, 409, 444), 4, -12) || this;
+            _super.call(this, game, new Phaser.Rectangle(0, 0, 460, 516), 4, -9) || this;
             // name
             _this.name = "Devil";
             _this.level = 4;
@@ -1787,8 +1787,9 @@ var GameBase;
         Devil.prototype.create = function () {
             _super.prototype.create.call(this);
             // sprite set idle
-            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'monster' + this.identification + '-idle'), 'idle');
-            aniSprite.y += 71; // padding sprite adjust
+            var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'monster' + this.identification + '-idle'), 'iddle');
+            // aniSprite.y+=71; // padding sprite adjust
+            this.playAnimation('iddle', 10);
         };
         return Devil;
     }(GameBase.Enemy));
@@ -2125,8 +2126,8 @@ var GameBase;
             ghost.ui.updatePosition();
             var devil = new GameBase.Devil(this.game);
             devil.create();
-            devil.x = this.game.world.width - devil.width;
-            devil.y = 120;
+            devil.x = this.game.world.width - devil.width + 40;
+            devil.y = 110;
             devil.ui.updatePosition();
             var i = 0;
             this.heroes.forEach(function (hero) {
