@@ -184,7 +184,12 @@ module GameBase {
             this.load.image('main-bg', 'assets/states/main/images/bg/s-background.png');
             this.load.image('main-bridge-back', 'assets/states/main/images/bg/s-bridge-back.png');
             this.load.image('main-bridge-front', 'assets/states/main/images/bg/s-bridge-front.png');
- 
+            
+            // game-over
+            this.load.image('gameover-win', 'assets/states/gameover/images/win.jpg');
+            this.load.image('gameover-lose', 'assets/states/gameover/images/lose.jpg');
+            this.load.image('gameover-credits', 'assets/states/gameover/images/credits.jpg');
+
 
             // op icons
             // this.load.spritesheet('operator-icon-' + E.Operator.MULT, 'assets/default/images/operator-icon-mult.png', 15, 15, 3);

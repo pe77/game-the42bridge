@@ -54,8 +54,8 @@ module GameBase {
             attack3.value = 4;
 
             this.addAttack(attack1);
-            this.addAttack(attack3);
             this.addAttack(attack2);
+            this.addAttack(attack3);
 
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char'+this.identification+'-idle'), 'iddle');

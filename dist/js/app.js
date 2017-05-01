@@ -675,6 +675,10 @@ var GameBase;
             this.load.image('main-bg', 'assets/states/main/images/bg/s-background.png');
             this.load.image('main-bridge-back', 'assets/states/main/images/bg/s-bridge-back.png');
             this.load.image('main-bridge-front', 'assets/states/main/images/bg/s-bridge-front.png');
+            // game-over
+            this.load.image('gameover-win', 'assets/states/gameover/images/win.jpg');
+            this.load.image('gameover-lose', 'assets/states/gameover/images/lose.jpg');
+            this.load.image('gameover-credits', 'assets/states/gameover/images/credits.jpg');
             // op icons
             // this.load.spritesheet('operator-icon-' + E.Operator.MULT, 'assets/default/images/operator-icon-mult.png', 15, 15, 3);
             // this.load.spritesheet('operator-icon-' + E.Operator.PLUS, 'assets/default/images/operator-icon-plus.png', 15, 15, 3);
@@ -1604,8 +1608,8 @@ var GameBase;
             attack3.energyCost = 5;
             attack3.value = 4;
             this.addAttack(attack1);
-            this.addAttack(attack3);
             this.addAttack(attack2);
+            this.addAttack(attack3);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=26; // padding sprite adjust
@@ -1632,11 +1636,11 @@ var GameBase;
             // name
             _this.name = "Knight";
             // die turns
-            _this.dieTime = 1;
+            _this.dieTime = 2;
             // revive health
             _this.reviveHealthPoints = 4;
             _this.damageReduction = 3;
-            _this.reloadEnergyQtn = 2;
+            _this.reloadEnergyQtn = 3;
             return _this;
         }
         Knight.prototype.create = function () {
@@ -1651,8 +1655,8 @@ var GameBase;
             attack3.energyCost = 5;
             attack3.value = 13;
             this.addAttack(attack1);
-            this.addAttack(attack3);
             this.addAttack(attack2);
+            this.addAttack(attack3);
             // animation
             // iddle
             var iddleSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
@@ -1700,8 +1704,8 @@ var GameBase;
             attack3.energyCost = 5;
             attack3.value = 4;
             this.addAttack(attack1);
-            this.addAttack(attack3);
             this.addAttack(attack2);
+            this.addAttack(attack3);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=16;
@@ -1749,8 +1753,8 @@ var GameBase;
             attack3.energyCost = 5;
             attack3.value = 13;
             this.addAttack(attack1);
-            this.addAttack(attack3);
             this.addAttack(attack2);
+            this.addAttack(attack3);
             // animation
             var aniSprite = this.addAnimation(this.game.add.sprite(0, 0, 'char' + this.identification + '-idle'), 'iddle');
             // aniSprite.y+=18; // padding sprite adjust
@@ -1873,14 +1877,34 @@ var GameBase;
         function GameOver() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
+        GameOver.prototype.init = function (win) {
+            _super.prototype.init.call(this);
+            this.win = win;
+        };
         GameOver.prototype.create = function () {
+            var _this = this;
             console.log('GameOver create');
             // change state bg
             this.game.stage.backgroundColor = "#89aca6";
+            // if win
+            if (this.win)
+                this.bg = this.game.add.sprite(0, 0, 'gameover-win');
+            else
+                this.bg = this.game.add.sprite(0, 0, 'gameover-lose');
+            //
             this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
+            if (this.win) {
+                var credits = this.game.add.sprite(0, 0, 'gameover-credits');
+                credits.alpha = 0;
+                setTimeout(function () {
+                    _this.game.add.tween(credits).to({
+                        alpha: 1
+                    }, 300, Phaser.Easing.Linear.None, true);
+                }, 1000 * 3);
+            }
         };
         GameOver.prototype.render = function () {
-            this.game.debug.text('GAME OVER -- press F5 to play again', 35, 35);
+            // this.game.debug.text('GAME OVER -- press F5 to play again', 35, 35);
         };
         return GameOver;
     }(Pk.PkState));
@@ -2198,7 +2222,9 @@ var GameBase;
             this.callNextBattle();
             setTimeout(function () {
                 // knight.die();
-            }, 1500);
+                // game over screen
+                _this.transition.change('GameOver', true);
+            }, 500);
         };
         Main.prototype.playSound = function () {
             // play music
@@ -2211,8 +2237,8 @@ var GameBase;
             var _this = this;
             // check if is play all battles
             if (this.battleCount >= this.battles.length) {
-                alert('You win all battles!');
-                this.transition.change('GameOver');
+                // alert('You win all battles!');
+                this.transition.change('GameOver', true);
                 return;
             }
             // call next one
@@ -2226,7 +2252,7 @@ var GameBase;
                 }
                 else {
                     // game over screen
-                    _this.transition.change('GameOver');
+                    _this.transition.change('GameOver', false);
                 }
             }, this);
             // start battle
