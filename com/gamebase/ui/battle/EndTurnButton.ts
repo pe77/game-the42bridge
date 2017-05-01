@@ -10,6 +10,9 @@ module GameBase {
 
         buttonBack:Phaser.Sprite;
 
+        tweenIn:Phaser.Tween;
+        tweenOut:Phaser.Tween;
+
         create()
         {
 			this.buttonBack = this.game.add.sprite(0, 0, 'endturn-button');
@@ -49,8 +52,11 @@ module GameBase {
 
             this.alpha = 1;
             
+            if(this.tweenOut)
+                this.tweenOut.stop();
+            //
 
-            var tween = this.addTween(this).from(
+            this.tweenIn = this.addTween(this).from(
                 {
                     alpha:0
                 }, 
@@ -59,8 +65,9 @@ module GameBase {
                 true
             );
 
-            tween.onComplete.add(()=>{
-                // this.visible = false;
+            this.tweenIn.onComplete.add(()=>{
+                this.alpha = 1;
+                this.visible = true;
             }, this)
         }
 
@@ -69,7 +76,12 @@ module GameBase {
             // this.buttonBack.input.useHandCursor = false;
             this.buttonBack.inputEnabled = false;
 
-            var tween = this.addTween(this).to(
+            if(this.tweenIn)
+                this.tweenIn.stop();
+            //
+            
+            
+            this.tweenOut = this.addTween(this).to(
                 {
                     alpha:0
                 }, 
@@ -78,7 +90,7 @@ module GameBase {
                 true
             )
 
-            tween.onComplete.add(()=>{
+            this.tweenOut.onComplete.add(()=>{
                 this.visible = false;
             }, this);
         }

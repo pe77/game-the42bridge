@@ -457,7 +457,7 @@ var GameBase;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
             _this.canvasSize = [1280, 720];
-            _this.initialState = 'Intro';
+            _this.initialState = 'Main';
             return _this;
         }
         return Config;
@@ -636,6 +636,19 @@ var GameBase;
             this.load.image('ui-hero-2-off', 'assets/default/images/chars/heroes/2/ui-off.png');
             this.load.image('ui-hero-3-off', 'assets/default/images/chars/heroes/3/ui-off.png');
             this.load.image('ui-hero-4-off', 'assets/default/images/chars/heroes/4/ui-off.png');
+            // hero attack
+            this.load.image('ui-hero-1-attack-1', 'assets/default/images/ui/attack/Druid/1.png');
+            this.load.image('ui-hero-1-attack-2', 'assets/default/images/ui/attack/Druid/2.png');
+            this.load.image('ui-hero-1-attack-3', 'assets/default/images/ui/attack/Druid/3.png');
+            this.load.image('ui-hero-2-attack-1', 'assets/default/images/ui/attack/Thief/1.png');
+            this.load.image('ui-hero-2-attack-2', 'assets/default/images/ui/attack/Thief/2.png');
+            this.load.image('ui-hero-2-attack-3', 'assets/default/images/ui/attack/Thief/3.png');
+            this.load.image('ui-hero-3-attack-1', 'assets/default/images/ui/attack/Priest/1.png');
+            this.load.image('ui-hero-3-attack-2', 'assets/default/images/ui/attack/Priest/2.png');
+            this.load.image('ui-hero-3-attack-3', 'assets/default/images/ui/attack/Priest/3.png');
+            this.load.image('ui-hero-4-attack-1', 'assets/default/images/ui/attack/Knight/1.png');
+            this.load.image('ui-hero-4-attack-2', 'assets/default/images/ui/attack/Knight/2.png');
+            this.load.image('ui-hero-4-attack-3', 'assets/default/images/ui/attack/Knight/3.png');
             this.load.image('ui-hero-revive', 'assets/default/images/ui/a-blessed.png');
             this.load.image('ui-hero-dead-count', 'assets/default/images/ui/dead-count.png');
             // ui hero attacks
@@ -654,6 +667,7 @@ var GameBase;
             this.load.spritesheet('monster2-idle', 'assets/default/images/chars/enemies/2/idle.png', 588, 392, 15);
             this.load.spritesheet('monster3-idle', 'assets/default/images/chars/enemies/3/idle.png', 217, 395, 13);
             this.load.spritesheet('monster4-idle', 'assets/default/images/chars/enemies/4/idle.png', 500, 550, 1);
+            this.load.spritesheet('monster-damage', 'assets/default/images/ui/attack/clawAttack.png', 400, 600, 6);
             // battle
             this.load.image('level-flag', 'assets/default/images/ui/d-flag.png');
             this.load.image('endturn-button', 'assets/default/images/ui/d-bg-over.png');
@@ -792,7 +806,7 @@ var GameBase;
         Battle.prototype.playHeroAttack = function (hero, attack, enemy) {
             var _this = this;
             // create calculation splash
-            var hac = new GameBase.HeroAttackCalculation(this.game, attack, enemy);
+            var hac = new GameBase.HeroAttackCalculation(this.game, attack, enemy, hero);
             hac.create();
             this.blockBg.visible = true;
             // event
@@ -1229,9 +1243,18 @@ var GameBase;
             }
             // cause a random damage
             hero.event.dispatch(GameBase.E.AttackEvent.OnAttackResolve, this, damage, damageType);
+            // play claw animation
+            var clawAnimation = new GameBase.EnemyClawDamage(this.game, this, hero);
+            clawAnimation.create();
+            // pos on hero body
+            clawAnimation.x = hero.x - 10;
+            clawAnimation.show();
+            clawAnimation.event.add(GameBase.E.EnemyClawDamage.OnEnd, function () {
+                _this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
+            }, this);
             // wait a little and dispatch event
             setTimeout(function () {
-                _this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
+                // this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
             }, 1500);
         };
         Enemy.prototype.setValue = function (v) {
@@ -2245,7 +2268,7 @@ var GameBase;
             // pos
             this.gamelogo.anchor.x = this.startGameBtn.anchor.x = 0.5;
             this.startGameBtn.x = this.gamelogo.x = this.game.world.centerX;
-            this.startGameBtn.y = this.game.height - this.startGameBtn.height - 30;
+            this.startGameBtn.y = this.gamelogo.height + 40;
             this.startGameBtn.inputEnabled = true;
             this.startGameBtn.input.useHandCursor = true;
             this.startGameBtn.events.onInputUp.add(this.startGame, this);
@@ -2963,24 +2986,32 @@ var GameBase;
             this.visible = false;
         };
         EndTurnButton.prototype.in = function () {
+            var _this = this;
             this.visible = true;
             this.buttonBack.inputEnabled = true;
             this.alpha = 1;
-            var tween = this.addTween(this).from({
+            if (this.tweenOut)
+                this.tweenOut.stop();
+            //
+            this.tweenIn = this.addTween(this).from({
                 alpha: 0
             }, this.inOutTime, Phaser.Easing.Back.In, true);
-            tween.onComplete.add(function () {
-                // this.visible = false;
+            this.tweenIn.onComplete.add(function () {
+                _this.alpha = 1;
+                _this.visible = true;
             }, this);
         };
         EndTurnButton.prototype.out = function () {
             var _this = this;
             // this.buttonBack.input.useHandCursor = false;
             this.buttonBack.inputEnabled = false;
-            var tween = this.addTween(this).to({
+            if (this.tweenIn)
+                this.tweenIn.stop();
+            //
+            this.tweenOut = this.addTween(this).to({
                 alpha: 0
             }, this.inOutTime, Phaser.Easing.Back.Out, true);
-            tween.onComplete.add(function () {
+            this.tweenOut.onComplete.add(function () {
                 _this.visible = false;
             }, this);
         };
@@ -2997,12 +3028,50 @@ var GameBase;
 })(GameBase || (GameBase = {}));
 var GameBase;
 (function (GameBase) {
+    var EnemyClawDamage = (function (_super) {
+        __extends(EnemyClawDamage, _super);
+        function EnemyClawDamage(game, enemy, hero) {
+            var _this = _super.call(this, game) || this;
+            _this.hero = hero;
+            _this.enemy = enemy;
+            return _this;
+        }
+        EnemyClawDamage.prototype.create = function () {
+            this.claw = this.game.add.sprite(0, 0, 'monster-damage');
+            this.animation = this.claw.animations.add('claw');
+            this.add(this.claw);
+            this.visible = false;
+        };
+        EnemyClawDamage.prototype.show = function () {
+            var _this = this;
+            this.visible = true;
+            this.animation.play(15, false);
+            this.animation.onComplete.add(function () {
+                _this.event.dispatch(GameBase.E.EnemyClawDamage.OnEnd);
+                _this.destroy();
+            }, this);
+        };
+        return EnemyClawDamage;
+    }(Pk.PkElement));
+    GameBase.EnemyClawDamage = EnemyClawDamage;
+    var E;
+    (function (E) {
+        var EnemyClawDamage;
+        (function (EnemyClawDamage) {
+            EnemyClawDamage.OnEnd = "OnEnemyClawDamageEnd";
+        })(EnemyClawDamage = E.EnemyClawDamage || (E.EnemyClawDamage = {}));
+    })(E = GameBase.E || (GameBase.E = {}));
+})(GameBase || (GameBase = {}));
+var GameBase;
+(function (GameBase) {
     var HeroAttackCalculation = (function (_super) {
         __extends(HeroAttackCalculation, _super);
-        function HeroAttackCalculation(game, attack, enemy) {
+        function HeroAttackCalculation(game, attack, enemy, hero) {
             var _this = _super.call(this, game) || this;
+            _this.heroAttackBgs = [];
             _this.attack = attack;
             _this.enemy = enemy;
+            _this.hero = hero;
             _this.lastValue = _this.enemy.lastValue;
             _this.result = _this.enemy.value;
             _this.enemy.setValue(_this.enemy.lastValue);
@@ -3015,6 +3084,14 @@ var GameBase;
             // bg bg! // same world size
             this.bg = Pk.PkUtils.createSquare(this.game, this.game.world.width, this.game.world.height, "#000");
             this.bg.alpha = .3;
+            // create hero bg attack animation 
+            for (var i = 0; i < 3; i++) {
+                var bg = this.game.add.sprite(0, 0, 'ui-hero-' + this.hero.identification + '-attack-' + (i + 1));
+                bg.anchor.set(.5, .5);
+                bg.x += bg.width / 2;
+                bg.y += bg.height / 2;
+                this.heroAttackBgs.push(bg);
+            }
             this.attackText = this.game.add.text(0, 0, '', {
                 font: "108px StrangerBack",
                 fill: "#833716"
@@ -3036,6 +3113,9 @@ var GameBase;
             this.textBox.add(this.textBg);
             this.textBox.add(this.texts);
             this.add(this.bg);
+            for (var i = 0; i < this.heroAttackBgs.length; i++)
+                this.add(this.heroAttackBgs[i]);
+            //
             this.add(this.textBox);
             this.visible = false;
         };
@@ -3087,6 +3167,11 @@ var GameBase;
                     x: _this.textBox.x + 150,
                     alpha: 0
                 }, 200, Phaser.Easing.Cubic.In, true);
+                for (var i = 0; i < _this.heroAttackBgs.length; i++) {
+                    _this.addTween(_this.heroAttackBgs[i]).to({
+                        alpha: 0
+                    }, 200, Phaser.Easing.Cubic.Out, true);
+                }
                 _this.addTween(_this.bg).to({
                     alpha: 0
                 }, 200, Phaser.Easing.Cubic.Out, true);
@@ -3104,6 +3189,21 @@ var GameBase;
                 alpha: 0
             }, 200, Phaser.Easing.Cubic.Out, true);
             tween.start();
+            var _loop_1 = function (i) {
+                this_1.addTween(this_1.heroAttackBgs[i]).from({
+                    alpha: 0
+                }, 200, Phaser.Easing.Linear.None, true).onComplete.add(function () {
+                    _this.addTween(_this.heroAttackBgs[i].scale).to({
+                        x: 1 + (i * 0.1),
+                        y: 1 + (i * 0.1)
+                    }, 2000, Phaser.Easing.Linear.None, true);
+                }, this_1);
+            };
+            var this_1 = this;
+            // attack animation
+            for (var i = 0; i < this.heroAttackBgs.length; i++) {
+                _loop_1(i);
+            }
         };
         return HeroAttackCalculation;
     }(Pk.PkElement));

@@ -32,7 +32,7 @@ module GameBase
             // pos
             this.gamelogo.anchor.x = this.startGameBtn.anchor.x = 0.5;
             this.startGameBtn.x = this.gamelogo.x = this.game.world.centerX;
-            this.startGameBtn.y = this.game.height - this.startGameBtn.height - 30;
+            this.startGameBtn.y = this.gamelogo.height + 40;
 
             this.startGameBtn.inputEnabled = true;
             this.startGameBtn.input.useHandCursor = true;

@@ -72,7 +72,7 @@ module GameBase {
 
             // menu
             this.load.audio('menu-sound-bg', 'assets/states/menu/audio/menu.mp3');
-            
+
             this.load.image('btn-start-on', 'assets/default/images/ui/btn-start-on.png');
             this.load.image('btn-start-off', 'assets/default/images/ui/btn-start-off.png');
 
@@ -132,6 +132,24 @@ module GameBase {
             this.load.image('ui-hero-3-off', 'assets/default/images/chars/heroes/3/ui-off.png');
             this.load.image('ui-hero-4-off', 'assets/default/images/chars/heroes/4/ui-off.png');
 
+            // hero attack
+            this.load.image('ui-hero-1-attack-1', 'assets/default/images/ui/attack/Druid/1.png');
+            this.load.image('ui-hero-1-attack-2', 'assets/default/images/ui/attack/Druid/2.png');
+            this.load.image('ui-hero-1-attack-3', 'assets/default/images/ui/attack/Druid/3.png');
+
+            this.load.image('ui-hero-2-attack-1', 'assets/default/images/ui/attack/Thief/1.png');
+            this.load.image('ui-hero-2-attack-2', 'assets/default/images/ui/attack/Thief/2.png');
+            this.load.image('ui-hero-2-attack-3', 'assets/default/images/ui/attack/Thief/3.png');
+
+            this.load.image('ui-hero-3-attack-1', 'assets/default/images/ui/attack/Priest/1.png');
+            this.load.image('ui-hero-3-attack-2', 'assets/default/images/ui/attack/Priest/2.png');
+            this.load.image('ui-hero-3-attack-3', 'assets/default/images/ui/attack/Priest/3.png');
+
+            this.load.image('ui-hero-4-attack-1', 'assets/default/images/ui/attack/Knight/1.png');
+            this.load.image('ui-hero-4-attack-2', 'assets/default/images/ui/attack/Knight/2.png');
+            this.load.image('ui-hero-4-attack-3', 'assets/default/images/ui/attack/Knight/3.png');
+
+
             this.load.image('ui-hero-revive', 'assets/default/images/ui/a-blessed.png');
             this.load.image('ui-hero-dead-count', 'assets/default/images/ui/dead-count.png');
 
@@ -155,6 +173,8 @@ module GameBase {
             this.load.spritesheet('monster2-idle', 'assets/default/images/chars/enemies/2/idle.png', 588, 392, 15);
             this.load.spritesheet('monster3-idle', 'assets/default/images/chars/enemies/3/idle.png', 217, 395, 13);
             this.load.spritesheet('monster4-idle', 'assets/default/images/chars/enemies/4/idle.png', 500, 550, 1);
+
+            this.load.spritesheet('monster-damage', 'assets/default/images/ui/attack/clawAttack.png', 400, 600, 6);
 
             // battle
             this.load.image('level-flag', 'assets/default/images/ui/d-flag.png');
