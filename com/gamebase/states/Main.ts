@@ -263,7 +263,7 @@ module GameBase
 			this.callNextBattle();
 
 			setTimeout(()=>{
-				knight.die();
+				// knight.die();
 				
 			}, 1500);
 
@@ -272,7 +272,10 @@ module GameBase
 		playSound()
         {
             // play music
-            this.musicBG.fadeIn(1000, true);
+            // this.musicBG.fadeIn(1000, true);
+			this.musicBG.play();
+			this.musicBG.loop = true;
+			this.musicBG.volume = 0.5;
         }
 
 		callNextBattle()
