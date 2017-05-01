@@ -70,6 +70,15 @@ module GameBase {
                 this.load.image('intro-'+i, 'assets/states/intro/images/Cin_00'+i+'.jpg');
             //
 
+            // menu
+            this.load.audio('menu-sound-bg', 'assets/states/menu/audio/menu.mp3');
+            
+            this.load.image('btn-start-on', 'assets/default/images/ui/btn-start-on.png');
+            this.load.image('btn-start-off', 'assets/default/images/ui/btn-start-off.png');
+
+            this.load.image('gamelogo-on', 'assets/default/images/ui/logo.png');
+            this.load.image('gamelogo-off', 'assets/default/images/ui/logo2.png');
+
             // battle :: ANW2683_06_Runway-To-Ignition.mp3
             this.load.audio('battle-sound', 'assets/states/main/audio/battle.mp3');
             

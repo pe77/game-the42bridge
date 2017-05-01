@@ -457,7 +457,7 @@ var GameBase;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
             _this.canvasSize = [1280, 720];
-            _this.initialState = 'Intro';
+            _this.initialState = 'Menu';
             return _this;
         }
         return Config;
@@ -587,6 +587,12 @@ var GameBase;
             for (var i = 1; i <= 10; i++)
                 this.load.image('intro-' + i, 'assets/states/intro/images/Cin_00' + i + '.jpg');
             //
+            // menu
+            this.load.audio('menu-sound-bg', 'assets/states/menu/audio/menu.mp3');
+            this.load.image('btn-start-on', 'assets/default/images/ui/btn-start-on.png');
+            this.load.image('btn-start-off', 'assets/default/images/ui/btn-start-off.png');
+            this.load.image('gamelogo-on', 'assets/default/images/ui/logo.png');
+            this.load.image('gamelogo-off', 'assets/default/images/ui/logo2.png');
             // battle :: ANW2683_06_Runway-To-Ignition.mp3
             this.load.audio('battle-sound', 'assets/states/main/audio/battle.mp3');
             // sounds fx
@@ -2168,12 +2174,15 @@ var GameBase;
             // start calling battles
             this.callNextBattle();
             setTimeout(function () {
-                knight.die();
+                // knight.die();
             }, 1500);
         };
         Main.prototype.playSound = function () {
             // play music
-            this.musicBG.fadeIn(1000, true);
+            // this.musicBG.fadeIn(1000, true);
+            this.musicBG.play();
+            this.musicBG.loop = true;
+            this.musicBG.volume = 0.5;
         };
         Main.prototype.callNextBattle = function () {
             var _this = this;
@@ -2230,16 +2239,48 @@ var GameBase;
             console.log('Menu create');
             // change state bg
             this.game.stage.backgroundColor = "#89aca6";
+            // btns | logo
+            this.gamelogo = this.game.add.sprite(0, 0, 'gamelogo-off');
+            this.startGameBtn = this.game.add.sprite(0, 0, 'btn-start-off');
+            // pos
+            this.gamelogo.anchor.x = this.startGameBtn.anchor.x = 0.5;
+            this.startGameBtn.x = this.gamelogo.x = this.game.world.centerX;
+            this.startGameBtn.y = this.game.height - this.startGameBtn.height - 30;
+            this.startGameBtn.inputEnabled = true;
+            this.startGameBtn.input.useHandCursor = true;
+            this.startGameBtn.events.onInputUp.add(this.startGame, this);
+            this.startGameBtn.events.onInputOver.add(this.btnOver, this);
+            this.startGameBtn.events.onInputOut.add(this.btnOut, this);
+            // audio
+            this.musicBG = this.game.add.audio('menu-sound-bg');
+            this.musicBG.onDecoded.add(this.playSound, this); // load
             // get the keyboard
             this.enterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
             // when press the key...
             this.enterKey.onDown.add(function () {
-                _this.transition.change('Main'); // change to state Main
+                _this.startGame();
             }, this);
             this.transition.transitionAnimation = new GameBase.Transitions.Slide(this.game);
         };
+        Menu.prototype.btnOver = function () {
+            this.gamelogo.loadTexture('gamelogo-on');
+            this.startGameBtn.loadTexture('btn-start-on');
+        };
+        Menu.prototype.btnOut = function () {
+            this.gamelogo.loadTexture('gamelogo-off');
+            this.startGameBtn.loadTexture('btn-start-off');
+        };
+        Menu.prototype.startGame = function () {
+            this.transition.change('Main'); // change to state Main
+        };
+        Menu.prototype.playSound = function () {
+            // play music
+            this.musicBG.play();
+            this.musicBG.loop = true;
+            this.musicBG.volume = 0.5;
+        };
         Menu.prototype.render = function () {
-            this.game.debug.text('(Menu Screen) Press [ENTER] to Main', 35, 35);
+            // this.game.debug.text('(Menu Screen) Press [ENTER] to Main', 35, 35);
         };
         return Menu;
     }(Pk.PkState));
