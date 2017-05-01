@@ -264,8 +264,11 @@ module GameBase
 
 			setTimeout(()=>{
 				// knight.die();
+
+				// game over screen
+				// this.transition.change('GameOver', true);
 				
-			}, 1500);
+			}, 500);
 
     	}
 		
@@ -283,8 +286,8 @@ module GameBase
 			// check if is play all battles
 			if(this.battleCount >= this.battles.length) // win all battles
 			{
-				alert('You win all battles!');
-				this.transition.change('GameOver');
+				// alert('You win all battles!');
+				this.transition.change('GameOver', true);
 				return;
 			}
 
@@ -299,7 +302,7 @@ module GameBase
 					this.callNextBattle();
 				}else{
 					// game over screen
-					this.transition.change('GameOver');
+					this.transition.change('GameOver', false);
 				}
 
 			}, this);

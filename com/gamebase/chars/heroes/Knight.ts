@@ -16,14 +16,14 @@ module GameBase {
             this.name = "Knight";
 
             // die turns
-            this.dieTime = 1;
+            this.dieTime = 2;
 
             // revive health
             this.reviveHealthPoints = 4;
 
             this.damageReduction = 3;
 
-            this.reloadEnergyQtn = 2;
+            this.reloadEnergyQtn = 3;
         }
 
         create()
@@ -54,8 +54,8 @@ module GameBase {
             attack3.value = 13;
 
             this.addAttack(attack1);
-            this.addAttack(attack3);
             this.addAttack(attack2);
+            this.addAttack(attack3);
 
             // animation
             // iddle
