@@ -115,7 +115,7 @@ module GameBase
                 return;
             }
 
-            this.boxs[this.boxsIndex].in();
+            this.boxs[this.boxsIndex].in(0);
 
             this.boxs[this.boxsIndex].event.add(
                 GameBase.E.IntroBoxEvent.OnIntroBoxEnd,
@@ -131,6 +131,8 @@ module GameBase
         end()
         {
             this.endIntro = true;
+
+            this.skipButton.visible = false;
 
             this.musicBG.fadeOut(1000);
 

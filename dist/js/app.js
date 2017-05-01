@@ -1939,7 +1939,7 @@ var GameBase;
                 this.end();
                 return;
             }
-            this.boxs[this.boxsIndex].in();
+            this.boxs[this.boxsIndex].in(0);
             this.boxs[this.boxsIndex].event.add(GameBase.E.IntroBoxEvent.OnIntroBoxEnd, this.play, this);
             // next
             this.boxsIndex++;
@@ -1947,6 +1947,7 @@ var GameBase;
         Intro.prototype.end = function () {
             var _this = this;
             this.endIntro = true;
+            this.skipButton.visible = false;
             this.musicBG.fadeOut(1000);
             setTimeout(function () {
                 _this.transition.change('Menu');
