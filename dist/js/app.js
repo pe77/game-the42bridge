@@ -1903,6 +1903,13 @@ var GameBase;
                     }, 300, Phaser.Easing.Linear.None, true);
                 }, 1000 * 3);
             }
+            // audio
+            this.musicBG = this.game.add.audio('intro-sound');
+            this.musicBG.onDecoded.add(this.playSound, this); // load
+        };
+        GameOver.prototype.playSound = function () {
+            // play music
+            this.musicBG.fadeIn(1000, false);
         };
         GameOver.prototype.render = function () {
             // this.game.debug.text('GAME OVER -- press F5 to play again', 35, 35);
@@ -3216,20 +3223,15 @@ var GameBase;
                 alpha: 0
             }, 200, Phaser.Easing.Cubic.Out, true);
             tween.start();
-            var _loop_1 = function (i) {
-                this_1.addTween(this_1.heroAttackBgs[i]).from({
-                    alpha: 0
-                }, 200, Phaser.Easing.Linear.None, true).onComplete.add(function () {
-                    _this.addTween(_this.heroAttackBgs[i].scale).to({
-                        x: 1.1 + (i * 0.1),
-                        y: 1.1 + (i * 0.1)
-                    }, 2000, Phaser.Easing.Linear.None, true);
-                }, this_1);
-            };
-            var this_1 = this;
             // attack animation
             for (var i = 0; i < this.heroAttackBgs.length; i++) {
-                _loop_1(i);
+                this.addTween(this.heroAttackBgs[i]).from({
+                    alpha: 0
+                }, 200, Phaser.Easing.Linear.None, true);
+                this.addTween(this.heroAttackBgs[i].scale).to({
+                    x: 1.1 + (i * 0.03),
+                    y: 1.1 + (i * 0.03)
+                }, 2500, Phaser.Easing.Exponential.Out, true);
             }
         };
         return HeroAttackCalculation;

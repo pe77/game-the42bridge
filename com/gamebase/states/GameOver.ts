@@ -8,6 +8,8 @@ module GameBase
         win:boolean;
         bg:Phaser.Sprite;
 
+        musicBG:Phaser.Sound;
+
         init(win)
         {
             super.init(); 
@@ -45,10 +47,21 @@ module GameBase
                         Phaser.Easing.Linear.None,
                         true
                     );
-                    
+
                 }, 1000 * 3);
             }
+
+            // audio
+            this.musicBG = this.game.add.audio('intro-sound');
+            this.musicBG.onDecoded.add(this.playSound, this); // load
     	}
+
+        playSound()
+        {
+            // play music
+            this.musicBG.fadeIn(1000, false);
+        }
+
 
 		render()
         {
