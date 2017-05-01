@@ -145,7 +145,7 @@ module GameBase
         playSound()
         {
             // play music
-            this.musicBG.fadeIn(1000, false);
+            this.musicBG.play('', 0, 0.6)
         }
 
         // calls when leaving state

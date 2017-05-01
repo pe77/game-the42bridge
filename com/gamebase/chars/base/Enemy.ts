@@ -139,7 +139,7 @@ module GameBase {
                 this.game.camera.shake(0.03, 100);
 
                 // play fx
-                this.audioDie.play();
+                this.audioDie.play('', 0, 0.3)
 
                 this.addTween(this).to(
                     {alpha:0},

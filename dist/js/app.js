@@ -1221,7 +1221,7 @@ var GameBase;
                 // camera shake
                 _this.game.camera.shake(0.03, 100);
                 // play fx
-                _this.audioDie.play();
+                _this.audioDie.play('', 0, 0.3);
                 _this.addTween(_this).to({ alpha: 0 }, 300, Phaser.Easing.Default, true).onComplete.add(function () {
                     // dispatch dead event
                     if (dispatchDieEvent)
@@ -1434,7 +1434,7 @@ var GameBase;
         };
         Hero.prototype.inputOver = function () {
             this.selectedSprite.visible = true;
-            this.audioOver.play();
+            this.audioOver.play('', 0, 0.06);
         };
         Hero.prototype.heroDeselect = function () {
             this.selectedSprite.visible = false;
@@ -1488,7 +1488,7 @@ var GameBase;
             // stop current animation
             this.currentAnimation.animation.stop();
             // play sound 
-            this.audioDead.play();
+            this.audioDead.play('', 0, 0.1);
             // tint to black
             var step = { v: 0, rv: 100 };
             var t = this.addTween(step).to({
@@ -1550,7 +1550,7 @@ var GameBase;
             this.target.event.dispatch(GameBase.E.AttackEvent.OnAttackResolve, this, attack);
             // play attack audio
             setTimeout(function () {
-                _this.audioAttack.play();
+                _this.audioAttack.play('', 0, 0.15);
             }, 700);
             // remove attack energy
             this.ui.removeEnergy(attack.energyCost);
@@ -2069,7 +2069,7 @@ var GameBase;
         };
         Intro.prototype.playSound = function () {
             // play music
-            this.musicBG.fadeIn(1000, false);
+            this.musicBG.play('', 0, 0.6);
         };
         // calls when leaving state
         Intro.prototype.shutdown = function () {
@@ -2281,6 +2281,7 @@ var GameBase;
             this.battles.push(battle4);
             // start calling battles
             this.callNextBattle();
+            // tests
             setTimeout(function () {
                 // knight.die();
                 // game over screen
@@ -2290,7 +2291,7 @@ var GameBase;
         Main.prototype.playSound = function () {
             // play music
             // this.musicBG.fadeIn(1000, true);
-            this.musicBG.play('', 0, 0.5, true);
+            this.musicBG.play('', 0, 0.25, true);
         };
         Main.prototype.callNextBattle = function () {
             var _this = this;
@@ -2564,7 +2565,7 @@ var GameBase;
                         if (_this.hero.turnMove)
                             return;
                         //
-                        _this.audioSelect.play();
+                        _this.audioSelect.play('', 0, 0.15);
                         _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroAttackClick, attack);
                         _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
                     }, _this);
@@ -2585,7 +2586,7 @@ var GameBase;
                     if (_this.hero.turnMove)
                         return;
                     //
-                    _this.audioSelect.play();
+                    _this.audioSelect.play('', 0, 0.6);
                     _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroReloadClick);
                     _this.hero.event.dispatch(GameBase.E.HeroEvent.OnHeroDeselect);
                 });
@@ -2618,7 +2619,7 @@ var GameBase;
                 this.updateView();
                 this.visible = true;
                 this.resetAttrs();
-                this.audioOpen.play();
+                this.audioOpen.play('', 0, 0.3);
             };
             Attack.prototype.updateView = function () {
                 var _this = this;
@@ -3339,7 +3340,7 @@ var GameBase;
             for (var i = 0; i < this.heroAttackBgs.length; i++) {
                 this.addTween(this.heroAttackBgs[i]).from({
                     alpha: 0
-                }, 200, Phaser.Easing.Linear.None, true);
+                }, 500, Phaser.Easing.Linear.None, true);
                 this.addTween(this.heroAttackBgs[i].scale).to({
                     x: 1.1 + (i * 0.03),
                     y: 1.1 + (i * 0.03)
@@ -3581,7 +3582,7 @@ var GameBase;
                 var _this = this;
                 this.visible = true;
                 this.alpha = 0;
-                this.sound.play();
+                this.sound.play('', 0, 0.3);
                 var tween = this.addTween(this).to({
                     alpha: 1
                 }, 200, Phaser.Easing.Linear.None, true).onComplete.add(function () {

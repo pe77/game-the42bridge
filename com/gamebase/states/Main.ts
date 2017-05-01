@@ -262,6 +262,7 @@ module GameBase
 			// start calling battles
 			this.callNextBattle();
 
+			// tests
 			setTimeout(()=>{
 				// knight.die();
 
@@ -276,7 +277,7 @@ module GameBase
         {
             // play music
             // this.musicBG.fadeIn(1000, true);
-			this.musicBG.play('', 0, 0.5, true);
+			this.musicBG.play('', 0, 0.25, true);
         }
 
 		callNextBattle()
