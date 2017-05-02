@@ -596,7 +596,7 @@ var GameBase;
             // scripts
             this.load.script('gray', 'assets/default/scripts/filters/Gray.js');
             // generic
-            this.load.image('cinematic-bg', 'assets/states/intro/images/cinematic-bg.jpg');
+            // this.load.image('cinematic-bg', 'assets/states/intro/images/cinematic-bg.jpg');
             // intro
             this.load.audio('intro-sound', 'assets/states/intro/sounds/intro.mp3');
             for (var i = 1; i <= 10; i++)
