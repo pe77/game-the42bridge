@@ -72,6 +72,7 @@ module GameBase
 
         startGame()
         {
+            this.startGameBtn.inputEnabled = false;
             this.transition.change('Main'); // change to state Main
         }
 

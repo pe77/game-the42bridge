@@ -91,6 +91,18 @@ module GameBase {
                 }, this);
             });
 
+            // get a random 
+            var randomHero:GameBase.Hero = this.heroes[Math.floor(Math.random() * this.heroes.length)];
+            console.log('select :' + randomHero.name)
+            // create a random speak balloon
+            var balloon:GameBase.SpeakHero = new GameBase.SpeakHero(this.game, randomHero);
+            
+            setTimeout(()=>{
+                balloon.create();
+                balloon.show();
+            }, 1500)
+            
+
             // show enemies
             this.enemies.forEach(enemy => {
                 enemy.ui.visible = enemy.visible = true;

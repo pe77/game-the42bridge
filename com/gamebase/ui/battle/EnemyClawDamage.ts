@@ -17,7 +17,6 @@ module GameBase {
 
             this.hero = hero;
             this.enemy = enemy;
-
         }
 
         create()

@@ -457,7 +457,7 @@ var GameBase;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
             _this.canvasSize = [1280, 720];
-            _this.initialState = 'Intro';
+            _this.initialState = 'Main';
             return _this;
         }
         return Config;
@@ -601,6 +601,10 @@ var GameBase;
             this.load.audio('intro-sound', 'assets/states/intro/sounds/intro.mp3');
             for (var i = 0; i <= 10; i++)
                 this.load.image('intro-' + i, 'assets/states/intro/images/Cin_00' + i + '.jpg');
+            //
+            // speak baloon
+            for (var i = 1; i <= 5; i++)
+                this.load.image('speak-' + i, 'assets/default/images/chars/heroes/b-speak-0' + i + '.png');
             //
             // menu
             this.load.audio('menu-sound-bg', 'assets/states/menu/audio/menu.mp3');
@@ -841,6 +845,15 @@ var GameBase;
                     _this.checkIfAllHeroesMove();
                 }, _this);
             });
+            // get a random 
+            var randomHero = this.heroes[Math.floor(Math.random() * this.heroes.length)];
+            console.log('select :' + randomHero.name);
+            // create a random speak balloon
+            var balloon = new GameBase.SpeakHero(this.game, randomHero);
+            setTimeout(function () {
+                balloon.create();
+                balloon.show();
+            }, 1500);
             // show enemies
             this.enemies.forEach(function (enemy) {
                 enemy.ui.visible = enemy.visible = true;
@@ -2408,6 +2421,7 @@ var GameBase;
             this.startGameBtn.loadTexture('btn-start-off');
         };
         Menu.prototype.startGame = function () {
+            this.startGameBtn.inputEnabled = false;
             this.transition.change('Main'); // change to state Main
         };
         Menu.prototype.playSound = function () {
@@ -3449,6 +3463,64 @@ var GameBase;
         (function (LevelFlagEvent) {
             LevelFlagEvent.OnEndShow = "OnEndShow";
         })(LevelFlagEvent = E.LevelFlagEvent || (E.LevelFlagEvent = {}));
+    })(E = GameBase.E || (GameBase.E = {}));
+})(GameBase || (GameBase = {}));
+var GameBase;
+(function (GameBase) {
+    var SpeakHero = (function (_super) {
+        __extends(SpeakHero, _super);
+        function SpeakHero(game, hero) {
+            var _this = _super.call(this, game) || this;
+            _this.hero = hero;
+            return _this;
+        }
+        SpeakHero.prototype.create = function () {
+            // bg bg! // same world size
+            this.bg = this.game.add.sprite(0, 0, 'speak-' + this.game.rnd.integerInRange(1, 5));
+            // pos on hero head
+            // this.bg.anchor.set(0.5, .5);
+            /*
+            this.bg.anchor.x = 0.5;
+            this.bg.anchor.y = 1;
+            this.bg.x = this.hero.body.x //;+ this.bg.width;
+            this.bg.y = this.hero.body.y;
+            */
+            this.add(this.bg);
+            this.visible = false;
+            Pk.PkState.currentState.addToLayer('ui', this);
+            // pos
+        };
+        SpeakHero.prototype.show = function () {
+            var _this = this;
+            // pos
+            this.bg.x = this.hero.x;
+            this.bg.y = this.hero.y - this.height;
+            this.visible = true;
+            // show bg
+            console.log('here', this.rotation);
+            this.addTween(this.bg).from({
+                alpha: 0,
+                y: this.bg.y + 10,
+                rotation: this.rotation - 0.1
+            }, 200, Phaser.Easing.Back.In, true).onComplete.add(function () {
+                _this.addTween(_this.bg).to({
+                    alpha: 0,
+                    y: _this.bg.y - 10
+                }, 200, Phaser.Easing.Linear.None, true, 2500).onComplete.add(function () {
+                    console.log('complete----');
+                    _this.destroy();
+                });
+            }, this);
+        };
+        return SpeakHero;
+    }(Pk.PkElement));
+    GameBase.SpeakHero = SpeakHero;
+    var E;
+    (function (E) {
+        var SpeakHeroEvent;
+        (function (SpeakHeroEvent) {
+            SpeakHeroEvent.OnEnd = "SpeakHeroEventEnd";
+        })(SpeakHeroEvent = E.SpeakHeroEvent || (E.SpeakHeroEvent = {}));
     })(E = GameBase.E || (GameBase.E = {}));
 })(GameBase || (GameBase = {}));
 var GameBase;

@@ -89,6 +89,12 @@ module GameBase {
                 this.load.image('intro-'+i, 'assets/states/intro/images/Cin_00'+i+'.jpg');
             //
 
+            // speak baloon
+            for (var i = 1; i <= 5; i++) 
+                this.load.image('speak-'+i, 'assets/default/images/chars/heroes/b-speak-0'+i+'.png');
+            //
+
+
             // menu
             this.load.audio('menu-sound-bg', 'assets/states/menu/audio/menu.mp3');
 
