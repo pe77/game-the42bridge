@@ -29,6 +29,7 @@ module GameBase {
 
         audioOver:Phaser.Sound;
         audioDead:Phaser.Sound;
+        audioHit:Phaser.Sound;
         audioAttack:Phaser.Sound;
         
         selectedSprite:Phaser.Sprite;
@@ -122,6 +123,7 @@ module GameBase {
             this.audioOver = this.game.add.audio('a-hero-selected');
             this.audioDead = this.game.add.audio('a-char'+this.identification+'-dead');
             this.audioAttack = this.game.add.audio('a-char'+this.identification+'-attack');
+            this.audioHit = this.game.add.audio('a-char'+this.identification+'-hit');
         }
 
         updatePosition()
@@ -301,8 +303,6 @@ module GameBase {
             }
             
 
-            
-
             this.event.dispatch(GameBase.E.HeroEvent.OnHeroDieResolve, this);
 
         }
@@ -380,7 +380,8 @@ module GameBase {
             // if has no health points
             if(!this.ui.getHealth())
                 this.die();
-            //
+            else
+                this.audioHit.play('', 0, 0.4);
             
         }
 

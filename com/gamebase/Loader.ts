@@ -136,6 +136,11 @@ module GameBase {
             this.load.audio('a-char3-dead', 'assets/default/audio/hero/3/death.mp3');
             this.load.audio('a-char4-dead', 'assets/default/audio/hero/4/death.mp3');
 
+            this.load.audio('a-char1-hit', 'assets/default/audio/hero/1/hit.mp3');
+            this.load.audio('a-char2-hit', 'assets/default/audio/hero/2/hit.mp3');
+            this.load.audio('a-char3-hit', 'assets/default/audio/hero/3/hit.mp3');
+            this.load.audio('a-char4-hit', 'assets/default/audio/hero/4/hit.mp3');
+
             // hero attack audio
             this.load.audio('a-char1-attack', 'assets/default/audio/hero/1/attack.mp3');
             this.load.audio('a-char2-attack', 'assets/default/audio/hero/2/attack.mp3');
