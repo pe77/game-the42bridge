@@ -606,6 +606,7 @@ var GameBase;
             this.load.audio('menu-sound-bg', 'assets/states/menu/audio/menu.mp3');
             this.load.image('btn-start-on', 'assets/default/images/ui/btn-start-on.png');
             this.load.image('btn-start-off', 'assets/default/images/ui/btn-start-off.png');
+            this.load.image('menu-bg', 'assets/states/menu/menu.jpg');
             this.load.image('gamelogo-on', 'assets/default/images/ui/logo.png');
             this.load.image('gamelogo-off', 'assets/default/images/ui/logo2.png');
             // battle :: ANW2683_06_Runway-To-Ignition.mp3
@@ -2374,7 +2375,8 @@ var GameBase;
             console.log('Menu create');
             // change state bg
             this.game.stage.backgroundColor = "#89aca6";
-            // btns | logo
+            // btns | logo | bg
+            var bg = this.game.add.sprite(0, 0, 'menu-bg');
             this.gamelogo = this.game.add.sprite(0, 0, 'gamelogo-off');
             this.startGameBtn = this.game.add.sprite(0, 0, 'btn-start-off');
             // pos

@@ -25,7 +25,8 @@ module GameBase
             // change state bg
             this.game.stage.backgroundColor = "#89aca6";
 
-            // btns | logo
+            // btns | logo | bg
+            var bg = this.game.add.sprite(0, 0, 'menu-bg');
             this.gamelogo = this.game.add.sprite(0, 0, 'gamelogo-off');
             this.startGameBtn = this.game.add.sprite(0, 0, 'btn-start-off');
 

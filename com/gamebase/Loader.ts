@@ -95,6 +95,8 @@ module GameBase {
             this.load.image('btn-start-on', 'assets/default/images/ui/btn-start-on.png');
             this.load.image('btn-start-off', 'assets/default/images/ui/btn-start-off.png');
 
+            this.load.image('menu-bg', 'assets/states/menu/menu.jpg');
+
             this.load.image('gamelogo-on', 'assets/default/images/ui/logo.png');
             this.load.image('gamelogo-off', 'assets/default/images/ui/logo2.png');
 
