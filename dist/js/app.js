@@ -599,7 +599,7 @@ var GameBase;
             // this.load.image('cinematic-bg', 'assets/states/intro/images/cinematic-bg.jpg');
             // intro
             this.load.audio('intro-sound', 'assets/states/intro/sounds/intro.mp3');
-            for (var i = 1; i <= 10; i++)
+            for (var i = 0; i <= 10; i++)
                 this.load.image('intro-' + i, 'assets/states/intro/images/Cin_00' + i + '.jpg');
             //
             // menu
