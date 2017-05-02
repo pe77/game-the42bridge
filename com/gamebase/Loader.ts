@@ -164,6 +164,12 @@ module GameBase {
             this.load.image('ui-hero-3-off', 'assets/default/images/chars/heroes/3/ui-off.png');
             this.load.image('ui-hero-4-off', 'assets/default/images/chars/heroes/4/ui-off.png');
 
+            // hero attack icon
+            this.load.image('ui-hero-1-attack-icon', 'assets/default/images/chars/heroes/1/magic.png');
+            this.load.image('ui-hero-2-attack-icon', 'assets/default/images/chars/heroes/2/magic.png');
+            this.load.image('ui-hero-3-attack-icon', 'assets/default/images/chars/heroes/3/magic.png');
+            this.load.image('ui-hero-4-attack-icon', 'assets/default/images/chars/heroes/4/magic.png');
+
             // hero attack
             this.load.image('ui-hero-1-attack-1', 'assets/default/images/ui/attack/Druid/1.png');
             this.load.image('ui-hero-1-attack-2', 'assets/default/images/ui/attack/Druid/2.png');

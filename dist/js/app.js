@@ -663,6 +663,11 @@ var GameBase;
             this.load.image('ui-hero-2-off', 'assets/default/images/chars/heroes/2/ui-off.png');
             this.load.image('ui-hero-3-off', 'assets/default/images/chars/heroes/3/ui-off.png');
             this.load.image('ui-hero-4-off', 'assets/default/images/chars/heroes/4/ui-off.png');
+            // hero attack icon
+            this.load.image('ui-hero-1-attack-icon', 'assets/default/images/chars/heroes/1/magic.png');
+            this.load.image('ui-hero-2-attack-icon', 'assets/default/images/chars/heroes/2/magic.png');
+            this.load.image('ui-hero-3-attack-icon', 'assets/default/images/chars/heroes/3/magic.png');
+            this.load.image('ui-hero-4-attack-icon', 'assets/default/images/chars/heroes/4/magic.png');
             // hero attack
             this.load.image('ui-hero-1-attack-1', 'assets/default/images/ui/attack/Druid/1.png');
             this.load.image('ui-hero-1-attack-2', 'assets/default/images/ui/attack/Druid/2.png');
@@ -2536,6 +2541,12 @@ var GameBase;
                 this.hero.attacks.forEach(function (attack, i) {
                     // bg
                     var bg = _this.game.add.sprite(0, 0, 'ui-hero-attack-bg-' + _this.hero.energyType);
+                    var attackIcon = _this.game.add.sprite(0, 0, 'ui-hero-' + _this.hero.identification + '-attack-icon');
+                    // attackIcon.anchor.set(0.5, 0.5);
+                    attackIcon.scale.x = 0.7;
+                    attackIcon.scale.y = 0.7;
+                    attackIcon.x += 12;
+                    attackIcon.y += 13;
                     // value
                     var textValue = _this.game.add.text(0, 0, attack.value.toString(), // text
                     _this.textStyleValues // font style
@@ -2557,6 +2568,7 @@ var GameBase;
                     attackBox.attack = attack;
                     attackBox.add(bg);
                     attackBox.add(textValue);
+                    attackBox.add(attackIcon);
                     attackBox.add(textEnergy);
                     attackBox.add(operatorIcon);
                     attackBox.setInputElement(bg);

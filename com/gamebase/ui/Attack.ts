@@ -46,6 +46,13 @@ module GameBase {
                     
                     // bg
                     var bg = this.game.add.sprite(0, 0, 'ui-hero-attack-bg-' + this.hero.energyType);
+                    var attackIcon = this.game.add.sprite(0, 0, 'ui-hero-'+this.hero.identification+'-attack-icon')
+                    // attackIcon.anchor.set(0.5, 0.5);
+                    attackIcon.scale.x = 0.7;
+                    attackIcon.scale.y = 0.7;
+
+                    attackIcon.x += 12;
+                    attackIcon.y += 13;
 
                     // value
                     var textValue = this.game.add.text(0, 0,
@@ -75,6 +82,7 @@ module GameBase {
 
                     attackBox.add(bg);   
                     attackBox.add(textValue);
+                    attackBox.add(attackIcon);
                     attackBox.add(textEnergy);
                     attackBox.add(operatorIcon);
 
