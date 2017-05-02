@@ -615,6 +615,7 @@ var GameBase;
             this.load.audio('a-hero-menu', 'assets/default/audio/fx/a_menuchar.wav');
             this.load.audio('a-hero-attack-selected', 'assets/default/audio/fx/a_selGolpe.wav');
             this.load.audio('a-enemy-die', 'assets/default/audio/fx/a_golpe.wav');
+            this.load.audio('a-enemy-taking-damage', 'assets/default/audio/fx/monsterTakingHit.mp3');
             this.load.audio('a-hero-res', 'assets/default/audio/fx/Ress.mp3');
             // particles
             this.load.image('particle-1', 'assets/states/main/images/particles/p1.png');
@@ -643,6 +644,8 @@ var GameBase;
             this.load.audio('a-char2-attack', 'assets/default/audio/hero/2/attack.mp3');
             this.load.audio('a-char3-attack', 'assets/default/audio/hero/3/attack.mp3');
             this.load.audio('a-char4-attack', 'assets/default/audio/hero/4/attack.mp3');
+            // enemy attack audio
+            this.load.audio('a-enemy-attack', 'assets/default/audio/fx/monsterAttack.mp3');
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
             this.load.image('health-icon-large', 'assets/default/images/ui/ico-health-large.png');
@@ -1164,6 +1167,8 @@ var GameBase;
             }, this);
             // audio
             this.audioDie = this.game.add.audio('a-enemy-die');
+            this.audioAttack = this.game.add.audio('a-enemy-attack');
+            this.audioTakingDamage = this.game.add.audio('a-enemy-taking-damage');
         };
         Enemy.prototype.resolveAttack = function (hero, attack) {
             console.log('hero[' + hero.name + '] attack [' + this.name + ']');
@@ -1184,7 +1189,7 @@ var GameBase;
             // check if die
             if (this.value == 42)
                 this.die(false);
-            //
+            // 
         };
         Enemy.prototype.playDeadAnimation = function (dispatchDieEvent) {
             var _this = this;
@@ -1302,6 +1307,8 @@ var GameBase;
             // pos on hero body
             clawAnimation.x = hero.x - 10;
             clawAnimation.show();
+            // play attack audio
+            this.audioAttack.play('', 0, 0.6);
             clawAnimation.event.add(GameBase.E.EnemyClawDamage.OnEnd, function () {
                 _this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
             }, this);
@@ -3336,6 +3343,8 @@ var GameBase;
                 }, 200, Phaser.Easing.Cubic.Out, true);
                 tweenBoxOut.onComplete.add(function () {
                     _this.event.dispatch(GameBase.E.HeroAttackCalculation.End);
+                    _this.game.camera.shake(0.01, 170);
+                    _this.enemy.audioTakingDamage.play('', 0, 0.4);
                     _this.destroy();
                 }, _this);
             }, this);

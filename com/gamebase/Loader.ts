@@ -106,6 +106,7 @@ module GameBase {
             this.load.audio('a-hero-menu', 'assets/default/audio/fx/a_menuchar.wav');
             this.load.audio('a-hero-attack-selected', 'assets/default/audio/fx/a_selGolpe.wav');
             this.load.audio('a-enemy-die', 'assets/default/audio/fx/a_golpe.wav');
+            this.load.audio('a-enemy-taking-damage', 'assets/default/audio/fx/monsterTakingHit.mp3');
             this.load.audio('a-hero-res', 'assets/default/audio/fx/Ress.mp3');
 
             // particles
@@ -139,6 +140,9 @@ module GameBase {
             this.load.audio('a-char2-attack', 'assets/default/audio/hero/2/attack.mp3');
             this.load.audio('a-char3-attack', 'assets/default/audio/hero/3/attack.mp3');
             this.load.audio('a-char4-attack', 'assets/default/audio/hero/4/attack.mp3');
+
+            // enemy attack audio
+            this.load.audio('a-enemy-attack', 'assets/default/audio/fx/monsterAttack.mp3');
 
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');

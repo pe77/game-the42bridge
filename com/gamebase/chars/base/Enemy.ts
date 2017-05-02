@@ -17,6 +17,8 @@ module GameBase {
         static enemies:Array<GameBase.Enemy> = [];
 
         audioDie:Phaser.Sound;
+        audioAttack:Phaser.Sound;
+        audioTakingDamage:Phaser.Sound;
 
         constructor(game, body, id, value)
         {
@@ -44,6 +46,8 @@ module GameBase {
 
             // audio
             this.audioDie = this.game.add.audio('a-enemy-die');
+            this.audioAttack = this.game.add.audio('a-enemy-attack');
+            this.audioTakingDamage = this.game.add.audio('a-enemy-taking-damage');
 
         }
 
@@ -73,7 +77,7 @@ module GameBase {
             // check if die
             if(this.value == 42)
                 this.die(false);
-            //
+            // 
                 
 
         }
@@ -249,6 +253,9 @@ module GameBase {
             // pos on hero body
             clawAnimation.x = hero.x - 10;
             clawAnimation.show();
+
+            // play attack audio
+            this.audioAttack.play('', 0, 0.6);
 
             clawAnimation.event.add(GameBase.E.EnemyClawDamage.OnEnd, ()=>{
                 this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);

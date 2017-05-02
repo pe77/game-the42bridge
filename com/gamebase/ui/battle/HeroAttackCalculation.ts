@@ -197,6 +197,10 @@ module GameBase {
 
                 tweenBoxOut.onComplete.add(()=>{
                     this.event.dispatch(GameBase.E.HeroAttackCalculation.End);
+
+                    this.game.camera.shake(0.01, 170);
+                    this.enemy.audioTakingDamage.play('', 0, 0.4);
+
                     this.destroy();
                 }, this);
                 
