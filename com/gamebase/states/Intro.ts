@@ -33,7 +33,7 @@ module GameBase
             //
 
             // boxs time adjust
-            this.boxs[0].time = 1000 * 8;
+            this.boxs[0].time = 1000 * 4;
             this.boxs[1].time = 1000 * 8;
             this.boxs[2].time = 1000 * 8;
             this.boxs[3].time = 1000 * 8;
@@ -61,7 +61,7 @@ module GameBase
             var skipText = this.game.add.text(
 				0, // x
 				0, // y
-				" skip" // text
+				" skip to menu" // text
                 , {
                     // font details
 					font: "52px StrangerBack",

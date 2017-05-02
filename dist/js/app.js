@@ -291,7 +291,6 @@ var Pk;
         };
         PkState.prototype.create = function () {
             // console.log('PkState create');
-            Pk.PkState.currentState = this;
         };
         return PkState;
     }(Phaser.State));
@@ -457,7 +456,7 @@ var GameBase;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
             _this.canvasSize = [1280, 720];
-            _this.initialState = 'Main';
+            _this.initialState = 'Intro';
             return _this;
         }
         return Config;
@@ -2032,7 +2031,7 @@ var GameBase;
                 this.boxs.push(new GameBase.IntroBox(this.game, this.add.sprite(0, 0, 'intro-' + i_1)));
             //
             // boxs time adjust
-            this.boxs[0].time = 1000 * 8;
+            this.boxs[0].time = 1000 * 4;
             this.boxs[1].time = 1000 * 8;
             this.boxs[2].time = 1000 * 8;
             this.boxs[3].time = 1000 * 8;
@@ -2053,7 +2052,7 @@ var GameBase;
             this.skipButton = new Pk.PkElement(this.game);
             var skipText = this.game.add.text(0, // x
             0, // y
-            " skip" // text
+            " skip to menu" // text
             , {
                 // font details
                 font: "52px StrangerBack",
