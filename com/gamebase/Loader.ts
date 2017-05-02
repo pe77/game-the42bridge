@@ -108,6 +108,7 @@ module GameBase {
             this.load.audio('a-enemy-die', 'assets/default/audio/fx/a_golpe.wav');
             this.load.audio('a-enemy-taking-damage', 'assets/default/audio/fx/monsterTakingHit.mp3');// enemy attack audio
             this.load.audio('a-enemy-attack', 'assets/default/audio/fx/monsterAttack2.mp3');
+            this.load.audio('a-enemy-intro', 'assets/default/audio/fx/monsterBreath.mp3');
             this.load.audio('a-hero-res', 'assets/default/audio/fx/Ress.mp3');
 
             // particles
@@ -146,6 +147,13 @@ module GameBase {
             this.load.audio('a-char2-attack', 'assets/default/audio/hero/2/attack.mp3');
             this.load.audio('a-char3-attack', 'assets/default/audio/hero/3/attack.mp3');
             this.load.audio('a-char4-attack', 'assets/default/audio/hero/4/attack.mp3');
+
+            // enemy intro audio
+            this.load.audio('a-enemy1-intro', 'assets/default/audio/enemy/audio/1/intro.mp3');
+            this.load.audio('a-enemy2-intro', 'assets/default/audio/enemy/audio/2/intro.mp3');
+            this.load.audio('a-enemy3-intro', 'assets/default/audio/enemy/audio/3/intro.mp3');
+            this.load.audio('a-enemy4-intro', 'assets/default/audio/enemy/audio/4/intro.mp3');
+
 
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');

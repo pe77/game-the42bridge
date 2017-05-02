@@ -95,6 +95,8 @@ module GameBase {
             this.enemies.forEach(enemy => {
                 enemy.ui.visible = enemy.visible = true;
 
+                enemy.audioIntro.play('', 0, 0.4);
+
                 enemy.event.add(GameBase.E.EnemyEvent.OnEnemyResolve, ()=>{
                     this.checkEndBattle();
                 }, this);

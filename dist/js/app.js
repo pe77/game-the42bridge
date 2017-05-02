@@ -617,6 +617,7 @@ var GameBase;
             this.load.audio('a-enemy-die', 'assets/default/audio/fx/a_golpe.wav');
             this.load.audio('a-enemy-taking-damage', 'assets/default/audio/fx/monsterTakingHit.mp3'); // enemy attack audio
             this.load.audio('a-enemy-attack', 'assets/default/audio/fx/monsterAttack2.mp3');
+            this.load.audio('a-enemy-intro', 'assets/default/audio/fx/monsterBreath.mp3');
             this.load.audio('a-hero-res', 'assets/default/audio/fx/Ress.mp3');
             // particles
             this.load.image('particle-1', 'assets/states/main/images/particles/p1.png');
@@ -649,6 +650,11 @@ var GameBase;
             this.load.audio('a-char2-attack', 'assets/default/audio/hero/2/attack.mp3');
             this.load.audio('a-char3-attack', 'assets/default/audio/hero/3/attack.mp3');
             this.load.audio('a-char4-attack', 'assets/default/audio/hero/4/attack.mp3');
+            // enemy intro audio
+            this.load.audio('a-enemy1-intro', 'assets/default/audio/enemy/audio/1/intro.mp3');
+            this.load.audio('a-enemy2-intro', 'assets/default/audio/enemy/audio/2/intro.mp3');
+            this.load.audio('a-enemy3-intro', 'assets/default/audio/enemy/audio/3/intro.mp3');
+            this.load.audio('a-enemy4-intro', 'assets/default/audio/enemy/audio/4/intro.mp3');
             // icons
             this.load.image('heath-icon', 'assets/default/images/ui/ico-health.png');
             this.load.image('health-icon-large', 'assets/default/images/ui/ico-health-large.png');
@@ -837,6 +843,7 @@ var GameBase;
             // show enemies
             this.enemies.forEach(function (enemy) {
                 enemy.ui.visible = enemy.visible = true;
+                enemy.audioIntro.play('', 0, 0.4);
                 enemy.event.add(GameBase.E.EnemyEvent.OnEnemyResolve, function () {
                     _this.checkEndBattle();
                 }, _this);
@@ -1171,6 +1178,7 @@ var GameBase;
             // audio
             this.audioDie = this.game.add.audio('a-enemy-die');
             this.audioAttack = this.game.add.audio('a-enemy-attack');
+            this.audioIntro = this.game.add.audio('a-enemy' + this.identification + '-intro');
             this.audioTakingDamage = this.game.add.audio('a-enemy-taking-damage');
         };
         Enemy.prototype.resolveAttack = function (hero, attack) {

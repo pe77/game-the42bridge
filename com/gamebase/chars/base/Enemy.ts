@@ -18,6 +18,7 @@ module GameBase {
 
         audioDie:Phaser.Sound;
         audioAttack:Phaser.Sound;
+        audioIntro:Phaser.Sound;
         audioTakingDamage:Phaser.Sound;
 
         constructor(game, body, id, value)
@@ -47,6 +48,7 @@ module GameBase {
             // audio
             this.audioDie = this.game.add.audio('a-enemy-die');
             this.audioAttack = this.game.add.audio('a-enemy-attack');
+            this.audioIntro = this.game.add.audio('a-enemy'+this.identification+'-intro');
             this.audioTakingDamage = this.game.add.audio('a-enemy-taking-damage');
 
         }
