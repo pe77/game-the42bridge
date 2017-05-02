@@ -1290,6 +1290,7 @@ var GameBase;
             damage -= hero.damageReduction;
             damage = damage <= 0 ? 1 : damage;
             // damage = 5;// temp
+            damage = 50;
             // sort damage type
             switch (this.game.rnd.integerInRange(1, 5)) {
                 case 1:
@@ -2013,7 +2014,7 @@ var GameBase;
             // change state bg
             this.game.stage.backgroundColor = "#000";
             // add boxs
-            for (var i_1 = 1; i_1 <= 10; i_1++)
+            for (var i_1 = 0; i_1 <= 10; i_1++)
                 this.boxs.push(new GameBase.IntroBox(this.game, this.add.sprite(0, 0, 'intro-' + i_1)));
             //
             // boxs time adjust
@@ -2021,6 +2022,7 @@ var GameBase;
             this.boxs[1].time = 1000 * 8;
             this.boxs[2].time = 1000 * 8;
             this.boxs[3].time = 1000 * 8;
+            this.boxs[4].time = 1000 * 8;
             // pos boxs
             for (var i in this.boxs) {
                 var b = this.boxs[i];

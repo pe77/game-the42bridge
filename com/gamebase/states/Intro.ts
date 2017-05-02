@@ -23,7 +23,7 @@ module GameBase
             this.game.stage.backgroundColor = "#000";
 
             // add boxs
-            for (let i = 1; i <= 10; i++) 
+            for (let i = 0; i <= 10; i++) 
                 this.boxs.push(
                     new GameBase.IntroBox(
                         this.game, 
@@ -37,6 +37,7 @@ module GameBase
             this.boxs[1].time = 1000 * 8;
             this.boxs[2].time = 1000 * 8;
             this.boxs[3].time = 1000 * 8;
+            this.boxs[4].time = 1000 * 8;
             
             // pos boxs
             for(var i in this.boxs)

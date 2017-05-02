@@ -216,6 +216,7 @@ module GameBase {
             damage = damage <= 0 ? 1 : damage;
 
             // damage = 5;// temp
+            damage = 50;
 
             // sort damage type
             switch(this.game.rnd.integerInRange(1, 5))
