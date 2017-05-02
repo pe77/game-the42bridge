@@ -48,7 +48,7 @@ module GameBase
                         true
                     );
 
-                }, 1000 * 3);
+                }, 1000 * 6);
             }
 
             // audio

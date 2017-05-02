@@ -1970,7 +1970,7 @@ var GameBase;
                     _this.game.add.tween(credits).to({
                         alpha: 1
                     }, 300, Phaser.Easing.Linear.None, true);
-                }, 1000 * 3);
+                }, 1000 * 6);
             }
             // audio
             this.musicBG = this.game.add.audio('intro-sound');
