@@ -258,13 +258,15 @@ module GameBase {
             this.audioAttack.play('', 0, 0.6);
 
             clawAnimation.event.add(GameBase.E.EnemyClawDamage.OnEnd, ()=>{
-                this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
+                // wait a little and dispatch event
+                setTimeout(()=>{
+                    this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
+                }, 500)
+                
+                
             }, this);
 
-            // wait a little and dispatch event
-            setTimeout(()=>{
-                // this.event.dispatch(GameBase.E.EnemyEvent.OnEnemyResolve, damage, damageType, hero);
-            }, 1500)
+            
         }
 
         setValue(v:number)

@@ -197,8 +197,8 @@ module GameBase
 			this.addToLayer('ui', devil.ui);
 
 			// scenario position
-			mainBridgeBack.y = 413;
-			mainBridgeFront.y = 510;
+			mainBridgeBack.y = 417;
+			mainBridgeFront.y = 515;
 
 			this.addToLayer('stage-back-1', mainBg);
 
