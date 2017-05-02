@@ -457,7 +457,7 @@ var GameBase;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
             _this.canvasSize = [1280, 720];
-            _this.initialState = 'Main';
+            _this.initialState = 'Intro';
             return _this;
         }
         return Config;
@@ -1290,7 +1290,7 @@ var GameBase;
             damage -= hero.damageReduction;
             damage = damage <= 0 ? 1 : damage;
             // damage = 5;// temp
-            damage = 50;
+            // damage = 50;
             // sort damage type
             switch (this.game.rnd.integerInRange(1, 5)) {
                 case 1:
