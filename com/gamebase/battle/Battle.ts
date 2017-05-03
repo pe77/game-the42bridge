@@ -14,6 +14,7 @@ module GameBase {
 
         levelFlag:GameBase.LevelFlag;
         endTurnButton:GameBase.EndTurnButton;
+        clock:GameBase.Timing;
 
         blockBg:Phaser.Sprite;
 
@@ -49,6 +50,19 @@ module GameBase {
 			this.blockBg.alpha = 0;
 			this.blockBg.inputEnabled = true;
             this.blockBg.visible = false;
+
+            // create clock
+            this.clock = new GameBase.Timing(this.game);
+            this.clock.create();
+            // pos clock above endturn button
+            this.clock.x = this.game.width - this.clock.width - 20
+            this.clock.y = this.endTurnButton.y - this.clock.height;
+
+            this.state.addToLayer(uiLayerKey, this.clock);
+
+            // set time by level
+            this.clock.seconds = 40 / this.level;
+
 
             // add to layers
             this.state.addToLayer(uiLayerKey, this.levelFlag);
@@ -96,12 +110,21 @@ module GameBase {
             console.log('select :' + randomHero.name)
             // create a random speak balloon
             var balloon:GameBase.SpeakHero = new GameBase.SpeakHero(this.game, randomHero);
-            
+            this.state.addToLayer('ui-back', balloon);
+
             setTimeout(()=>{
                 balloon.create();
                 balloon.show();
             }, 1500)
             
+            // start timer
+            this.clock.start();
+
+            // clock end tur event
+            this.clock.event.add(GameBase.E.TimingEvent.OnEnd, ()=>{
+                // force click buttom
+                this.endTurnButton.event.dispatch(GameBase.E.ButtonEvent.OnClick);
+            }, this)
 
             // show enemies
             this.enemies.forEach(enemy => {
@@ -126,10 +149,14 @@ module GameBase {
             var hac:GameBase.HeroAttackCalculation = new GameBase.HeroAttackCalculation(this.game, attack, enemy, hero);
             hac.create();
 
+            this.clock.pause();
+
             this.blockBg.visible = true;
 
             // event
             hac.event.add(GameBase.E.HeroAttackCalculation.End, ()=>{
+
+                this.clock.resume();
                 
 
                 if(!enemy.alive)
@@ -285,6 +312,9 @@ module GameBase {
             endTurnAnimation.create();
             endTurnAnimation.show("Enemy Turn");
 
+            // start timing
+            this.clock.stop();
+
             // block interaction
             this.blockBg.visible = true;
 
@@ -335,9 +365,16 @@ module GameBase {
             endTurnAnimation.create();
             endTurnAnimation.show("Heroes Turn");
 
+            this.blockBg.visible = true;
+
             endTurnAnimation.event.add(GameBase.E.EndTurnAnimation.OnEnd, ()=>{
+                this.blockBg.visible = false;
+
                 // show turn end button
                 this.endTurnButton.in();
+
+                // start timing
+                this.clock.start();
             }, this);
         
         }

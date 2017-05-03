@@ -212,6 +212,8 @@ module GameBase {
 
 
             this.load.image('ui-hero-revive', 'assets/default/images/ui/a-blessed.png');
+            this.load.image('ui-battle-clock', 'assets/default/images/ui/i-clock.png');
+            // i-clock.png
             this.load.image('ui-hero-dead-count', 'assets/default/images/ui/dead-count.png');
 
             // ui hero attacks

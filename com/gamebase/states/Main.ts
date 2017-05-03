@@ -46,6 +46,7 @@ module GameBase
 			this.addLayer('stage-back-3');
 			this.addLayer('chars');
 			this.addLayer('stage-front-1');
+			this.addLayer('ui-back');
 			this.addLayer('ui');
 			this.addLayer('block');
 

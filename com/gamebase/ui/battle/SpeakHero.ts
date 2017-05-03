@@ -32,7 +32,7 @@ module GameBase {
             this.add(this.bg);
 			this.visible = false;
 
-            Pk.PkState.currentState.addToLayer('ui', this);
+            // Pk.PkState.currentState.addToLayer('ui', this);
 
             // pos
         }
@@ -46,7 +46,6 @@ module GameBase {
             this.visible = true;
 
             // show bg
-            console.log('here', this.rotation)
             this.addTween(this.bg).from(
                 {
                     alpha:0,
@@ -68,7 +67,6 @@ module GameBase {
                     true,
                     2500
                 ).onComplete.add(()=>{
-                    console.log('complete----');
                     this.destroy();
                 })
                 

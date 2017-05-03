@@ -456,7 +456,7 @@ var GameBase;
             // loading all* game assets
             _this.loaderState = GameBase.Loader;
             _this.canvasSize = [1280, 720];
-            _this.initialState = 'Intro';
+            _this.initialState = 'Main';
             return _this;
         }
         return Config;
@@ -698,6 +698,8 @@ var GameBase;
             this.load.image('ui-hero-4-attack-2', 'assets/default/images/ui/attack/Knight/2.png');
             this.load.image('ui-hero-4-attack-3', 'assets/default/images/ui/attack/Knight/3.png');
             this.load.image('ui-hero-revive', 'assets/default/images/ui/a-blessed.png');
+            this.load.image('ui-battle-clock', 'assets/default/images/ui/i-clock.png');
+            // i-clock.png
             this.load.image('ui-hero-dead-count', 'assets/default/images/ui/dead-count.png');
             // ui hero attacks
             this.load.image('ui-hero-attacks-bg-1', 'assets/default/images/ui/b-large-bg.png');
@@ -813,6 +815,15 @@ var GameBase;
             this.blockBg.alpha = 0;
             this.blockBg.inputEnabled = true;
             this.blockBg.visible = false;
+            // create clock
+            this.clock = new GameBase.Timing(this.game);
+            this.clock.create();
+            // pos clock above endturn button
+            this.clock.x = this.game.width - this.clock.width - 20;
+            this.clock.y = this.endTurnButton.y - this.clock.height;
+            this.state.addToLayer(uiLayerKey, this.clock);
+            // set time by level
+            this.clock.seconds = 40 / this.level;
             // add to layers
             this.state.addToLayer(uiLayerKey, this.levelFlag);
             this.state.addToLayer(uiLayerKey, this.endTurnButton);
@@ -849,10 +860,18 @@ var GameBase;
             console.log('select :' + randomHero.name);
             // create a random speak balloon
             var balloon = new GameBase.SpeakHero(this.game, randomHero);
+            this.state.addToLayer('ui-back', balloon);
             setTimeout(function () {
                 balloon.create();
                 balloon.show();
             }, 1500);
+            // start timer
+            this.clock.start();
+            // clock end tur event
+            this.clock.event.add(GameBase.E.TimingEvent.OnEnd, function () {
+                // force click buttom
+                _this.endTurnButton.event.dispatch(GameBase.E.ButtonEvent.OnClick);
+            }, this);
             // show enemies
             this.enemies.forEach(function (enemy) {
                 enemy.ui.visible = enemy.visible = true;
@@ -870,9 +889,11 @@ var GameBase;
             // create calculation splash
             var hac = new GameBase.HeroAttackCalculation(this.game, attack, enemy, hero);
             hac.create();
+            this.clock.pause();
             this.blockBg.visible = true;
             // event
             hac.event.add(GameBase.E.HeroAttackCalculation.End, function () {
+                _this.clock.resume();
                 if (!enemy.alive) {
                     console.log('play dead animation--');
                     enemy.playDeadAnimation();
@@ -979,6 +1000,8 @@ var GameBase;
             var endTurnAnimation = new GameBase.EndTurnAnimation(this.game);
             endTurnAnimation.create();
             endTurnAnimation.show("Enemy Turn");
+            // start timing
+            this.clock.stop();
             // block interaction
             this.blockBg.visible = true;
             endTurnAnimation.event.add(GameBase.E.EndTurnAnimation.OnEnd, function () {
@@ -1013,9 +1036,13 @@ var GameBase;
             var endTurnAnimation = new GameBase.EndTurnAnimation(this.game);
             endTurnAnimation.create();
             endTurnAnimation.show("Heroes Turn");
+            this.blockBg.visible = true;
             endTurnAnimation.event.add(GameBase.E.EndTurnAnimation.OnEnd, function () {
+                _this.blockBg.visible = false;
                 // show turn end button
                 _this.endTurnButton.in();
+                // start timing
+                _this.clock.start();
             }, this);
         };
         Battle.prototype.enemiesMove = function () {
@@ -2159,6 +2186,7 @@ var GameBase;
             this.addLayer('stage-back-3');
             this.addLayer('chars');
             this.addLayer('stage-front-1');
+            this.addLayer('ui-back');
             this.addLayer('ui');
             this.addLayer('block');
             // scene particles
@@ -3486,7 +3514,7 @@ var GameBase;
             */
             this.add(this.bg);
             this.visible = false;
-            Pk.PkState.currentState.addToLayer('ui', this);
+            // Pk.PkState.currentState.addToLayer('ui', this);
             // pos
         };
         SpeakHero.prototype.show = function () {
@@ -3496,7 +3524,6 @@ var GameBase;
             this.bg.y = this.hero.y - this.height;
             this.visible = true;
             // show bg
-            console.log('here', this.rotation);
             this.addTween(this.bg).from({
                 alpha: 0,
                 y: this.bg.y + 10,
@@ -3506,7 +3533,6 @@ var GameBase;
                     alpha: 0,
                     y: _this.bg.y - 10
                 }, 200, Phaser.Easing.Linear.None, true, 2500).onComplete.add(function () {
-                    console.log('complete----');
                     _this.destroy();
                 });
             }, this);
@@ -3520,6 +3546,77 @@ var GameBase;
         (function (SpeakHeroEvent) {
             SpeakHeroEvent.OnEnd = "SpeakHeroEventEnd";
         })(SpeakHeroEvent = E.SpeakHeroEvent || (E.SpeakHeroEvent = {}));
+    })(E = GameBase.E || (GameBase.E = {}));
+})(GameBase || (GameBase = {}));
+var GameBase;
+(function (GameBase) {
+    var Timing = (function (_super) {
+        __extends(Timing, _super);
+        function Timing() {
+            var _this = _super !== null && _super.apply(this, arguments) || this;
+            _this.seconds = 10; // 10 sec
+            _this.barSize = 221;
+            return _this;
+        }
+        Timing.prototype.create = function () {
+            // timing bar
+            this.bar = Pk.PkUtils.createSquare(this.game, this.barSize, 15, "#eddacc");
+            // clock
+            this.clock = this.game.add.sprite(0, 0, 'ui-battle-clock');
+            // pos 
+            this.bar.anchor.x = 1;
+            this.bar.x += this.bar.width;
+            this.clock.anchor.y = 0.5;
+            this.clock.y += 8;
+            this.clock.x = this.bar.width + 10;
+            this.add(this.bar);
+            this.add(this.clock);
+            this.visible = false;
+        };
+        Timing.prototype.stop = function () {
+            this.visible = false;
+            // stop tween
+            if (this.tweenBar)
+                this.tweenBar.stop();
+            //
+        };
+        Timing.prototype.pause = function () {
+            if (this.tweenBar)
+                this.tweenBar.pause();
+            //
+        };
+        Timing.prototype.resume = function () {
+            if (this.tweenBar)
+                this.tweenBar.resume();
+            //
+        };
+        Timing.prototype.start = function () {
+            var _this = this;
+            // reset bar size
+            this.bar.width = this.barSize;
+            // stop tween
+            this.stop();
+            this.visible = true;
+            this.tweenBar = null;
+            this.tweenBar = this.addTween(this.bar).to({
+                width: 0
+            }, Phaser.Timer.SECOND * this.seconds, Phaser.Easing.Linear.None);
+            // end bar event
+            this.tweenBar.onComplete.add(function () {
+                _this.event.dispatch(GameBase.E.TimingEvent.OnEnd);
+            }, this);
+            // start tween
+            this.tweenBar.start();
+        };
+        return Timing;
+    }(Pk.PkElement));
+    GameBase.Timing = Timing;
+    var E;
+    (function (E) {
+        var TimingEvent;
+        (function (TimingEvent) {
+            TimingEvent.OnEnd = "OnEndTimingEvent";
+        })(TimingEvent = E.TimingEvent || (E.TimingEvent = {}));
     })(E = GameBase.E || (GameBase.E = {}));
 })(GameBase || (GameBase = {}));
 var GameBase;
