@@ -3566,12 +3566,17 @@ var GameBase;
             // pos 
             this.bar.anchor.x = 1;
             this.bar.x += this.bar.width;
-            this.clock.anchor.y = 0.5;
+            this.clock.anchor.set(0.5, 0.5);
             this.clock.y += 8;
             this.clock.x = this.bar.width + 10;
             this.add(this.bar);
             this.add(this.clock);
             this.visible = false;
+            var t = this.addTween(this.clock).to({
+                width: this.clock.width + 5,
+                height: this.clock.height + 5,
+            }, 500, Phaser.Easing.Back.InOut, true, 0, -1, true);
+            // t.yoyo(true)
         };
         Timing.prototype.stop = function () {
             this.visible = false;
