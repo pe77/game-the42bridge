@@ -13,6 +13,7 @@ module GameBase {
             this.state.add('Intro', GameBase.Intro);
             this.state.add('Main', GameBase.Main);
             this.state.add('GameOver', GameBase.GameOver);
+
         }
     }
  
@@ -33,7 +34,6 @@ module GameBase {
 
 
             this.initialState = 'Main';
-
         }
     }
     
