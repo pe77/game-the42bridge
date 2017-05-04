@@ -583,8 +583,18 @@ var GameBase;
             } // font style
             );
             this.loadingText.anchor.set(.5, .5);
+            var tipText = this.game.add.text(0, 0, '"Reach 42 to defeat the enemy"', // text
+            {
+                font: "20px",
+                fill: "#ffffff"
+            } // font style
+            );
+            tipText.anchor.set(.5, .5);
             this.loadingText.x = this.world.centerX;
             this.loadingText.y = this.world.centerY;
+            tipText.x = this.world.centerX;
+            tipText.y = this.world.centerY;
+            tipText.y += 80;
             // fileComplete
             // this.fil
             this.game.load.onFileComplete.add(function (progress) {
