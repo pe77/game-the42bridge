@@ -1,4 +1,4 @@
-# game-the42bridge
+# Game - The 42nd Bridge
 The 42nd Bridge game code
 
 Pra rodar só precisa de um "apache da vida".
@@ -43,5 +43,7 @@ O código do jogo está em: ```com\gamebase```, os assets(imagens, sons, sprites
 Qualquer dúvida: (twitter):[@henriquepikachu](@henriquepikachu)
 
 Beijos.
+
+![](https://phaser.io/content/news/2017/05/the-42nd-bridge2.jpg)
 
 
