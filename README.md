@@ -44,7 +44,7 @@ Qualquer dúvida: (twitter):[@henriquepikachu](@henriquepikachu)
 
 Beijos.
 
-Play: [http://162.243.169.239/games/42/](http://162.243.169.239/games/42/)
+Play: [https://rainingrock.com/The42ndBridge/](https://rainingrock.com/The42ndBridge/)
 
 ![](https://phaser.io/content/news/2017/05/the-42nd-bridge2.jpg)
 
